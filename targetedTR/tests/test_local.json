@@ -1,0 +1,11 @@
+{
+  "targetTR.cram_files": ["tests/HG00138.cstb.cram","tests/NA12878.cstb.cram","tests/HG00190.cstb.cram"],
+  "targetTR.cram_index_files": ["tests/HG00138.cstb.cram.crai","tests/NA12878.cstb.cram.crai","tests/HG00190.cstb.cram.crai"],
+  "targetTR.motif_len": 5,
+  "targetTR.genome": "tests/chr21.fa",
+  "targetTR.str_name": "CSTB",
+  "targetTR.chrom": "chr21",
+  "targetTR.str_start": 43776445,
+  "targetTR.str_end": 43776479,
+  "targetTR.num_copies": 7
+}

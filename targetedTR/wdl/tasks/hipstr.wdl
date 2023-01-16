@@ -44,7 +44,7 @@ task hipstr {
     >>>
     
     runtime {
-        docker:"yli091230/hipstr:small"
+        docker:"mgymrek/hipstr-gymreklab:latest"
     }
 
     output {

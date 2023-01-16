@@ -1,11 +1,18 @@
 version 1.0
 
 # TODO
+# Implementation:
+# Get list of UKB files
+# Change to use GCR rather than dockerhub
+
+# TODO
+# Workflow improvements:
 # Take stutter input, allele set, from 
 # multi-sample hipstr calls from UKB subset
 # Just take in hipstr ID
 
 import "../tasks/hipstr.wdl" as hipstr_t
+import "../tasks/merge_hipstr.wdl" as merge_t
 
 workflow targetTR {
 	input {
@@ -35,7 +42,7 @@ workflow targetTR {
 	scatter (i in range(length(cram_files))) {
 		File cram = cram_files[i]
 		File cram_index = cram_index_files[i]
-		call hipstr_t.run_hipstr {
+		call hipstr_t.run_hipstr as run_hipstr {
 			input :
 				bam=cram,
 				bam_index=cram_index,
@@ -46,11 +53,21 @@ workflow targetTR {
 	}
 
 	### Merge HipSTR across all samples ###
+	call merge_t.merge_hipstr as merge_hipstr {
+		input :
+			vcfs=run_hipstr.outfile,
+			out_prefix=str_name
+	}
+
+	### DumpSTR and zip on merged VCF ###
 	# TODO
 
-	### DumpSTR on merged VCF ###
-	# TODO
-
+	### Output files ####
+	# TODO - merged, filtered VCF
+	output {
+		File outbed = makeBed.tr_bed
+		File mergevcf = merge_hipstr.outfile
+	}
 }
 
 task makeBed {
@@ -63,9 +80,11 @@ task makeBed {
 		String str_name
 	}
 
+	# TODO: couldn't figure out how to get tabs to be escaped properly in
+	# the command <<< >>> 
+	String command = "echo '~{chrom},~{str_start},~{str_end},~{motif_len},~{num_copies},~{str_name}' | sed 's/,/\t/g' "
 	command <<<
-		echo "~{chrom}\t~{str_start}\t~{str_end}\t~{motif_len}\t~{num_copies}\t~{num_copies}" \
-			> ~{str_name}_strref.bed
+		sh -c "~{command}" > ~{str_name}_strref.bed
 	>>>
 
 	output {
