@@ -3,12 +3,14 @@ version 1.0
 workflow merge_hipstr {
     input {
         Array[File] vcfs
+        Array[File] vcf_indexes
         String out_prefix
     }
 
     call mergestr {
         input : 
           vcfs=vcfs,
+          vcf_indexes=vcf_indexes,
           out_prefix=out_prefix+"_premerge"
     }
 
@@ -21,7 +23,7 @@ workflow merge_hipstr {
     output {
        File outfile = mergefix.outvcf 
     }
-    
+
     meta {
       description: "Merge VCFs from multiple HipSTR runs"
     }
@@ -30,6 +32,7 @@ workflow merge_hipstr {
 task mergestr {
   input {
     Array[File] vcfs
+    Array[File] vcf_indexes
     String out_prefix
   }
 

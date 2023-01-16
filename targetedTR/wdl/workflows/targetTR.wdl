@@ -13,6 +13,7 @@ version 1.0
 
 import "../tasks/hipstr.wdl" as hipstr_t
 import "../tasks/merge_hipstr.wdl" as merge_t
+import "../tasks/dumpstr.wdl" as dumpstr_t
 
 workflow targetTR {
 	input {
@@ -38,7 +39,7 @@ workflow targetTR {
 			str_name=str_name
 	}
 
-	### Call HipSTR on all samples ###
+	### Call HipSTR on all samples individually ###
 	scatter (i in range(length(cram_files))) {
 		File cram = cram_files[i]
 		File cram_index = cram_index_files[i]
@@ -56,17 +57,48 @@ workflow targetTR {
 	call merge_t.merge_hipstr as merge_hipstr {
 		input :
 			vcfs=run_hipstr.outfile,
+			vcf_indexes=run_hipstr.outfile_index,
 			out_prefix=str_name
 	}
 
-	### DumpSTR and zip on merged VCF ###
-	# TODO
+	### DumpSTR on merged VCF ###
+	call dumpstr_t.run_dumpstr as dumpstr {
+		input :
+			vcf=merge_hipstr.outfile,
+			out_prefix=str_name+".filtered"
+	}
+
+	### Zip and index the VCF ###
+	call sort_index {
+		input :
+			vcf=dumpstr.outfile
+	}
 
 	### Output files ####
-	# TODO - merged, filtered VCF
 	output {
-		File outbed = makeBed.tr_bed
-		File mergevcf = merge_hipstr.outfile
+		File finalvcf = sort_index.outvcf
+		File finalvcf_index = sort_index.outvcf_index
+	}
+}
+
+task sort_index {
+	input {
+		File vcf
+	}
+
+	String basename = basename(vcf, ".vcf")
+
+	command <<<
+		vcf-sort ~{vcf} | bgzip -c > ~{basename}.vcf.gz && tabix -p vcf ~{basename}.sorted.vcf.gz
+	>>>
+
+	runtime {
+        docker:"mgymrek/vcfutils:latest"
+    }
+
+	output {
+		File outvcf = "${basename}.vcf.gz"
+		File outvcf_index = "${basename}.vcf.gz.tbi"
 	}
 }
 
@@ -90,4 +122,8 @@ task makeBed {
 	output {
 		File tr_bed = "${str_name}_strref.bed"
 	}
+
+	meta {
+      description: "Make a HipSTR regions file for a single TR"
+    }
 }

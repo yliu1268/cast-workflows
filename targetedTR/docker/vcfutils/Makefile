@@ -1,6 +1,6 @@
 # Definitions
 repository = mgymrek
-identifier = trtools-4.2.1
+identifier = vcfutils
 version = 0.0.0
 git_commit ?= $(shell git log --pretty=oneline -n 1 | cut -f1 -d " ")
 name = ${repository}/${identifier}
