@@ -7,3 +7,4 @@ RUN apt-get update && DEBIAN_FRONTEND="noninteractive" apt-get install -qqy \
 RUN pip3 install --upgrade pip
 RUN pip3 install cyvcf2 numpy
 COPY Hipstr_correction.py /usr/bin/
+RUN chmod +x /usr/bin/Hipstr_correction.py

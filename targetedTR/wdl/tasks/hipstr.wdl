@@ -46,7 +46,9 @@ task hipstr {
           --bams ~{bam} \
           --fasta ~{genome} \
           --regions ~{str_ref} \
-          --str-vcf ~{out_prefix}.vcf.gz
+          --str-vcf ~{out_prefix}.vcf.gz \
+          --def-stutter-model \
+          --min-reads 10
     >>>
     
     runtime {
@@ -63,10 +65,10 @@ task sort_index {
     File vcf
   }
 
-  String basename = basename(vcf, ".vcf")
+  String basename = basename(vcf, ".vcf.gz")
 
   command <<<
-    vcf-sort ~{vcf} | bgzip -c > ~{basename}.vcf.gz && tabix -p vcf ~{basename}.sorted.vcf.gz
+    zcat ~{vcf} | vcf-sort | bgzip -c > ~{basename}.sorted.vcf.gz && tabix -p vcf ~{basename}.sorted.vcf.gz
   >>>
 
   runtime {
@@ -74,7 +76,7 @@ task sort_index {
     }
 
   output {
-    File outvcf = "${basename}.vcf.gz"
-    File outvcf_index = "${basename}.vcf.gz.tbi"
+    File outvcf = "${basename}.sorted.vcf.gz"
+    File outvcf_index = "${basename}.sorted.vcf.gz.tbi"
   }
 }

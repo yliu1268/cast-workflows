@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import cyvcf2
 from cyvcf2 import VCF, Writer
 from itertools import islice, count
@@ -6,7 +8,6 @@ import numpy as np
 import math
 import sys
 import time
-
 
 file_name = sys.argv[1] # Input vcf file
 vcf = VCF(file_name, strict_gt=True)

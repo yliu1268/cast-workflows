@@ -1,15 +1,24 @@
 version 1.0
 
 # TODO
-# Implementation:
+# Implementation/launching:
 # Get list of UKB files
 # Change to use GCR rather than dockerhub
+# Hipstr mergefix broke with only one record
+#  commenting for now, need to bring back
+
+# TODO
+# Adding phewas
+# Need: obtain phenotypes
+# Need: run associaTR
+# Need: Make html report 
+#   Length distribution
 
 # TODO
 # Workflow improvements:
 # Take stutter input, allele set, from 
 # multi-sample hipstr calls from UKB subset
-# Just take in hipstr ID
+# Just take in hipstr STRID rather than constructing the BED file?
 
 import "../tasks/hipstr.wdl" as hipstr_t
 import "../tasks/merge_hipstr.wdl" as merge_t
@@ -89,7 +98,7 @@ task sort_index {
 	String basename = basename(vcf, ".vcf")
 
 	command <<<
-		vcf-sort ~{vcf} | bgzip -c > ~{basename}.vcf.gz && tabix -p vcf ~{basename}.sorted.vcf.gz
+		vcf-sort ~{vcf} | bgzip -c > ~{basename}.sorted.vcf.gz && tabix -p vcf ~{basename}.sorted.vcf.gz
 	>>>
 
 	runtime {
@@ -97,8 +106,8 @@ task sort_index {
     }
 
 	output {
-		File outvcf = "${basename}.vcf.gz"
-		File outvcf_index = "${basename}.vcf.gz.tbi"
+		File outvcf = "${basename}.sorted.vcf.gz"
+		File outvcf_index = "${basename}.sorted.vcf.gz.tbi"
 	}
 }
 

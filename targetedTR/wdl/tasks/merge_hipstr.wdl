@@ -14,14 +14,15 @@ workflow merge_hipstr {
           out_prefix=out_prefix+"_premerge"
     }
 
-    call mergefix {
-        input :
-          vcf=mergestr.outvcf,
-          outfile=out_prefix+".merged.vcf"
-    }
+    #call mergefix {
+    #    input :
+    #      vcf=mergestr.outvcf,
+    #      outfile=out_prefix+".merged.vcf"
+    #}
 
     output {
-       File outfile = mergefix.outvcf 
+       #File outfile = mergefix.outvcf 
+       File outfile = mergestr.outvcf
     }
 
     meta {
