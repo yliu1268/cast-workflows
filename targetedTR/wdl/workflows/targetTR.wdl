@@ -35,6 +35,7 @@ workflow targetTR {
 		Array[File] cram_files
 		Array[File] cram_index_files
 		File genome
+		File genome_index
 	}
 
 	### Generate HipSTR BED file ###
@@ -57,6 +58,7 @@ workflow targetTR {
 				bam=cram,
 				bam_index=cram_index,
 				genome=genome,
+				genome_index=genome_index,
 				str_ref=makeBed.tr_bed,
 				out_prefix=str_name
 		}
@@ -123,9 +125,9 @@ task makeBed {
 
 	# TODO: couldn't figure out how to get tabs to be escaped properly in
 	# the command <<< >>> 
-	String command = "echo '~{chrom},~{str_start},~{str_end},~{motif_len},~{num_copies},~{str_name}' | sed 's/,/\t/g' "
+	String cmd = "echo '~{chrom},~{str_start},~{str_end},~{motif_len},~{num_copies},~{str_name}' | sed 's/,/\t/g' "
 	command <<<
-		sh -c "~{command}" > ~{str_name}_strref.bed
+		sh -c "~{cmd}" > ~{str_name}_strref.bed
 	>>>
 
 	output {

@@ -5,6 +5,7 @@ workflow run_hipstr {
         File bam
         File bam_index
         File genome
+        File genome_index
         File str_ref
         String out_prefix
     }
@@ -14,18 +15,19 @@ workflow run_hipstr {
           bam=bam, 
           bam_index=bam_index,
           genome=genome, 
+          genome_index=genome_index,
           str_ref=str_ref,
           out_prefix=out_prefix
     }
 
-    call sort_index {
+    call sort_index_hipstr {
       input :
         vcf=hipstr.outfile
     }
 
     output {
-       File outfile = sort_index.outvcf 
-       File outfile_index = sort_index.outvcf_index
+       File outfile = sort_index_hipstr.outvcf 
+       File outfile_index = sort_index_hipstr.outvcf_index
     }
     meta {
       description: "Run HipSTR on a single sample with default parameters"
@@ -37,6 +39,7 @@ task hipstr {
         File bam
         File bam_index
         File genome
+        File genome_index
         File str_ref
         String out_prefix
     } 
@@ -60,7 +63,7 @@ task hipstr {
     }
 }
 
-task sort_index {
+task sort_index_hipstr {
   input {
     File vcf
   }
