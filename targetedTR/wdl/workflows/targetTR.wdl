@@ -20,7 +20,9 @@ version 1.0
 # multi-sample hipstr calls from UKB subset
 # Just take in hipstr STRID rather than constructing the BED file?
 
-import "../tasks/hipstr.wdl" as hipstr_t
+#import "../tasks/hipstr.wdl" as hipstr_t
+#import "../tasks/get_batches.wdl" as get_batches_t
+import "../tasks/hipstr_multi.wdl" as hipstr_multi_t
 import "../tasks/merge_hipstr.wdl" as merge_t
 import "../tasks/dumpstr.wdl" as dumpstr_t
 
@@ -32,14 +34,14 @@ workflow targetTR {
 		Int motif_len
 		Float num_copies
 		String str_name
-		Array[File] cram_files
-		Array[File] cram_index_files
+		Array[Array[File]] cram_file_batches
+		Array[Array[File]] cram_index_batches
 		File genome
 		File genome_index
 	}
 
 	### Generate HipSTR BED file ###
-	call makeBed {
+	call make_bed {
 		input :
 			chrom=chrom,
 			str_start=str_start,
@@ -49,18 +51,26 @@ workflow targetTR {
 			str_name=str_name
 	}
 
-	### Call HipSTR on all samples individually ###
-	scatter (i in range(length(cram_files))) {
-		File cram = cram_files[i]
-		File cram_index = cram_index_files[i]
-		call hipstr_t.run_hipstr as run_hipstr {
+	### Get bathces of cram files and indices
+	#call get_batches_t.get_batches as get_batches {
+	#	input :
+	#		cram_files=cram_files,
+	#		cram_index_files=cram_index_files,
+	#		batch_size=batch_size
+	#}
+
+	### Call HipSTR on batches of samples ###
+	scatter(i in range(length(cram_file_batches))) {
+		Array[File] crams = cram_file_batches[i]
+		Array[File] cram_indices = cram_index_batches[i]
+		call hipstr_multi_t.run_hipstr as run_hipstr {
 			input :
-				bam=cram,
-				bam_index=cram_index,
+				bams=crams,
+				bam_indices=cram_indices,
 				genome=genome,
 				genome_index=genome_index,
-				str_ref=makeBed.tr_bed,
-				out_prefix=str_name
+				str_ref=make_bed.tr_bed,
+				out_prefix=str_name+".BATCH"+i
 		}
 	}
 
@@ -113,7 +123,7 @@ task sort_index {
 	}
 }
 
-task makeBed {
+task make_bed {
 	input {
 		String chrom
 		Int str_start
