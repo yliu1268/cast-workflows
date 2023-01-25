@@ -4,13 +4,18 @@ Compile to run on DNA Nexus
 # Notes
 # - Checks are more rigorous than those of womtool validate
 java -jar ~/Applications/dxCompiler-2.10.4.jar compile ../wdl/workflows/targetTR.wdl \
-	-project project-GG25fB8Jv7B928vqK7k6vYY6 -folder /TargetedSTR/ -streamFiles all -archive
+	-project project-GG25fB8Jv7B928vqK7k6vYY6 -folder /TargetedSTR/ -streamFiles all -archive 
 ```
 
 Run example
 
 ```
-dx run workflow-GP3JQGQJv7B2q9PG5fk6Kqg8 -y -f uk_rap_example_input.json --destination "TargetedSTR/results/CSTB"
+# Test one batch of 3
+dx run workflow-GP8jzvQJv7B3K97ypgvBBqxq -y -f uk_rap_example_input.json --destination "TargetedSTR/results/CSTB"
+
+# Test three batches of 1
+dx run workflow-GP8jzvQJv7B3K97ypgvBBqxq -y -f uk_rap_example_input-2.json --destination "TargetedSTR/results/CSTB-2"
+
 ```
 
 List all UKB cram files
@@ -24,5 +29,23 @@ done | grep -v "crai$" > ukb_cram_files.txt
 
 Get file IDs of all the crams/indices
 ```
-dx describe file-G2x1p68JkF61f5xgGk9XyffQ | awk '($1=="ID") {print $2}'
+while IFS="" read -r p || [ -n "$p" ]
+do
+	cramid=$(dx describe "$p" | awk '($1=="ID") {print $2}')
+	idxid=$(dx describe "$p.crai" | awk '($1=="ID") {print $2}')
+  	echo $cramid $idxid
+done < ukb_cram_files.txt > ukb_cram_and_index_files.txt
+```
+
+Run bigger example (3 batches of 100 each)
+```
+./targetTR_launcher_ukb.py \
+  --region chr21:43776445-43776479 \
+  --period 5 \
+  --refcopies 7.0 \
+  --name CSTB-mini \
+  --batch-size 100 \
+  --batch-num 3 \
+  --workflow-id workflow-GP8jzvQJv7B3K97ypgvBBqxq \
+  --file-list ukb_cram_and_index_files.txt
 ```
