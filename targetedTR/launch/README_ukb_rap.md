@@ -49,7 +49,7 @@ done < ukb_cram_files.txt > ukb_cram_and_index_files.txt
 
 The python launcher takes care of batching, which was difficult to do cleanly in WDL 1.0.
 
-The code below shows a small example (3 batches of 5 samples each).
+The code below shows a small example (3 batches of 25 samples each).
 To run all files, increase `--batch-size` to a larger number (1000?) and remove the `--batch-num` argument.
 ```
 ./targetTR_launcher_ukb.py \
@@ -57,7 +57,7 @@ To run all files, increase `--batch-size` to a larger number (1000?) and remove 
   --period 5 \
   --refcopies 7.0 \
   --name CSTB-mini \
-  --batch-size 5 \
+  --batch-size 25 \
   --batch-num 3 \
   --workflow-id workflow-GP8jzvQJv7B3K97ypgvBBqxq \
   --file-list ukb_cram_and_index_files.txt
