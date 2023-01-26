@@ -1,8 +1,6 @@
 version 1.0
 
 # TODO
-# Implementation/launching:
-# Get list of UKB files
 # Change to use GCR rather than dockerhub
 # Hipstr mergefix broke with only one record
 #  commenting for now, need to bring back
@@ -20,8 +18,6 @@ version 1.0
 # multi-sample hipstr calls from UKB subset
 # Just take in hipstr STRID rather than constructing the BED file?
 
-#import "../tasks/hipstr.wdl" as hipstr_t
-#import "../tasks/get_batches.wdl" as get_batches_t
 import "../tasks/hipstr_multi.wdl" as hipstr_multi_t
 import "../tasks/merge_hipstr.wdl" as merge_t
 import "../tasks/dumpstr.wdl" as dumpstr_t
@@ -50,14 +46,6 @@ workflow targetTR {
 			num_copies=num_copies,
 			str_name=str_name
 	}
-
-	### Get bathces of cram files and indices
-	#call get_batches_t.get_batches as get_batches {
-	#	input :
-	#		cram_files=cram_files,
-	#		cram_index_files=cram_index_files,
-	#		batch_size=batch_size
-	#}
 
 	### Call HipSTR on batches of samples ###
 	scatter(i in range(length(cram_file_batches))) {

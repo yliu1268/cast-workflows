@@ -28,6 +28,7 @@ done | grep -v "crai$" > ukb_cram_files.txt
 ```
 
 Get file IDs of all the crams/indices
+TODO need to rerun this takes a long time
 ```
 while IFS="" read -r p || [ -n "$p" ]
 do
@@ -44,7 +45,7 @@ Run bigger example (3 batches of 100 each)
   --period 5 \
   --refcopies 7.0 \
   --name CSTB-mini \
-  --batch-size 100 \
+  --batch-size 5 \
   --batch-num 3 \
   --workflow-id workflow-GP8jzvQJv7B3K97ypgvBBqxq \
   --file-list ukb_cram_and_index_files.txt
