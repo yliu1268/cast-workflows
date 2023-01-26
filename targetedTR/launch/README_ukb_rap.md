@@ -1,4 +1,9 @@
-Compile to run on DNA Nexus
+# TargetTR on UKB RAP
+
+
+## Setup WDL workflow
+
+First, compile WDL workflow to run on DNA Nexus
 
 ```
 # Notes
@@ -7,7 +12,7 @@ java -jar ~/Applications/dxCompiler-2.10.4.jar compile ../wdl/workflows/targetTR
 	-project project-GG25fB8Jv7B928vqK7k6vYY6 -folder /TargetedSTR/ -streamFiles all -archive 
 ```
 
-Run example
+Then, test with some tiny examples
 
 ```
 # Test one batch of 3
@@ -17,6 +22,8 @@ dx run workflow-GP8jzvQJv7B3K97ypgvBBqxq -y -f uk_rap_example_input.json --desti
 dx run workflow-GP8jzvQJv7B3K97ypgvBBqxq -y -f uk_rap_example_input-2.json --destination "TargetedSTR/results/CSTB-2"
 
 ```
+
+## Compile list of files to process
 
 List all UKB cram files
 ```
@@ -28,7 +35,7 @@ done | grep -v "crai$" > ukb_cram_files.txt
 ```
 
 Get file IDs of all the crams/indices
-TODO need to rerun this takes a long time
+(this takes a long time. is there a faster way?)
 ```
 while IFS="" read -r p || [ -n "$p" ]
 do
@@ -38,7 +45,12 @@ do
 done < ukb_cram_files.txt > ukb_cram_and_index_files.txt
 ```
 
-Run bigger example (3 batches of 100 each)
+## Call python launcher 
+
+The python launcher takes care of batching, which was difficult to do cleanly in WDL 1.0.
+
+The code below shows a small example (3 batches of 5 samples each).
+To run all files, increase `--batch-size` to a larger number (1000?) and remove the `--batch-num` argument.
 ```
 ./targetTR_launcher_ukb.py \
   --region chr21:43776445-43776479 \
