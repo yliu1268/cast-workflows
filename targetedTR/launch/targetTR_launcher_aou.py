@@ -139,7 +139,7 @@ def main():
 	json_dict["targetTR.genome"] = args.genome_id
 	json_dict["targetTR.genome_index"] = args.genome_idx_id
 	json_dict["targetTR.tr_bed"] = tr_bedfile
-	json_dict["tragetTR.str_name"] = args.name
+	json_dict["targetTR.str_name"] = args.name
 
 	# Set up batches of files
 	cram_batches, cram_idx_batches = GetFileBatches(args.file_list, int(args.batch_size), int(args.batch_num))

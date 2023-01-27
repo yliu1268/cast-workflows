@@ -134,8 +134,8 @@ def UploadDNANexus(fname, name):
 	   ID of the file on DNA Nexus
 	"""
 	cmd = 'dx upload {fname} --brief --destination "TargetedSTR/results/{name}"'.format(fname=fname, name=name)
-	output = str(subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read())
-	return {"$dnanexus_link": output.decode("utf-8")}
+	output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
+	return {"$dnanexus_link": output.decode("utf-8").strip()}
 
 def WriteTRBed(region, period, refcopies, name, filename):
 	chrom, start, end = ParseRegion(region)
