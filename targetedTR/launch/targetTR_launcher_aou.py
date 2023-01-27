@@ -111,6 +111,11 @@ def RunWorkflow(json_file, json_options_file):
 	output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
 	print(output.decode("utf-8"))
 
+def UploadTRBed(tr_bedfile, tr_bedfile_gcs):
+	cmd = "gsutil cp {src} {dest}".format(src=tr_bedfile, dest=tr_bedfile_gcs)
+	output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
+	print(output.decode("utf-8"))	
+
 def WriteTRBed(region, period, refcopies, name, filename):
 	chrom, start, end = ParseRegion(region)
 	with open(filename, "w") as f:
@@ -130,15 +135,22 @@ def main():
 	parser.add_argument("--genome-idx-id", help="File id of ref genome index", type=str, default="gs://genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.fasta.fai")
 	args = parser.parse_args()
 
+	# Set up output bucket
+	bucket = os.getenv("WORKSPACE_BUCKET")
+	project = os.getenv("GOOGLE_PROJECT")
+	output_bucket = bucket + "/" + args.name
+
 	# Generate TR Bed file
 	tr_bedfile = args.name+".bed"
+	tr_bedfile_gcs = output_bucket + "/" + args.name + "/" + tr_bedfile
 	WriteTRBed(args.region, args.period, args.refcopies, args.name, tr_bedfile)
+	UploadTRBed(tr_bedfile, tr_bedfile_gcs)
 
 	# Set up workflow JSON
 	json_dict = {}
 	json_dict["targetTR.genome"] = args.genome_id
 	json_dict["targetTR.genome_index"] = args.genome_idx_id
-	json_dict["targetTR.tr_bed"] = tr_bedfile
+	json_dict["targetTR.tr_bed"] = tr_bedfile_gcs
 	json_dict["targetTR.str_name"] = args.name
 
 	# Set up batches of files
@@ -152,9 +164,6 @@ def main():
 		json.dump(json_dict, f, indent=4)
 
 	# Set up json options
-	bucket = os.getenv("WORKSPACE_BUCKET")
-	project = os.getenv("GOOGLE_PROJECT")
-	output_bucket = bucket + "/" + args.name
 	json_options_dict = {"jes_gcs_root": output_bucket}
 	json_options_file = args.name+".options.aou.json"
 	with open(json_options_file, "w") as f:
