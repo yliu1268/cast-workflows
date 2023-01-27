@@ -2,9 +2,27 @@
 
 All of this must be run on the workbench itself. Once in the workbench, launch a terminal session and to the following.
 
-1. Navigate to the `launch` directory.
+1. Clone the github and navigate to the launch directory.
 
-2. Do `git pull` to get the latest changes.
+```
+cd workspaces/impactofglobalandlocalancestryongenomewideassociationv6studies/
+mkdir mgymrek-workspace
+cd mgymrek-workspace/
+git clone https://github.com/cast-genomics/cast-workflows/
+cd cast-workflows/
+git checkout targetedTR
+cd targetedTR/launch
+```
+
+2. Set up
+```
+curl https://github.com/broadinstitute/cromwell/releases/download/77/womtool-77.jar -o womtool-77.jar -L
+curl https://github.com/broadinstitute/cromwell/releases/download/77/cromwell-77.jar -o cromwell-77.jar -L
+curl -s "https://get.sdkman.io" -o install_sdkman.sh
+bash install_sdkman.sh
+source "/home/jupyter/.sdkman/bin/sdkman-init.sh"
+sdk install java 11.0.14-tem
+```
 
 3. Copy the `manifest.csv` file with the CRAM paths to the launch directory.
 ```
