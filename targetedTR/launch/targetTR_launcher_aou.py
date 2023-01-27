@@ -145,7 +145,7 @@ def main():
 	json_dict["targetTR.cram_index_batches"] = cram_idx_batches
 
 	# Convert to json and save as a file
-	json_file = args.name+"aou.json"
+	json_file = args.name+".aou.json"
 	with open(json_file, "w") as f:
 		json.dump(json_dict, f, indent=4)
 
@@ -156,7 +156,7 @@ def main():
 	json_options_dict = {"jes_gcs_root": output_bucket}
 	json_options_file = args.name+".options.aou.json"
 	with open(json_options_file, "w") as f:
-		json.dump(json_dict, f, indent=4)
+		json.dump(json_options_dict, f, indent=4)
 
 	# Run workflow on AoU using cromwell
 #	RunWorkflow(json_file, json_options_file)
