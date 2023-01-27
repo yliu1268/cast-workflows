@@ -7,6 +7,9 @@ All of this must be run on the workbench itself. Once in the workbench, launch a
 2. Do `git pull` to get the latest changes.
 
 3. Copy the `manifest.csv` file with the CRAM paths to the launch directory.
+```
+gsutil -u $GOOGLE_PROJECT cp gs://fc-aou-datasets-controlled/v6/wgs/cram/manifest.csv .
+```
 
 4. Run a test job:
 
@@ -16,7 +19,7 @@ All of this must be run on the workbench itself. Once in the workbench, launch a
   --period 5 \
   --refcopies 7.0 \
   --name CSTB-mini \
-  --batch-size 5 \
-  --batch-num 3 \
+  --batch-size 1 \
+  --batch-num 2 \
   --file-list manifest.csv
 ```
