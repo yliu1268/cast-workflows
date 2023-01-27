@@ -111,6 +111,11 @@ def RunWorkflow(json_file, json_options_file):
 	output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
 	print(output.decode("utf-8"))
 
+def WriteTRBed(region, period, refcopies, name, filename):
+	chrom, start, end = ParseRegion(region)
+	with open(filename, "w") as f:
+		f.write("\t".join([chrom, str(start), str(end), str(period), str(refcopies), name])+"\n")
+
 def main():
 	parser = argparse.ArgumentParser(__doc__)
 	parser.add_argument("--region", help="chrom:start-end of TR region", required=True, type=str)
@@ -125,19 +130,15 @@ def main():
 	parser.add_argument("--genome-idx-id", help="File id of ref genome index", type=str, default="gs://genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.fasta.fai")
 	args = parser.parse_args()
 
+	# Generate TR Bed file
+	tr_bedfile = args.name+".bed"
+	WriteTRBed(args.region, args.period, args.refcopies, args.name, tr_bedfile)
+
 	# Set up workflow JSON
 	json_dict = {}
 	json_dict["targetTR.genome"] = args.genome_id
 	json_dict["targetTR.genome_index"] = args.genome_idx_id
-	json_dict["targetTR.str_name"] = args.name
-	json_dict["targetTR.num_copies"] = args.refcopies
-	json_dict["targetTR.motif_len"] = args.period
-	
-	# Parser region and set in json
-	chrom, start, end = ParseRegion(args.region)
-	json_dict["targetTR.chrom"] = chrom
-	json_dict["targetTR.str_start"] = start
-	json_dict["targetTR.str_end"] = end
+	json_dict["tr_bed"] = tr_bedfile
 
 	# Set up batches of files
 	cram_batches, cram_idx_batches = GetFileBatches(args.file_list, int(args.batch_size), int(args.batch_num))

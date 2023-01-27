@@ -19,27 +19,12 @@ import "../tasks/dumpstr.wdl" as dumpstr_t
 
 workflow targetTR {
 	input {
-		String chrom
-		Int str_start
-		Int str_end
-		Int motif_len
-		Float num_copies
 		String str_name
 		Array[Array[File]] cram_file_batches
 		Array[Array[File]] cram_index_batches
 		File genome
 		File genome_index
-	}
-
-	### Generate HipSTR BED file ###
-	call make_bed {
-		input :
-			chrom=chrom,
-			str_start=str_start,
-			str_end=str_end,
-			motif_len=motif_len,
-			num_copies=num_copies,
-			str_name=str_name
+		File tr_bed
 	}
 
 	### Call HipSTR on batches of samples ###
@@ -52,7 +37,7 @@ workflow targetTR {
 				bam_indices=cram_indices,
 				genome=genome,
 				genome_index=genome_index,
-				str_ref=make_bed.tr_bed,
+				str_ref=tr_bed,
 				out_prefix=str_name+".BATCH"+i
 		}
 	}
@@ -104,34 +89,4 @@ task sort_index {
 		File outvcf = "${basename}.sorted.vcf.gz"
 		File outvcf_index = "${basename}.sorted.vcf.gz.tbi"
 	}
-}
-
-task make_bed {
-	input {
-		String chrom
-		Int str_start
-		Int str_end
-		Int motif_len
-		Float num_copies
-		String str_name
-	}
-
-	# TODO: couldn't figure out how to get tabs to be escaped properly in
-	# the command <<< >>> 
-	String cmd = "echo '~{chrom},~{str_start},~{str_end},~{motif_len},~{num_copies},~{str_name}' | sed 's/,/\t/g' "
-	command <<<
-		sh -c "~{cmd}" > ~{str_name}_strref.bed
-	>>>
-
-	output {
-		File tr_bed = "${str_name}_strref.bed"
-	}
-
-	runtime {
-        docker:"mgymrek/vcfutils:latest"
-    }
-
-	meta {
-      description: "Make a HipSTR regions file for a single TR"
-    }
 }

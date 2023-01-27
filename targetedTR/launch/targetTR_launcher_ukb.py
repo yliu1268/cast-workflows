@@ -116,6 +116,32 @@ def RunWorkflow(json_file, workflow_id, name):
 	output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
 	print(output.decode("utf-8"))
 
+def UploadDNANexus(fname, name):
+	"""
+	Upload a file to DNA Nexus and return
+	its file ID
+
+	Arguments
+	---------
+	fname : str
+	   Path to file to upload
+	name : str
+	   Name of subdirectory to store in
+
+	Returns
+	-------
+	file_id : str
+	   ID of the file on DNA Nexus
+	"""
+	cmd = 'dx upload {fname} --brief ‑‑destination "TargetedSTR/results/{name}"'.format(fname, name=name)
+	output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
+	return output
+
+def WriteTRBed(region, period, refcopies, name, filename):
+	chrom, start, end = ParseRegion(region)
+	with open(filename, "w") as f:
+		f.write("\t".join([chrom, str(start), str(end), str(period), str(refcopies), name])+"\n")
+
 def main():
 	parser = argparse.ArgumentParser(__doc__)
 	parser.add_argument("--region", help="chrom:start-end of TR region", required=True, type=str)
@@ -138,14 +164,11 @@ def main():
 	json_dict["stage-common.genome"]["$dnanexus_link"] = args.genome_id
 	json_dict["stage-common.genome_index"]["$dnanexus_link"] = args.genome_idx_id
 	json_dict["stage-common.str_name"] = args.name
-	json_dict["stage-common.num_copies"] = args.refcopies
-	json_dict["stage-common.motif_len"] = args.period
 	
-	# Parser region and set in json
-	chrom, start, end = ParseRegion(args.region)
-	json_dict["stage-common.chrom"] = chrom
-	json_dict["stage-common.str_start"] = start
-	json_dict["stage-common.str_end"] = end
+	# Make bed file
+	tr_bedfile = args.name+".bed"
+	WriteTRBed(args.region, args.period, args.refcopies, args.name, tr_bedfile)
+	json_dict["stage-common.tr_bed"] = UploadDNANexus(tr_bedfile, args.name)
 
 	# Set up batches of files
 	cram_batches, cram_idx_batches = GetFileBatches(args.file_list, int(args.batch_size), int(args.batch_num))
