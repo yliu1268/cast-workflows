@@ -1,6 +1,5 @@
 # TargetTR on UKB RAP
 
-
 ## Setup WDL workflow
 
 First, compile WDL workflow to run on DNA Nexus
@@ -10,17 +9,6 @@ First, compile WDL workflow to run on DNA Nexus
 # - Checks are more rigorous than those of womtool validate
 java -jar ~/Applications/dxCompiler-2.10.4.jar compile ../wdl/workflows/targetTR.wdl \
 	-project project-GG25fB8Jv7B928vqK7k6vYY6 -folder /TargetedSTR/ -streamFiles all -archive 
-```
-
-Then, test with some tiny examples
-
-```
-# Test one batch of 3
-dx run workflow-GP8jzvQJv7B3K97ypgvBBqxq -y -f uk_rap_example_input.json --destination "TargetedSTR/results/CSTB"
-
-# Test three batches of 1
-dx run workflow-GP8jzvQJv7B3K97ypgvBBqxq -y -f uk_rap_example_input-2.json --destination "TargetedSTR/results/CSTB-2"
-
 ```
 
 ## Compile list of files to process
@@ -59,6 +47,6 @@ To run all files, increase `--batch-size` to a larger number (1000?) and remove 
   --name CSTB-mini \
   --batch-size 25 \
   --batch-num 3 \
-  --workflow-id workflow-GP8jzvQJv7B3K97ypgvBBqxq \
+  --workflow-id workflow-GP9f1pjJv7B4G6fk11V1y5QF \
   --file-list ukb_cram_and_index_files.txt
 ```

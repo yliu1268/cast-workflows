@@ -133,9 +133,9 @@ def UploadDNANexus(fname, name):
 	file_id : str
 	   ID of the file on DNA Nexus
 	"""
-	cmd = 'dx upload {fname} --brief ‑‑destination "TargetedSTR/results/{name}"'.format(fname, name=name)
-	output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
-	return output
+	cmd = 'dx upload {fname} --brief --destination "TargetedSTR/results/{name}"'.format(fname=fname, name=name)
+	output = str(subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read())
+	return {"$dnanexus_link": output.decode("utf-8")}
 
 def WriteTRBed(region, period, refcopies, name, filename):
 	chrom, start, end = ParseRegion(region)
@@ -150,7 +150,7 @@ def main():
 	parser.add_argument("--name", help="Name of the TR job", required=True, type=str)
 	parser.add_argument("--batch-size", help="HipSTR batch size", required=False, type=int, default=1000)
 	parser.add_argument("--batch-num", help="Number of batches. Default: -1 (all)", required=False, default=-1)
-	parser.add_argument("--workflow-id", help="DNA Nexus workflow ID", required=False, default="workflow-GP8jzvQJv7B3K97ypgvBBqxq")
+	parser.add_argument("--workflow-id", help="DNA Nexus workflow ID", required=False, default="workflow-GP9f1pjJv7B4G6fk11V1y5QF")
 	parser.add_argument("--file-list", help="List of crams and indices to process"
 		"Format of each line: cram-file-id cram-index-id", type=str, required=True)
 	parser.add_argument("--genome-id", help="File id of ref genome", type=str, default="file-GGJ1z28JbVqbpqB93YbPqbzz")
