@@ -108,8 +108,9 @@ def RunWorkflow(json_file, json_options_file):
 	"""
 	conf_file = "/home/jupyter/cromwell.conf"
 	cmd = "java -jar -Dconfig.file={conf} cromwell-77.jar run ../wdl/workflows/targetTR.wdl -i {json} -o {options}".format(conf=conf_file, json=json_file, options=json_options_file)
-	output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
-	print(output.decode("utf-8"))
+	print(cmd)
+	#output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
+	#print(output.decode("utf-8"))
 
 def main():
 	parser = argparse.ArgumentParser(__doc__)
@@ -159,7 +160,7 @@ def main():
 		json.dump(json_options_dict, f, indent=4)
 
 	# Run workflow on AoU using cromwell
-#	RunWorkflow(json_file, json_options_file)
+	RunWorkflow(json_file, json_options_file)
 
 if __name__ == "__main__":
 	main()
