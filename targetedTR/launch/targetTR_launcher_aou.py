@@ -64,12 +64,8 @@ def GetFileBatches(file_list, batch_size, batch_num=-1):
 	-------
 	cram_batches : list of lists
 	   Each internal list is a list of file IDs for crams
-	   To play nicely with dxCompiler json, each item
-	   in the internal list has format {"$dnanexus_link": cram_id}
 	cram_idx_batches : list of lists
 	   Each internal list is a list of file IDs for cram indices
-	   To play nicely with dxCompiler json, each item
-	   in the internal list has format {"$dnanexus_link": cram_id}
 	"""
 
 	# Keep track of batches
@@ -94,8 +90,8 @@ def GetFileBatches(file_list, batch_size, batch_num=-1):
 				curr_batch_indices = []
 			# Add this cram to the current batch
 			cram_id, idx_id = line.strip().split(",")[1:3]
-			curr_batch_crams.append({"$dnanexus_link": cram_id})
-			curr_batch_indices.append({"$dnanexus_link": idx_id})
+			curr_batch_crams.append(cram_id)
+			curr_batch_indices.append(idx_id)
 	assert(len(cram_batches) == len(cram_idx_batches))
 	return cram_batches, cram_idx_batches
 
