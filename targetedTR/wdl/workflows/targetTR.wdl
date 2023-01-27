@@ -127,6 +127,10 @@ task make_bed {
 		File tr_bed = "${str_name}_strref.bed"
 	}
 
+	runtime {
+        docker:"mgymrek/vcfutils:latest"
+    }
+
 	meta {
       description: "Make a HipSTR regions file for a single TR"
     }
