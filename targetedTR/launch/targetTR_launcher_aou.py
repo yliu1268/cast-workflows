@@ -156,7 +156,8 @@ def main():
 	# Set up json options
 	bucket = os.getenv("WORKSPACE_BUCKET")
 	project = os.getenv("GOOGLE_PROJECT")
-	json_options_dict = {"jes_gcs_root": output_bucket = bucket + "/" + args.name}
+	output_bucket = bucket + "/" + args.name
+	json_options_dict = {"jes_gcs_root": output_bucket}
 	json_options_file = args.name+".options.aou.json"
 	with open(json_options_file, "w") as f:
 		json.dump(json_dict, f, indent=4)
