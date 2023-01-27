@@ -42,7 +42,7 @@ task mergestr {
   >>>
     
   runtime {
-      docker: "mgymrek/trtools-4.2.1:latest"
+      docker: "gcr.io/ucsd-medicine-cast/trtools-4.2.1:latest"
   }
 
   output {
@@ -61,7 +61,7 @@ task mergefix {
   >>>
 
   runtime {
-    docker: "mgymrek/ensembletr:latest"
+    docker: "gcr.io/ucsd-medicine-cast/ensembletr:latest"
   }
 
   output {

@@ -55,7 +55,7 @@ task hipstr {
     >>>
     
     runtime {
-        docker:"mgymrek/hipstr-gymreklab:latest"
+        docker:"gcr.io/ucsd-medicine-cast/hipstr-gymreklab"
     }
 
     output {
@@ -75,7 +75,7 @@ task sort_index_hipstr {
   >>>
 
   runtime {
-        docker:"mgymrek/vcfutils:latest"
+        docker:"gcr.io/ucsd-medicine-cast/vcfutils:latest"
     }
 
   output {

@@ -38,7 +38,7 @@ task dumpstr {
   >>>
     
   runtime {
-      docker: "mgymrek/trtools-4.2.1:latest"
+      docker: "gcr.io/ucsd-medicine-cast/trtools-4.2.1:latest"
   }
 
   output {

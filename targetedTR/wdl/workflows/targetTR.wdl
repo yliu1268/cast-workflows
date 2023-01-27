@@ -1,22 +1,17 @@
 version 1.0
 
 # TODO
-# Change to use GCR rather than dockerhub
 # Hipstr mergefix broke with only one record
 #  commenting for now, need to bring back
-
-# TODO
 # Adding phewas
 # Need: obtain phenotypes
 # Need: run associaTR
 # Need: Make html report 
 #   Length distribution
-
 # TODO
 # Workflow improvements:
 # Take stutter input, allele set, from 
 # multi-sample hipstr calls from UKB subset
-# Just take in hipstr STRID rather than constructing the BED file?
 
 import "../tasks/hipstr_multi.wdl" as hipstr_multi_t
 import "../tasks/merge_hipstr.wdl" as merge_t

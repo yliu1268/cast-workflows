@@ -1,5 +1,5 @@
 # Definitions
-repository = mgymrek
+repository = gcr.io/ucsd-medicine-cast
 identifier = hipstr-gymreklab
 version = 0.0.0
 git_commit ?= $(shell git log --pretty=oneline -n 1 | cut -f1 -d " ")
@@ -12,7 +12,7 @@ build:
 	docker build -t ${name}:${tag} .
 	docker tag ${name}:${tag} ${name}:latest
 
-push: build
+push:
 	# Requires ~/.dockercfg
 	docker push ${name}:${tag}
 	docker push ${name}:latest
