@@ -1,7 +1,7 @@
 # cast-workflows
 Workflows used by the Center for Admixture Science and Technology
 
-To compile this for DNANexus, run from the current directory:
+To compile targetedTR for DNANexus, run from the current directory:
 
 ```
 java -jar "$DX_COMPILER_JAR" compile \
