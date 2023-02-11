@@ -1,24 +1,10 @@
 version 1.0
 
-# TODO
-#### UKB
-# spot instances
-
 #### AoU
 # make a notebook launcher. since apparently other things go away?
 
-
 # Hipstr mergefix broke with only one record
 #  commenting for now, need to bring back
-# Adding phewas
-# Need: obtain phenotypes
-# Need: run associaTR
-# Need: Make html report 
-#   Length distribution
-# TODO
-# Workflow improvements:
-# Take stutter input, allele set, from 
-# multi-sample hipstr calls from UKB subset
 
 import "../tasks/hipstr_multi.wdl" as hipstr_multi_t
 import "../tasks/merge_hipstr.wdl" as merge_t
@@ -32,7 +18,7 @@ workflow targetTR {
 		File genome
 		File genome_index
 		File tr_bed
-    Boolean ukb_names = false
+    	Boolean ukb_names = false
 	}
 
 	### Call HipSTR on batches of samples ###
@@ -47,7 +33,7 @@ workflow targetTR {
 				genome_index=genome_index,
 				str_ref=tr_bed,
 				out_prefix=str_name+".BATCH"+i,
-        ukb_names = ukb_names
+        		ukb_names = ukb_names
 		}
 	}
 
@@ -71,12 +57,6 @@ workflow targetTR {
 		input :
 			vcf=dumpstr.outfile
 	}
-
-	### Call association testing ###
-	# TODO
-
-	### Visualize associations ###
-	# TODO
 
 	### Output files ####
 	output {

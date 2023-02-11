@@ -13,24 +13,15 @@ java -jar ~/Applications/dxCompiler-2.10.4.jar compile ../wdl/workflows/targetTR
 
 ## Compile list of files to process
 
-List all UKB cram files
+List all UKB cram/crai files
 ```
 for i in $(seq 10 60)
 do
-	cmd="dx ls 'Bulk/Whole genome sequences/Whole genome CRAM files/${i}/'"
-	sh -c ${cmd} | awk -v "i=$i" '{print "Bulk/Whole genome sequences/Whole genome CRAM files/" i "/" $0}'
-done | grep -v "crai$" > ukb_cram_files.txt
-```
+  cmd="dx ls -l 'Bulk/Whole genome sequences/Whole genome CRAM files/${i}/'"
+  sh -c ${cmd}
+done > ukb_cram_files_long.txt
 
-Get file IDs of all the crams/indices
-(this takes a long time. is there a faster way?)
-```
-while IFS="" read -r p || [ -n "$p" ]
-do
-	cramid=$(dx describe "$p" | awk '($1=="ID") {print $2}')
-	idxid=$(dx describe "$p.crai" | awk '($1=="ID") {print $2}')
-  	echo $cramid $idxid
-done < ukb_cram_files.txt > ukb_cram_and_index_files.txt
+./process_cram_list.py ukb_cram_files_long.txt > ukb_cram_and_index_files.txt
 ```
 
 ## Call python launcher 
@@ -47,6 +38,8 @@ To run all files, increase `--batch-size` to a larger number (1000?) and remove 
   --name CSTB-mini \
   --batch-size 25 \
   --batch-num 3 \
-  --workflow-id workflow-GP9f1pjJv7B4G6fk11V1y5QF \
+  --workflow-id workflow-GPYY0p0Jv7B730qb33V6jvG0 \
   --file-list ukb_cram_and_index_files.txt
 ```
+
+See `launch_scripts/` for full launches.
