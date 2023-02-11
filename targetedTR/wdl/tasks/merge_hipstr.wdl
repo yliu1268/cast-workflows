@@ -42,7 +42,7 @@ task mergestr {
   >>>
     
   runtime {
-      docker: "gcr.io/ucsd-medicine-cast/trtools-4.2.1:latest"
+      docker: "gcr.io/ucsd-medicine-cast/trtools-5.0.1:latest"
   }
 
   output {

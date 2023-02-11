@@ -1,6 +1,13 @@
 version 1.0
 
 # TODO
+#### UKB
+# spot instances
+
+#### AoU
+# make a notebook launcher. since apparently other things go away?
+
+
 # Hipstr mergefix broke with only one record
 #  commenting for now, need to bring back
 # Adding phewas
@@ -62,6 +69,12 @@ workflow targetTR {
 		input :
 			vcf=dumpstr.outfile
 	}
+
+	### Call association testing ###
+	# TODO
+
+	### Visualize associations ###
+	# TODO
 
 	### Output files ####
 	output {
