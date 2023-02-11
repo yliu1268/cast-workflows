@@ -32,6 +32,7 @@ workflow targetTR {
 		File genome
 		File genome_index
 		File tr_bed
+    Boolean ukb_names = false
 	}
 
 	### Call HipSTR on batches of samples ###
@@ -45,7 +46,8 @@ workflow targetTR {
 				genome=genome,
 				genome_index=genome_index,
 				str_ref=tr_bed,
-				out_prefix=str_name+".BATCH"+i
+				out_prefix=str_name+".BATCH"+i,
+        ukb_names = ukb_names
 		}
 	}
 

@@ -8,6 +8,7 @@ workflow run_hipstr {
         File genome_index
         File str_ref
         String out_prefix
+        Boolean ukb_names = false
     }
 
     call hipstr {
@@ -17,7 +18,8 @@ workflow run_hipstr {
           genome=genome, 
           genome_index=genome_index,
           str_ref=str_ref,
-          out_prefix=out_prefix
+          out_prefix=out_prefix,
+          ukb_names = ukb_names
     }
 
     call sort_index_hipstr {
@@ -42,20 +44,32 @@ task hipstr {
         File genome_index
         File str_ref
         String out_prefix
+        Boolean ukb_names = false
     } 
 
     command <<<
+      samps_flags=""
+      if [[ "~{ukb_names}" == true ]] ; then
+        samps=""
+        for bam in ~{sep=" " bams} ; do
+          samps="${samps},$(basename "${bam}" | cut -f 1 -d _)"
+        done
+        samps=${samps:1} # remove beginning excess comma
+        samps_flags="--bam-samps ${samps} --bam-libs ${samps}"
+      fi
       HipSTR \
           --bams ~{sep=',' bams} \
           --fasta ~{genome} \
           --regions ~{str_ref} \
           --str-vcf ~{out_prefix}.vcf.gz \
-          --def-stutter-model \
-          --min-reads 10
+          --min-reads 10 \
+          ${samps_flags}
     >>>
     
     runtime {
-        docker:"gcr.io/ucsd-medicine-cast/hipstr-gymreklab"
+        docker: "gcr.io/ucsd-medicine-cast/hipstr-gymreklab"
+        memory: "16 GB"
+        cpu: 1
     }
 
     output {

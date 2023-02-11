@@ -106,13 +106,13 @@ def RunWorkflow(json_file, workflow_id, name):
 	Arguments
 	---------
 	json_file : str
-	    JSON file path with input arguments
+	JSON file path with input arguments
 	workflow_id : str
-	    ID of the DNA Nexus worfklow
+	ID of the DNA Nexus worfklow
 	name : str
-	    Used to determine where to store output
+	Used to determine where to store output
 	"""
-	cmd = 'dx run {workflow} -y -f {json} --destination "TargetedSTR/results/{name}"'.format(workflow=workflow_id, json=json_file, name=name)
+	cmd = 'dx run {workflow} -y -f {json} --destination "TargetedSTR/results/{name}" --priority low'.format(workflow=workflow_id, json=json_file, name=name)
 	output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
 	print(output.decode("utf-8"))
 
@@ -144,18 +144,22 @@ def WriteTRBed(region, period, refcopies, name, filename):
 
 def main():
 	parser = argparse.ArgumentParser(__doc__)
-	parser.add_argument("--region", help="chrom:start-end of TR region", required=True, type=str)
-	parser.add_argument("--period", help="Repeat unit length (bp) of TR", required=True, type=int)
-	parser.add_argument("--refcopies", help="Ref num. of copies of the TR", required=True, type=float)
+	parser.add_argument("--str-ref", help="str reference bed file, containing the tab separated columns chrom, start, end, period, refcopies and name. Must either specify --str-ref (for many STRs) or all of --region, --period and --refcopies (for a single STR)", required=False, type=str)
+	parser.add_argument("--region", help="chrom:start-end of TR region, start and end are bed file style (they are zero-indexed and start is inclusive but end is exclusive)", required=False, type=str)
+	parser.add_argument("--period", help="Repeat unit length (bp) of TR", required=False, type=int)
+	parser.add_argument("--refcopies", help="Ref num. of copies of the TR", required=False, type=float)
 	parser.add_argument("--name", help="Name of the TR job", required=True, type=str)
 	parser.add_argument("--batch-size", help="HipSTR batch size", required=False, type=int, default=1000)
 	parser.add_argument("--batch-num", help="Number of batches. Default: -1 (all)", required=False, default=-1)
-	parser.add_argument("--workflow-id", help="DNA Nexus workflow ID", required=False, default="workflow-GP9f1pjJv7B4G6fk11V1y5QF")
+	parser.add_argument("--workflow-id", help="DNA Nexus workflow ID", required=False, default="workflow-GPGkXZQJv7BBFbqP4qQQz868")
 	parser.add_argument("--file-list", help="List of crams and indices to process"
 		"Format of each line: cram-file-id cram-index-id", type=str, required=True)
 	parser.add_argument("--genome-id", help="File id of ref genome", type=str, default="file-GGJ1z28JbVqbpqB93YbPqbzz")
 	parser.add_argument("--genome-idx-id", help="File id of ref genome index", type=str, default="file-GGJ94JQJv7BGFYq8BGp62xPV")
 	args = parser.parse_args()
+
+	assert bool(args.region) == bool(args.period) == bool(args.refcopies)
+	assert bool(args.region) != bool(args.str_ref)
 
 	# Set up workflow JSON
 	json_dict = {}
@@ -164,10 +168,14 @@ def main():
 	json_dict["stage-common.genome"]["$dnanexus_link"] = args.genome_id
 	json_dict["stage-common.genome_index"]["$dnanexus_link"] = args.genome_idx_id
 	json_dict["stage-common.str_name"] = args.name
+	json_dict["stage-common.ukb_names"] = True
 	
 	# Make bed file
-	tr_bedfile = args.name+".bed"
-	WriteTRBed(args.region, args.period, args.refcopies, args.name, tr_bedfile)
+	if args.region:
+		tr_bedfile = args.name+".bed"
+		WriteTRBed(args.region, args.period, args.refcopies, args.name, tr_bedfile)
+	else:
+		tr_bedfile = args.str_ref
 	json_dict["stage-common.tr_bed"] = UploadDNANexus(tr_bedfile, args.name)
 
 	# Set up batches of files
