@@ -16,8 +16,9 @@ Desired usage:
 """
 
 import argparse
+import dxpy
 import json
-import subprocess
+import sys
 
 def ParseRegion(str_region):
 	"""
@@ -94,27 +95,33 @@ def GetFileBatches(file_list, batch_size, batch_num=-1):
 				curr_batch_indices = []
 			# Add this cram to the current batch
 			cram_id, idx_id = line.strip().split()
-			curr_batch_crams.append({"$dnanexus_link": cram_id})
-			curr_batch_indices.append({"$dnanexus_link": idx_id})
+			curr_batch_crams.append(dxpy.dxlink(cram_id))
+			curr_batch_indices.append(dxpy.dxlink(idx_id))
 	assert(len(cram_batches) == len(cram_idx_batches))
 	return cram_batches, cram_idx_batches
 
-def RunWorkflow(json_file, workflow_id, name):
+def RunWorkflow(json_dict, workflow_id, name, depends=[]):
 	"""
 	Run DNA Nexus workflow
 
 	Arguments
 	---------
-	json_file : str
-	JSON file path with input arguments
+	json_dict : dict
+		Input arguments for the workflow
 	workflow_id : str
-	ID of the DNA Nexus worfklow
+		ID of the DNA Nexus worfklow
 	name : str
-	Used to determine where to store output
+		Used to determine where to store output
+
+	Returns
+	-------
+	analysis : DXAnalysis object
 	"""
-	cmd = 'dx run {workflow} -y -f {json} --destination "TargetedSTR/results/{name}" --priority low'.format(workflow=workflow_id, json=json_file, name=name)
-	output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
-	print(output.decode("utf-8"))
+	workflow = dxpy.dxworkflow.DXWorkflow(dxid=workflow_id)
+	analysis = workflow.run(json_dict, depends_on=depends, \
+		folder="/TargetedSTR/results/{name}".format(name=name))
+	sys.stderr.write("Started analysis %s (%s)\n"%(analysis.get_id(), name))
+	return analysis
 
 def UploadDNANexus(fname, name):
 	"""
@@ -130,12 +137,11 @@ def UploadDNANexus(fname, name):
 
 	Returns
 	-------
-	file_id : str
-	   ID of the file on DNA Nexus
+	file : dxlink
+	   {"$dnanexus_link": file_id}
 	"""
-	cmd = 'dx upload {fname} --brief --destination "TargetedSTR/results/{name}"'.format(fname=fname, name=name)
-	output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
-	return {"$dnanexus_link": output.decode("utf-8").strip()}
+	dxfile = dxpy.upload_local_file(fname)
+	return dxpy.dxlink(dxfile)
 
 def WriteTRBed(region, period, refcopies, name, filename):
 	chrom, start, end = ParseRegion(region)
@@ -151,11 +157,13 @@ def main():
 	parser.add_argument("--name", help="Name of the TR job", required=True, type=str)
 	parser.add_argument("--batch-size", help="HipSTR batch size", required=False, type=int, default=1000)
 	parser.add_argument("--batch-num", help="Number of batches. Default: -1 (all)", required=False, default=-1)
+	parser.add_argument("--max-batches-per-workflow", help="Maximum number of batches to launch at once. Default: -1 (all)", required=False, default=-1, type=int)
 	parser.add_argument("--workflow-id", help="DNA Nexus workflow ID", required=False, default="workflow-GPGkXZQJv7BBFbqP4qQQz868")
 	parser.add_argument("--file-list", help="List of crams and indices to process"
 		"Format of each line: cram-file-id cram-index-id", type=str, required=True)
 	parser.add_argument("--genome-id", help="File id of ref genome", type=str, default="file-GGJ1z28JbVqbpqB93YbPqbzz")
 	parser.add_argument("--genome-idx-id", help="File id of ref genome index", type=str, default="file-GGJ94JQJv7BGFYq8BGp62xPV")
+	parser.add_argument("--wait-on-done", help="Wait until jobs are done. For multi-batches, or phewas, will always wait.", action="store_true")
 	args = parser.parse_args()
 
 	assert bool(args.region) == bool(args.period) == bool(args.refcopies)
@@ -165,12 +173,13 @@ def main():
 	json_dict = {}
 	json_dict["stage-common.genome"] = {}
 	json_dict["stage-common.genome_index"] = {}
-	json_dict["stage-common.genome"]["$dnanexus_link"] = args.genome_id
-	json_dict["stage-common.genome_index"]["$dnanexus_link"] = args.genome_idx_id
+	json_dict["stage-common.genome"] = dxpy.dxlink(args.genome_id)
+	json_dict["stage-common.genome_index"] = dxpy.dxlink(args.genome_idx_id)
 	json_dict["stage-common.str_name"] = args.name
 	json_dict["stage-common.ukb_names"] = True
 	
 	# Make bed file
+	sys.stderr.write("Preparing bed file...\n")
 	if args.region:
 		tr_bedfile = args.name+".bed"
 		WriteTRBed(args.region, args.period, args.refcopies, args.name, tr_bedfile)
@@ -179,17 +188,65 @@ def main():
 	json_dict["stage-common.tr_bed"] = UploadDNANexus(tr_bedfile, args.name)
 
 	# Set up batches of files
+	sys.stderr.write("Setting up batches...\n")
 	cram_batches, cram_idx_batches = GetFileBatches(args.file_list, int(args.batch_size), int(args.batch_num))
-	json_dict["stage-common.cram_file_batches"] = cram_batches
-	json_dict["stage-common.cram_index_batches"] = cram_idx_batches
 
-	# Convert to json and save as a file
-	json_file = args.name+".json"
-	with open(json_file, "w") as f:
-		json.dump(json_dict, f, indent=4)
-
-	# Run workflow on dna nexus
-	RunWorkflow(json_file, args.workflow_id, args.name)
+	# Run batches
+	final_vcf = None
+	final_vcf_idx = None
+	if args.max_batches_per_workflow == -1:
+		# Run all at once
+		json_dict["stage-common.cram_file_batches"] = cram_batches
+		json_dict["stage-common.cram_index_batches"] = cram_idx_batches
+		analysis = RunWorkflow(json_dict, args.workflow_id, args.name)
+		if args.wait_on_done:
+			analysis.wait_on_done()
+			final_vcf = analysis.describe()["output"]["stage-outputs.finalvcf"]
+			final_vcf_idx = analysis.describe()["output"]["stage-outputs.finalvcf_index"]
+	else:
+		# Run in chunks across multiple workflows
+		# Run sequentially so we don't overload
+		depends = []
+		batch_num = 0
+		curr_idx = 0
+		curr_cram_batches = []
+		curr_idx_batches = []
+		while curr_idx < len(cram_batches):
+			if len(curr_cram_batches) == args.max_batches_per_workflow:
+				batch_name = args.name + "-CHUNK%s"%batch_num
+				batch_dict = json_dict.copy()
+				batch_dict["stage-common.str_name"] = batch_name
+				batch_dict["stage-common.cram_file_batches"] = curr_cram_batches
+				batch_dict["stage-common.cram_index_batches"] = curr_idx_batches
+				analysis = RunWorkflow(batch_dict, args.workflow_id, \
+					batch_name, depends=depends)
+				depends.append(analysis.get_id())
+				batch_num += 1
+				curr_cram_batches = []
+				curr_idx_batches = []
+			curr_cram_batches.append(cram_batches[curr_idx])
+			curr_idx_batches.append(cram_idx_batches[curr_idx])
+			curr_idx += 1
+		# Run last batch if any are left
+		if len(curr_cram_batches) > 0:
+			batch_name = args.name + "-CHUNK%s"%batch_num
+			batch_dict = json_dict.copy()
+			batch_dict["stage-common.str_name"] = batch_name
+			batch_dict["stage-common.cram_file_batches"] = curr_cram_batches
+			batch_dict["stage-common.cram_index_batches"] = curr_idx_batches
+			analysis = RunWorkflow(batch_dict, args.workflow_id, \
+				batch_name, depends=depends)
+		# Run a final job to merge all the meta-batches
+		merge_vcfs = []
+		merge_vcfs_idx = []
+		for analysis in depends:
+			analysis.wait_on_done()
+			vcf = analysis.describe()["output"]["stage-outputs.finalvcf"]
+			vcf_idx = analysis.describe()["output"]["stage-outputs.finalvcf_index"]
+			merge_vcfs.append(vcf)
+			merge_vcfs_idx.append(vcf_idx)
+		print("TODO - merge %s %s"%(str(merge_vcfs), str(merge_vcfs_idx)))
+		# TODO
 
 if __name__ == "__main__":
 	main()
