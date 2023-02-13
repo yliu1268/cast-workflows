@@ -129,7 +129,7 @@ task viz_assoc {
 		--phenotype ~{phenotype} \
 		--covars ~{sep="," covars} \
 		--ptfile ~{phenocovars} \
-		--vcf ~{trvcf} \
+		--trvcf ~{trvcf} \
 		--out ~{name}_~{phenotype}_viz.png
 	>>>
 
