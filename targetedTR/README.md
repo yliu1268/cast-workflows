@@ -1,9 +1,12 @@
-# Run analysis of a single TR
+# Run analysis of a small number of TRs
 
 To validate the wdl:
 
 ```
+# Main WDL for targeted TR genotyping
 java -jar womtool-84.jar validate wdl/workflows/targetTR.wdl
+
+# Helper WDL for merging mega-batches from UKB
 java -jar womtool-84.jar validate wdl/workflows/merge_index_str.wdl
 
 ```
