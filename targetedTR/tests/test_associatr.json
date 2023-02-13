@@ -3,6 +3,6 @@
   "trait_association.trvcf_idx": "tests/test2.vcf.gz.tbi",
   "trait_association.phenotype": "testpt",
   "trait_association.covars": ["cov1","cov2"],
-  "trait_association.phenocovars": "tests/ptcovar.tab"
+  "trait_association.phenocovars": "tests/ptcovar.tab",
   "trait_association.name": "testassoc"
 }

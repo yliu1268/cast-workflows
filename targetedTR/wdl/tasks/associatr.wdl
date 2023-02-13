@@ -55,25 +55,11 @@ task setup_associatr_npy {
 	}
 
 	command <<<
-		echo '~{sep="\n" covars}' > covar.list
-		python <<CODE
-		import pandas as pd
-		import numpy as np
-		import sys
-		covarlist = [item.strip() for item in open("covar.list").readlines()]
-		print('${phenotype}')
-		print(str(covarlist))
-		df = pd.read_csv('${phenocovars}', sep="\t")
-		np.save('${phenotype}'+"_phenotype.npy", \
-			df[["IID", '${phenotype}']].to_numpy())
-		np.save('${phenotype}'+"_covars.npy", \
-			df[["IID"]+covarlist].to_numpy())
-		sys.exit(0)
-		CODE
+		wrangle_ptcovars.py '~{sep="," covars}' ~{phenotype} ~{phenocovars}
 	>>>
 
 	runtime {
-      docker: "quay.io/biocontainers/pandas:1.4.3"
+      docker: "gcr.io/ucsd-medicine-cast/trviz:latest"
   	}
 
 	output {
