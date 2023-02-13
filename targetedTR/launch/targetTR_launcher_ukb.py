@@ -141,8 +141,9 @@ def UploadDNANexus(fname, name):
 	file : dxlink
 	   {"$dnanexus_link": file_id}
 	"""
-	dxfile = dxpy.upload_local_file(fname)
-	return dxpy.dxlink(dxfile, folder="/TargetedSTR/results/{name}".format(name=name))
+	folder = "/TargetedSTR/results/{name}".format(name=name)
+	dxfile = dxpy.upload_local_file(fname, folder=folder, parents=True)
+	return dxpy.dxlink(dxfile)
 
 def WriteTRBed(region, period, refcopies, name, filename):
 	chrom, start, end = ParseRegion(region)
