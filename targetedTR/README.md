@@ -4,6 +4,8 @@ To validate the wdl:
 
 ```
 java -jar womtool-84.jar validate wdl/workflows/targetTR.wdl
+java -jar womtool-84.jar validate wdl/workflows/merge_index_str.wdl
+
 ```
 
 To test locally:

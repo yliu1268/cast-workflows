@@ -118,7 +118,8 @@ def RunWorkflow(json_dict, workflow_id, name, depends=[]):
 	analysis : DXAnalysis object
 	"""
 	workflow = dxpy.dxworkflow.DXWorkflow(dxid=workflow_id)
-	analysis = workflow.run(json_dict, depends_on=depends, \
+	analysis = workflow.run(json_dict, \
+		depends_on=[item.get_id() for item in depends], \
 		folder="/TargetedSTR/results/{name}".format(name=name))
 	sys.stderr.write("Started analysis %s (%s)\n"%(analysis.get_id(), name))
 	return analysis
@@ -141,7 +142,7 @@ def UploadDNANexus(fname, name):
 	   {"$dnanexus_link": file_id}
 	"""
 	dxfile = dxpy.upload_local_file(fname)
-	return dxpy.dxlink(dxfile)
+	return dxpy.dxlink(dxfile, folder="/TargetedSTR/results/{name}".format(name=name))
 
 def WriteTRBed(region, period, refcopies, name, filename):
 	chrom, start, end = ParseRegion(region)
@@ -157,17 +158,22 @@ def main():
 	parser.add_argument("--name", help="Name of the TR job", required=True, type=str)
 	parser.add_argument("--batch-size", help="HipSTR batch size", required=False, type=int, default=1000)
 	parser.add_argument("--batch-num", help="Number of batches. Default: -1 (all)", required=False, default=-1)
-	parser.add_argument("--max-batches-per-workflow", help="Maximum number of batches to launch at once. Default: -1 (all)", required=False, default=-1, type=int)
 	parser.add_argument("--workflow-id", help="DNA Nexus workflow ID", required=False, default="workflow-GPGkXZQJv7BBFbqP4qQQz868")
 	parser.add_argument("--file-list", help="List of crams and indices to process"
 		"Format of each line: cram-file-id cram-index-id", type=str, required=True)
 	parser.add_argument("--genome-id", help="File id of ref genome", type=str, default="file-GGJ1z28JbVqbpqB93YbPqbzz")
 	parser.add_argument("--genome-idx-id", help="File id of ref genome index", type=str, default="file-GGJ94JQJv7BGFYq8BGp62xPV")
-	parser.add_argument("--wait-on-done", help="Wait until jobs are done. For multi-batches, or phewas, will always wait.", action="store_true")
+	# Options for multi-batches
+	parser.add_argument("--merge-workflow-id", help="DNA Nexus workflow ID for merging", required=False, default="workflow-GPZj5BQJv7B2yFY0fv47Z8x1")
+	parser.add_argument("--max-batches-per-workflow", help="Maximum number of batches to launch at once. Default: -1 (all)", required=False, default=-1, type=int)
 	args = parser.parse_args()
 
 	assert bool(args.region) == bool(args.period) == bool(args.refcopies)
 	assert bool(args.region) != bool(args.str_ref)
+
+	wait_on_done = False
+	if args.max_batches_per_workflow > -1:
+		wait_on_done = True
 
 	# Set up workflow JSON
 	json_dict = {}
@@ -199,10 +205,13 @@ def main():
 		json_dict["stage-common.cram_file_batches"] = cram_batches
 		json_dict["stage-common.cram_index_batches"] = cram_idx_batches
 		analysis = RunWorkflow(json_dict, args.workflow_id, args.name)
-		if args.wait_on_done:
+		if wait_on_done:
 			analysis.wait_on_done()
 			final_vcf = analysis.describe()["output"]["stage-outputs.finalvcf"]
 			final_vcf_idx = analysis.describe()["output"]["stage-outputs.finalvcf_index"]
+		else:
+			# Nothing else to do, launched our single job
+			sys.exit(0)
 	else:
 		# Run in chunks across multiple workflows
 		# Run sequentially so we don't overload
@@ -219,8 +228,8 @@ def main():
 				batch_dict["stage-common.cram_file_batches"] = curr_cram_batches
 				batch_dict["stage-common.cram_index_batches"] = curr_idx_batches
 				analysis = RunWorkflow(batch_dict, args.workflow_id, \
-					batch_name, depends=depends)
-				depends.append(analysis.get_id())
+					args.name, depends=depends)
+				depends.append(analysis)
 				batch_num += 1
 				curr_cram_batches = []
 				curr_idx_batches = []
@@ -235,7 +244,8 @@ def main():
 			batch_dict["stage-common.cram_file_batches"] = curr_cram_batches
 			batch_dict["stage-common.cram_index_batches"] = curr_idx_batches
 			analysis = RunWorkflow(batch_dict, args.workflow_id, \
-				batch_name, depends=depends)
+				args.name, depends=depends)
+			depends.append(analysis)
 		# Run a final job to merge all the meta-batches
 		merge_vcfs = []
 		merge_vcfs_idx = []
@@ -245,8 +255,15 @@ def main():
 			vcf_idx = analysis.describe()["output"]["stage-outputs.finalvcf_index"]
 			merge_vcfs.append(vcf)
 			merge_vcfs_idx.append(vcf_idx)
-		print("TODO - merge %s %s"%(str(merge_vcfs), str(merge_vcfs_idx)))
-		# TODO
+		merge_dict = {}
+		merge_dict["stage-common.out_name"] = args.name
+		merge_dict["stage-common.vcf_files"] = merge_vcfs
+		merge_dict["stage-common.vcf_idxs"] = merge_vcfs_idx
+		analysis = RunWorkflow(merge_dict, args.merge_workflow_id, args.name)
+		analysis.wait_on_done()
+		final_vcf = analysis.describe()["output"]["stage-outputs.finalvcf"]
+		final_vcf_idx = analysis.describe()["output"]["stage-outputs.finalvcf_index"]
+	sys.stderr.write("Final output files %s %s"%(final_vcf, final_vcf_idx))
 
 if __name__ == "__main__":
 	main()
