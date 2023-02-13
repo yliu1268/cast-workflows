@@ -8,6 +8,12 @@ Output file of:
 
 import sys
 
+# Problematic samples
+rmsamples = [
+	"1041104_23193_0_0",
+	"1523211_23193_0_0"
+]
+
 fdict = {} # sample -> {cram, idx}
 
 with open(sys.argv[1], "r") as f:
@@ -25,6 +31,7 @@ with open(sys.argv[1], "r") as f:
 			fdict[sample]["cram"] = fid
 
 for sample in fdict.keys():
+	if sample in rmsamples: continue
 	cramid = fdict[sample].get("cram", None)
 	idxid = fdict[sample].get("idx", None)
 	if cramid is None or idxid is None:

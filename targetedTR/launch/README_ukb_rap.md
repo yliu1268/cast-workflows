@@ -12,6 +12,9 @@ java -jar ~/Applications/dxCompiler-2.10.4.jar compile ../wdl/workflows/targetTR
 
 java -jar ~/Applications/dxCompiler-2.10.4.jar compile ../wdl/workflows/merge_index_str.wdl \
   -project project-GG25fB8Jv7B928vqK7k6vYY6 -folder /TargetedSTR/ -streamFiles all -archive 
+
+java -jar ~/Applications/dxCompiler-2.10.4.jar compile ../wdl/tasks/associatr.wdl \
+  -project project-GG25fB8Jv7B928vqK7k6vYY6 -folder /STRPhewas/ -streamFiles all -archive
 ```
 
 ## Compile list of files to process
@@ -46,6 +49,12 @@ To run all files, increase `--batch-size` to a larger number (1000?) and remove 
 ```
 
 See `launch_scripts/` for full launches.
+
+## Call phewas (under development...)
+
+```
+dx run -y -f GATM-EGFR-test.json --destination /STRPhewas/results/ workflow-GPbFJ7QJv7B17K4xk76xj6XJ
+```
 
 ## associatr wishlist
 

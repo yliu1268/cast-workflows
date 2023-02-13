@@ -36,7 +36,8 @@ workflow trait_association {
 			covars=covars,
 			trvcf=trvcf,
 			trvcf_idx=trvcf_idx,
-			phenotype=phenotype
+			phenotype=phenotype,
+			name=name
 	}
 
 	### Output files ####
@@ -53,11 +54,12 @@ task setup_associatr_npy {
 		File phenocovars
 	}
 
-	command {
+	command <<<
 		echo '~{sep="\n" covars}' > covar.list
 		python <<CODE
 		import pandas as pd
 		import numpy as np
+		import sys
 		covarlist = [item.strip() for item in open("covar.list").readlines()]
 		print('${phenotype}')
 		print(str(covarlist))
@@ -66,8 +68,9 @@ task setup_associatr_npy {
 			df[["IID", '${phenotype}']].to_numpy())
 		np.save('${phenotype}'+"_covars.npy", \
 			df[["IID"]+covarlist].to_numpy())
+		sys.exit(0)
 		CODE
-	}
+	>>>
 
 	runtime {
       docker: "quay.io/biocontainers/pandas:1.4.3"
