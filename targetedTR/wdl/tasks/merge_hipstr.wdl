@@ -11,7 +11,7 @@ workflow merge_hipstr {
         input : 
           vcfs=vcfs,
           vcf_indexes=vcf_indexes,
-          out_prefix=out_prefix+"_premerge"
+          out_prefix=out_prefix+".merged"
     }
 
     #call mergefix {

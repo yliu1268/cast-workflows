@@ -1,8 +1,6 @@
 version 1.0
 
-# TODO
-# Run associatr to test for association of a phenotype
-# Visualize TR vs. phenotype
+import "../tasks/associatr.wdl" as associatr_t
 
 workflow trphewas {
 	input {
@@ -18,17 +16,8 @@ workflow trphewas {
 	scatter(i in range(length(phenotypes))) {
 		String use_pt = phenotypes[i]
 		Array[String] use_covars = covars[i]
-		### Run associaTR ###
-		call associaTR {
-			input :
-				trvcf = trvcf,
-				trvcf_idx = trvcf_idx,
-				phenotype = use_pt,
-				covars = use_covars,
-				phenocovars = phenocovars
-		}
-		### Run visualization ###
-		call visTR {
+		### Run associaTR and visualization ###
+		call associatr_t.trait_association as trait_association {
 			input :
 				trvcf = trvcf,
 				trvcf_idx = trvcf_idx,

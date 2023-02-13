@@ -31,6 +31,7 @@ workflow run_hipstr {
        File outfile = sort_index_hipstr.outvcf 
        File outfile_index = sort_index_hipstr.outvcf_index
     }
+    
     meta {
       description: "Run HipSTR on multiple samples with default parameters"
     }

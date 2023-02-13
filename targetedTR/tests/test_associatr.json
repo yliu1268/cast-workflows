@@ -1,0 +1,7 @@
+{
+  "trait_association.trvcf": "tests/test.vcf.gz",
+  "trait_association.trvcf_idx": "tests/test.vcf.tbi",
+  "trait_association.phenotype": "testpt",
+  "trait_association.covars": ["cov1","cov2"],
+  "trait_association.phenocovars": "tests/ptcovar.tab"
+}

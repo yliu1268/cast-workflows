@@ -248,6 +248,7 @@ def main():
 				args.name, depends=depends)
 			depends.append(analysis)
 		# Run a final job to merge all the meta-batches
+		sys.stderr.write("Merging from meta-batches...\n")
 		merge_vcfs = []
 		merge_vcfs_idx = []
 		for analysis in depends:
