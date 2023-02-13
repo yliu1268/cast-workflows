@@ -10,3 +10,6 @@ RUN pip3 install numpy statsmodels
 
 COPY trviz.py /usr/bin/
 RUN chmod +x /usr/bin/trviz.py
+
+COPY wrangle_ptcovars.py /usr/bin/
+RUN chmod +x /usr/bin/wrangle_ptcovars.py
