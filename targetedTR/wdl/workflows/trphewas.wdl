@@ -23,7 +23,8 @@ workflow trphewas {
 				trvcf_idx = trvcf_idx,
 				phenotype = use_pt,
 				covars = use_covars,
-				phenocovars = phenocovars
+				phenocovars = phenocovars,
+				name = outname
 		}
 	}
 

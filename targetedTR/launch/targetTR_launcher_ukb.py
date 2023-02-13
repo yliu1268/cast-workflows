@@ -248,7 +248,6 @@ def main():
 				args.name, depends=depends)
 			depends.append(analysis)
 		# Run a final job to merge all the meta-batches
-		sys.stderr.write("Merging from meta-batches...\n")
 		merge_vcfs = []
 		merge_vcfs_idx = []
 		for analysis in depends:
@@ -257,6 +256,7 @@ def main():
 			vcf_idx = analysis.describe()["output"]["stage-outputs.finalvcf_index"]
 			merge_vcfs.append(vcf)
 			merge_vcfs_idx.append(vcf_idx)
+		sys.stderr.write("Merging from meta-batches...\n")
 		merge_dict = {}
 		merge_dict["stage-common.out_name"] = args.name
 		merge_dict["stage-common.vcf_files"] = merge_vcfs

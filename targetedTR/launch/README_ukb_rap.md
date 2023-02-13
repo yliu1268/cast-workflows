@@ -46,3 +46,8 @@ To run all files, increase `--batch-size` to a larger number (1000?) and remove 
 ```
 
 See `launch_scripts/` for full launches.
+
+## associatr wishlist
+
+* Take plink style phenotypes file as input, and don't require numerical sample IDs
+* Change to not use positional arguments
