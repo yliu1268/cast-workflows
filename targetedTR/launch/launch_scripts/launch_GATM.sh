@@ -6,7 +6,7 @@
   --refcopies 23 \
   --name GATM-Homopolymer \
   --batch-size 500 \
-  --batch-num 100 \
+  --batch-num 50 \
   --workflow-id workflow-GPYY0p0Jv7B730qb33V6jvG0 \
   --file-list ../ukb_cram_and_index_files.txt
 

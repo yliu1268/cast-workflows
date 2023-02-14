@@ -53,7 +53,7 @@ See `launch_scripts/` for full launches.
 ## Call phewas (under development...)
 
 ```
-dx run -y -f GATM-EGFR-test.json --destination /STRPhewas/results/ workflow-GPbFJ7QJv7B17K4xk76xj6XJ
+dx run -y -f GATM-EGFR-test.json --destination /STRPhewas/results/ workflow-GPbFzQ8Jv7BGF8fp4k4fbFfB
 ```
 
 ## associatr wishlist

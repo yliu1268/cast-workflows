@@ -9,6 +9,7 @@ import pandas as pd
 from statsmodels.regression.linear_model import OLS
 import trtools.utils.tr_harmonizer as trh
 import trtools.utils.utils as utils
+import matplotlib.pyplot as plt
 
 def RegressOutCovars(df, phenotype, covars):
 	Y = np.array(df[phenotype])
@@ -18,6 +19,17 @@ def RegressOutCovars(df, phenotype, covars):
 	pred = res.get_prediction(X).predicted_mean
 	resid = [Y[i]-pred[i] for i in range(len(Y))]
 	return resid
+
+def PlotAssoc(df, ax, ptcol):
+	aggdata_mean = df.groupby(["GTLEN"], as_index=False).agg({ptcol: np.mean})
+	aggdata_mean = aggdata_mean.rename({ptcol: "mean"}, axis=1)
+	aggdata_sd = df.groupby(["GTLEN"], as_index=False).agg({ptcol: lambda x: np.sqrt(np.var(x))})
+	aggdata_sd = aggdata_sd.rename({ptcol: "sd"}, axis=1)
+	pltdata = pd.merge(aggdata_mean, aggdata_sd, on="GTLEN").sort_values("GTLEN")
+	ax.errorbar(pltdata["GTLEN"], pltdata["mean"], yerr=pltdata["sd"], \
+		marker="o")
+	ax.set_xlabel("Sum of rpt. lens")
+	ax.set_ylabel(ptcol)
 
 def main():
 	parser = argparse.ArgumentParser(__doc__)
@@ -56,11 +68,15 @@ def main():
     # Get regressed out phenotype
 	df["%s.resid"%args.phenotype] = \
 		RegressOutCovars(df, args.phenotype, args.covars.split(","))
-	print(df)
 
 	# Visualization of raw pt and adjusted pt - TODO
-	with open(args.out, "w") as f:
-		f.write("TEST")
+	fig = plt.figure()
+	ax = fig.add_subplot(1, 2, 1)
+	PlotAssoc(df, ax, args.phenotype)
+	ax = fig.add_subplot(1, 2, 2)
+	PlotAssoc(df, ax, "%s.resid"%args.phenotype)
+	fig.tight_layout()
+	fig.savefig(args.out)
 
 if __name__ == "__main__":
 	main()
