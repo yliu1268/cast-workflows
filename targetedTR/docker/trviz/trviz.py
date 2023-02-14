@@ -20,12 +20,33 @@ def RegressOutCovars(df, phenotype, covars):
 	resid = [Y[i]-pred[i] for i in range(len(Y))]
 	return resid
 
+def PlotAssocStratified(df, ax, ptcol):
+	alleles = set(list(df["GT1"]) + list(df["GT2"]))
+	for a in alleles:
+		adata = df[(df["GT1"]==a) | (df["GT2"]==a)].copy()
+		if adata.shape[0] < 100: continue
+		adata["other_allele"] = adata.apply(lambda x: x["GT2"] if x["GT1"]==a else x["GT1"], 1)
+		aggdata = adata.groupby(["other_allele"], as_index=False).agg({ptcol: np.mean})
+		aggdata_num = adata.groupby(["other_allele"], as_index=False).agg({ptcol: len})
+		aggdata_num = adddata_num.rename({ptcol: "num.samples"}, axis=1)
+		aggdata = pd.merge(aggdata, aggdata_num, on="GTLEN")
+		aggdata = aggdata[aggdata["num.samples"]>100].sort_values("GTLEN")
+		ax.plot(aggdata["other_allele"], aggdata[ptcol], label="A1=%s"%a)
+	ax.set_xlabel("rpt. len")
+	ax.set_ylabel(ptcol)
+	ax.legend()
+
 def PlotAssoc(df, ax, ptcol):
 	aggdata_mean = df.groupby(["GTLEN"], as_index=False).agg({ptcol: np.mean})
 	aggdata_mean = aggdata_mean.rename({ptcol: "mean"}, axis=1)
 	aggdata_sd = df.groupby(["GTLEN"], as_index=False).agg({ptcol: lambda x: np.sqrt(np.var(x))})
 	aggdata_sd = aggdata_sd.rename({ptcol: "sd"}, axis=1)
+	aggdata_num = df.groupby(["GTLEN"], as_index=False).agg({ptcol: len})
+	aggdata_num = aggdata_num.rename({ptcol: "num.samples"}, axis=1)
 	pltdata = pd.merge(aggdata_mean, aggdata_sd, on="GTLEN").sort_values("GTLEN")
+	pltdata = pd.merge(pltdata, aggdata_num, on="GTLEN").sort_values("GTLEN")
+	pltdata = pltdata[pltdata["GTLEN"]> 0]
+	pltdata = pltdata[pltdata["num.samples"]>=100]
 	ax.errorbar(pltdata["GTLEN"], pltdata["mean"], yerr=pltdata["sd"], \
 		marker="o")
 	ax.set_xlabel("Sum of rpt. lens")
@@ -69,12 +90,16 @@ def main():
 	df["%s.resid"%args.phenotype] = \
 		RegressOutCovars(df, args.phenotype, args.covars.split(","))
 
-	# Visualization of raw pt and adjusted pt - TODO
+	# Visualization of raw pt and adjusted pt
 	fig = plt.figure()
-	ax = fig.add_subplot(1, 2, 1)
+	ax = fig.add_subplot(2, 2, 1)
 	PlotAssoc(df, ax, args.phenotype)
-	ax = fig.add_subplot(1, 2, 2)
+	ax = fig.add_subplot(2, 2, 2)
 	PlotAssoc(df, ax, "%s.resid"%args.phenotype)
+	ax = fig.add_subplot(2, 2, 1)
+	PlotAssocStratified(df, ax, args.phenotype)
+	ax = fig.add_subplot(2, 2, 2)
+	PlotAssocStratified(df, ax, "%s.resid"%args.phenotype)
 	fig.tight_layout()
 	fig.savefig(args.out)
 
