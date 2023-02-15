@@ -13,6 +13,14 @@ Desired usage:
   --workflow-id workflow-GP8jzvQJv7B3K97ypgvBBqxq \
   --file-list ukb_cram_and_index_files.txt
 
+# TODO #1
+# For final merge step, is there a way to know what
+# the fileids will be without waiting for all previous steps to finish?
+# otherwise this script has to stay running for the whole time
+
+# TODO #2
+# Cleanup intermediate VCF files after merging to the final one
+# maybe there is a way to set the workflow setting to do that?
 """
 
 import argparse
@@ -167,6 +175,7 @@ def main():
 	# Options for multi-batches
 	parser.add_argument("--merge-workflow-id", help="DNA Nexus workflow ID for merging", required=False, default="workflow-GPZj5BQJv7B2yFY0fv47Z8x1")
 	parser.add_argument("--max-batches-per-workflow", help="Maximum number of batches to launch at once. Default: -1 (all)", required=False, default=-1, type=int)
+	parser.add_argument("--concurrent", help="Launch all batches at once", action="store_true")
 	args = parser.parse_args()
 
 	assert bool(args.region) == bool(args.period) == bool(args.refcopies)
@@ -228,8 +237,11 @@ def main():
 				batch_dict["stage-common.str_name"] = batch_name
 				batch_dict["stage-common.cram_file_batches"] = curr_cram_batches
 				batch_dict["stage-common.cram_index_batches"] = curr_idx_batches
+				if args.concurrent:
+					use_dep = []
+				else: use_dep = depends
 				analysis = RunWorkflow(batch_dict, args.workflow_id, \
-					args.name, depends=depends)
+					args.name, depends=use_dep)
 				depends.append(analysis)
 				batch_num += 1
 				curr_cram_batches = []
@@ -244,8 +256,11 @@ def main():
 			batch_dict["stage-common.str_name"] = batch_name
 			batch_dict["stage-common.cram_file_batches"] = curr_cram_batches
 			batch_dict["stage-common.cram_index_batches"] = curr_idx_batches
+			if args.concurrent:
+				use_dep = []
+			else: use_dep = depends
 			analysis = RunWorkflow(batch_dict, args.workflow_id, \
-				args.name, depends=depends)
+				args.name, depends=use_dep)
 			depends.append(analysis)
 		# Run a final job to merge all the meta-batches
 		merge_vcfs = []
