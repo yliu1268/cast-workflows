@@ -22,5 +22,6 @@ java -jar cromwell-84.jar run -i tests/test_local.json wdl/workflows/targetTR.wd
 # 3 batches of 1 sample each
 java -jar cromwell-84.jar run -i tests/test_local_2.json wdl/workflows/targetTR.wdl
 
+# Test association tests+vis
 java -jar cromwell-84.jar run -i tests/test_associatr.json wdl/tasks/associatr.wdl
 ```

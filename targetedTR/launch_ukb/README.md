@@ -2,18 +2,17 @@
 
 ## Setup WDL workflow
 
-First, compile WDL workflow to run on DNA Nexus
+First, compile WDL workflows to run on DNA Nexus
 
 ```
-# Notes
-# - Checks are more rigorous than those of womtool validate
-java -jar ~/Applications/dxCompiler-2.10.4.jar compile ../wdl/workflows/targetTR.wdl \
+# Note: Checks are more rigorous than those of womtool validate
+java -jar "$DX_COMPILER_JAR" compile ../wdl/workflows/targetTR.wdl \
 	-project project-GG25fB8Jv7B928vqK7k6vYY6 -folder /TargetedSTR/ -streamFiles all -archive -separateOutputs
 
-java -jar ~/Applications/dxCompiler-2.10.4.jar compile ../wdl/workflows/merge_index_str.wdl \
+java -jar "$DX_COMPILER_JAR" compile ../wdl/workflows/merge_index_str.wdl \
   -project project-GG25fB8Jv7B928vqK7k6vYY6 -folder /TargetedSTR/ -streamFiles all -archive 
 
-java -jar ~/Applications/dxCompiler-2.10.4.jar compile ../wdl/tasks/associatr.wdl \
+java -jar "$DX_COMPILER_JAR" compile ../wdl/tasks/associatr.wdl \
   -project project-GG25fB8Jv7B928vqK7k6vYY6 -folder /STRPhewas/ -streamFiles all -archive
 ```
 
