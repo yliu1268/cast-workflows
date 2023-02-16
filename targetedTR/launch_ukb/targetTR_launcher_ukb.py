@@ -10,17 +10,19 @@ Desired usage:
   --name CSTB-mini \
   --batch-size 5 \
   --batch-num 3 \
-  --workflow-id workflow-GP8jzvQJv7B3K97ypgvBBqxq \
+  --workflow-id workflow-GPfbXV8Jv7B27kpf6Y50QyQ9  \
   --file-list ukb_cram_and_index_files.txt
 
 # TODO #1
 # For final merge step, is there a way to know what
 # the fileids will be without waiting for all previous steps to finish?
 # otherwise this script has to stay running for the whole time
+# maybe can use: https://documentation.dnanexus.com/developer/api/running-analyses/job-input-and-output#job-dependencies
 
 # TODO #2
 # Cleanup intermediate VCF files after merging to the final one
 # maybe there is a way to set the workflow setting to do that?
+# use -separateOutputs as argument to dxcompile? -> doesn't seem to work?
 """
 
 import argparse
@@ -158,6 +160,14 @@ def WriteTRBed(region, period, refcopies, name, filename):
 	with open(filename, "w") as f:
 		f.write("\t".join([chrom, str(start), str(end), str(period), str(refcopies), name])+"\n")
 
+def GetJBOR(analysis, filename):
+	return {
+		"$dnanexus_link": {
+			"analysis": analysis.get_id(),
+			"field": filename
+		}
+	}
+
 def main():
 	parser = argparse.ArgumentParser(__doc__)
 	parser.add_argument("--str-ref", help="str reference bed file, containing the tab separated columns chrom, start, end, period, refcopies and name. Must either specify --str-ref (for many STRs) or all of --region, --period and --refcopies (for a single STR)", required=False, type=str)
@@ -167,13 +177,13 @@ def main():
 	parser.add_argument("--name", help="Name of the TR job", required=True, type=str)
 	parser.add_argument("--batch-size", help="HipSTR batch size", required=False, type=int, default=1000)
 	parser.add_argument("--batch-num", help="Number of batches. Default: -1 (all)", required=False, default=-1)
-	parser.add_argument("--workflow-id", help="DNA Nexus workflow ID", required=False, default="workflow-GPGkXZQJv7BBFbqP4qQQz868")
+	parser.add_argument("--workflow-id", help="DNA Nexus workflow ID", required=False, default="workflow-GPfbXV8Jv7B27kpf6Y50QyQ9 ")
 	parser.add_argument("--file-list", help="List of crams and indices to process"
 		"Format of each line: cram-file-id cram-index-id", type=str, required=True)
 	parser.add_argument("--genome-id", help="File id of ref genome", type=str, default="file-GGJ1z28JbVqbpqB93YbPqbzz")
 	parser.add_argument("--genome-idx-id", help="File id of ref genome index", type=str, default="file-GGJ94JQJv7BGFYq8BGp62xPV")
 	# Options for multi-batches
-	parser.add_argument("--merge-workflow-id", help="DNA Nexus workflow ID for merging", required=False, default="workflow-GPZj5BQJv7B2yFY0fv47Z8x1")
+	parser.add_argument("--merge-workflow-id", help="DNA Nexus workflow ID for merging", required=False, default="workflow-GPfjgPQJv7B2X5b4G91Kv91X")
 	parser.add_argument("--max-batches-per-workflow", help="Maximum number of batches to launch at once. Default: -1 (all)", required=False, default=-1, type=int)
 	parser.add_argument("--concurrent", help="Launch all batches at once", action="store_true")
 	args = parser.parse_args()
@@ -241,7 +251,7 @@ def main():
 					use_dep = []
 				else: use_dep = depends
 				analysis = RunWorkflow(batch_dict, args.workflow_id, \
-					args.name, depends=use_dep)
+					args.name+"_%s"%batch_num, depends=use_dep)
 				depends.append(analysis)
 				batch_num += 1
 				curr_cram_batches = []
@@ -260,15 +270,17 @@ def main():
 				use_dep = []
 			else: use_dep = depends
 			analysis = RunWorkflow(batch_dict, args.workflow_id, \
-				args.name, depends=use_dep)
+				args.name+"_%s"%batch_num, depends=use_dep)
 			depends.append(analysis)
 		# Run a final job to merge all the meta-batches
 		merge_vcfs = []
 		merge_vcfs_idx = []
 		for analysis in depends:
-			analysis.wait_on_done()
-			vcf = analysis.describe()["output"]["stage-outputs.finalvcf"]
-			vcf_idx = analysis.describe()["output"]["stage-outputs.finalvcf_index"]
+			#analysis.wait_on_done()
+			#vcf = analysis.describe()["output"]["stage-outputs.finalvcf"]
+			#vcf_idx = analysis.describe()["output"]["stage-outputs.finalvcf_index"]
+			vcf = GetJBOR(analysis, "stage-outputs.finalvcf")
+			vcf_idx = GetJBOR(analysis, "stage-outputs.finalvcf_index")
 			merge_vcfs.append(vcf)
 			merge_vcfs_idx.append(vcf_idx)
 		sys.stderr.write("Merging from meta-batches...\n")
@@ -276,11 +288,11 @@ def main():
 		merge_dict["stage-common.out_name"] = args.name
 		merge_dict["stage-common.vcf_files"] = merge_vcfs
 		merge_dict["stage-common.vcf_idxs"] = merge_vcfs_idx
-		analysis = RunWorkflow(merge_dict, args.merge_workflow_id, args.name)
-		analysis.wait_on_done()
-		final_vcf = analysis.describe()["output"]["stage-outputs.finalvcf"]
-		final_vcf_idx = analysis.describe()["output"]["stage-outputs.finalvcf_index"]
-	sys.stderr.write("Final output files %s %s"%(final_vcf, final_vcf_idx))
+		analysis = RunWorkflow(merge_dict, args.merge_workflow_id, args.name, depends=depends)
+		#analysis.wait_on_done()
+		#final_vcf = analysis.describe()["output"]["stage-outputs.finalvcf"]
+		#final_vcf_idx = analysis.describe()["output"]["stage-outputs.finalvcf_index"]
+	#sys.stderr.write("Final output files %s %s"%(final_vcf, final_vcf_idx))
 
 if __name__ == "__main__":
 	main()

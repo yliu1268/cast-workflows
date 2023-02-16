@@ -8,10 +8,10 @@ First, compile WDL workflow to run on DNA Nexus
 # Notes
 # - Checks are more rigorous than those of womtool validate
 java -jar ~/Applications/dxCompiler-2.10.4.jar compile ../wdl/workflows/targetTR.wdl \
-	-project project-GG25fB8Jv7B928vqK7k6vYY6 -folder /TargetedSTR/ -streamFiles all -archive 
+	-project project-GG25fB8Jv7B928vqK7k6vYY6 -folder /TargetedSTR/ -streamFiles all -archive -separateOutputs
 
 java -jar ~/Applications/dxCompiler-2.10.4.jar compile ../wdl/workflows/merge_index_str.wdl \
-  -project project-GG25fB8Jv7B928vqK7k6vYY6 -folder /TargetedSTR/ -streamFiles all -archive 
+  -project project-GG25fB8Jv7B928vqK7k6vYY6 -folder /TargetedSTR/ -streamFiles all -archive \ -separateOutputs
 
 java -jar ~/Applications/dxCompiler-2.10.4.jar compile ../wdl/tasks/associatr.wdl \
   -project project-GG25fB8Jv7B928vqK7k6vYY6 -folder /STRPhewas/ -streamFiles all -archive
@@ -44,7 +44,7 @@ To run all files, increase `--batch-size` to a larger number (1000?) and remove 
   --name CSTB-mini \
   --batch-size 25 \
   --batch-num 3 \
-  --workflow-id workflow-GPYY0p0Jv7B730qb33V6jvG0 \
+  --workflow-id workflow-GPfbXV8Jv7B27kpf6Y50QyQ9 \
   --file-list ukb_cram_and_index_files.txt
 ```
 

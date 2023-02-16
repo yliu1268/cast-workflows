@@ -7,15 +7,15 @@
   --name GATM-Homopolymer \
   --batch-size 500 \
   --max-batches-per-workflow 10 \
+  --batch-num 2 \
   --concurrent \
-  --workflow-id workflow-GPYY0p0Jv7B730qb33V6jvG0 \
+  --workflow-id workflow-GPfbXV8Jv7B27kpf6Y50QyQ9 \
   --file-list ../ukb_cram_and_index_files.txt
 
-#    --max-batches-per-workflow 50 \
+# TODO remove batch-num
 
 # Notes:
 # batch size 500 is good
 # up to 10 batches on a single job worked. 25 failed
 # for 200K crams: need:
-#  --batch-size 500 --max-batches-per-workflow 10
-# Can we run concurrently? without depends_on?
+#  --batch-size 500 --max-batches-per-workflow 10 --concurrent
