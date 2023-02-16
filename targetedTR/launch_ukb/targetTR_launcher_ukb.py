@@ -172,7 +172,7 @@ def main():
 	parser.add_argument("--genome-id", help="File id of ref genome", type=str, default="file-GGJ1z28JbVqbpqB93YbPqbzz")
 	parser.add_argument("--genome-idx-id", help="File id of ref genome index", type=str, default="file-GGJ94JQJv7BGFYq8BGp62xPV")
 	# Options for multi-batches
-	parser.add_argument("--merge-workflow-id", help="DNA Nexus workflow ID for merging", required=False, default="workflow-GPfjgPQJv7B2X5b4G91Kv91X")
+	parser.add_argument("--merge-workflow-id", help="DNA Nexus workflow ID for merging", required=False, default="workflow-GPfv050Jv7B5ZQqpZb0jG5k6")
 	parser.add_argument("--max-batches-per-workflow", help="Maximum number of batches to launch at once. Default: -1 (all)", required=False, default=-1, type=int)
 	parser.add_argument("--concurrent", help="Launch all batches at once", action="store_true")
 	args = parser.parse_args()
@@ -228,7 +228,7 @@ def main():
 					use_dep = []
 				else: use_dep = depends
 				analysis = RunWorkflow(batch_dict, args.workflow_id, \
-					args.name+"_%s"%batch_num, depends=use_dep)
+					args.name + "/" + args.name+"_%s"%batch_num, depends=use_dep)
 				depends.append(analysis)
 				batch_num += 1
 				curr_cram_batches = []
@@ -247,7 +247,7 @@ def main():
 				use_dep = []
 			else: use_dep = depends
 			analysis = RunWorkflow(batch_dict, args.workflow_id, \
-				args.name+"_%s"%batch_num, depends=use_dep)
+				args.name + "/" + args.name+"_%s"%batch_num, depends=use_dep)
 			depends.append(analysis)
 		# Run a final job to merge all the meta-batches
 		merge_vcfs = []
@@ -260,7 +260,7 @@ def main():
 			vcf_idx = GetJBOR(analysis, "stage-outputs.finalvcf_index")
 			merge_vcfs.append(vcf)
 			merge_vcfs_idx.append(vcf_idx)
-		sys.stderr.write("Merging from meta-batches...\n")
+		sys.stderr.write("Setting up merge from meta-batches...\n")
 		merge_dict = {}
 		merge_dict["stage-common.out_name"] = args.name
 		merge_dict["stage-common.vcf_files"] = merge_vcfs

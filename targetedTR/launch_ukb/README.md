@@ -11,7 +11,7 @@ java -jar ~/Applications/dxCompiler-2.10.4.jar compile ../wdl/workflows/targetTR
 	-project project-GG25fB8Jv7B928vqK7k6vYY6 -folder /TargetedSTR/ -streamFiles all -archive -separateOutputs
 
 java -jar ~/Applications/dxCompiler-2.10.4.jar compile ../wdl/workflows/merge_index_str.wdl \
-  -project project-GG25fB8Jv7B928vqK7k6vYY6 -folder /TargetedSTR/ -streamFiles all -archive \ -separateOutputs
+  -project project-GG25fB8Jv7B928vqK7k6vYY6 -folder /TargetedSTR/ -streamFiles all -archive 
 
 java -jar ~/Applications/dxCompiler-2.10.4.jar compile ../wdl/tasks/associatr.wdl \
   -project project-GG25fB8Jv7B928vqK7k6vYY6 -folder /STRPhewas/ -streamFiles all -archive
@@ -24,7 +24,7 @@ List all UKB cram/crai files
 for i in $(seq 10 60)
 do
   cmd="dx ls -l 'Bulk/Whole genome sequences/Whole genome CRAM files/${i}/'"
-  sh -c ${cmd}
+  sh -c "${cmd}"
 done > ukb_cram_files_long.txt
 
 ./process_cram_list.py ukb_cram_files_long.txt > ukb_cram_and_index_files.txt

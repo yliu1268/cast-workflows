@@ -7,7 +7,6 @@
   --name GATM-Homopolymer \
   --batch-size 500 \
   --max-batches-per-workflow 10 \
-  --batch-num 2 \
   --concurrent \
   --workflow-id workflow-GPfbXV8Jv7B27kpf6Y50QyQ9 \
   --file-list ../ukb_cram_and_index_files.txt
