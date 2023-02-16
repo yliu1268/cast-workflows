@@ -164,7 +164,7 @@ def main():
 	parser.add_argument("--period", help="Repeat unit length (bp) of TR", required=False, type=int)
 	parser.add_argument("--refcopies", help="Ref num. of copies of the TR", required=False, type=float)
 	parser.add_argument("--name", help="Name of the TR job", required=True, type=str)
-	parser.add_argument("--batch-size", help="HipSTR batch size", required=False, type=int, default=1000)
+	parser.add_argument("--batch-size", help="HipSTR batch size", required=False, type=int, default=500)
 	parser.add_argument("--batch-num", help="Number of batches. Default: -1 (all)", required=False, default=-1)
 	parser.add_argument("--workflow-id", help="DNA Nexus workflow ID", required=False, default="workflow-GPfbXV8Jv7B27kpf6Y50QyQ9 ")
 	parser.add_argument("--file-list", help="List of crams and indices to process"
