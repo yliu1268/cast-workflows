@@ -191,10 +191,6 @@ def main():
 	assert bool(args.region) == bool(args.period) == bool(args.refcopies)
 	assert bool(args.region) != bool(args.str_ref)
 
-	wait_on_done = False
-	if args.max_batches_per_workflow > -1:
-		wait_on_done = True
-
 	# Set up workflow JSON
 	json_dict = {}
 	json_dict["stage-common.genome"] = {}
@@ -225,16 +221,8 @@ def main():
 		json_dict["stage-common.cram_file_batches"] = cram_batches
 		json_dict["stage-common.cram_index_batches"] = cram_idx_batches
 		analysis = RunWorkflow(json_dict, args.workflow_id, args.name)
-		if wait_on_done:
-			analysis.wait_on_done()
-			final_vcf = analysis.describe()["output"]["stage-outputs.finalvcf"]
-			final_vcf_idx = analysis.describe()["output"]["stage-outputs.finalvcf_index"]
-		else:
-			# Nothing else to do, launched our single job
-			sys.exit(0)
 	else:
 		# Run in chunks across multiple workflows
-		# Run sequentially so we don't overload
 		depends = []
 		batch_num = 0
 		curr_idx = 0
@@ -289,10 +277,6 @@ def main():
 		merge_dict["stage-common.vcf_files"] = merge_vcfs
 		merge_dict["stage-common.vcf_idxs"] = merge_vcfs_idx
 		analysis = RunWorkflow(merge_dict, args.merge_workflow_id, args.name, depends=depends)
-		#analysis.wait_on_done()
-		#final_vcf = analysis.describe()["output"]["stage-outputs.finalvcf"]
-		#final_vcf_idx = analysis.describe()["output"]["stage-outputs.finalvcf_index"]
-	#sys.stderr.write("Final output files %s %s"%(final_vcf, final_vcf_idx))
 
 if __name__ == "__main__":
 	main()
