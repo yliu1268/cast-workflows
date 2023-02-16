@@ -12,17 +12,6 @@ Desired usage:
   --batch-num 3 \
   --workflow-id workflow-GPfbXV8Jv7B27kpf6Y50QyQ9  \
   --file-list ukb_cram_and_index_files.txt
-
-# TODO #1
-# For final merge step, is there a way to know what
-# the fileids will be without waiting for all previous steps to finish?
-# otherwise this script has to stay running for the whole time
-# maybe can use: https://documentation.dnanexus.com/developer/api/running-analyses/job-input-and-output#job-dependencies
-
-# TODO #2
-# Cleanup intermediate VCF files after merging to the final one
-# maybe there is a way to set the workflow setting to do that?
-# use -separateOutputs as argument to dxcompile? -> doesn't seem to work?
 """
 
 import argparse
