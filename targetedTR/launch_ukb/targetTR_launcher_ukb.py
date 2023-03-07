@@ -190,8 +190,8 @@ def main():
 	json_dict["stage-common.ukb_names"] = True
 	
 	# Make bed file
-	sys.stderr.write("Preparing bed file...\n")
 	if args.region:
+		sys.stderr.write("Preparing bed file...\n")
 		tr_bedfile = args.name+".bed"
 		WriteTRBed(args.region, args.period, args.refcopies, args.name, tr_bedfile)
 	else:
