@@ -15,9 +15,11 @@ Desired usage:
 """
 
 import argparse
-import dxpy
-import json
+import datetime
 import sys
+import time
+
+import dxpy
 
 def ParseRegion(str_region):
 	"""
@@ -72,7 +74,6 @@ def GetFileBatches(file_list, batch_size, batch_num=-1):
 	   To play nicely with dxCompiler json, each item
 	   in the internal list has format {"$dnanexus_link": cram_id}
 	"""
-
 	# Keep track of batches
 	cram_batches = []
 	cram_idx_batches = []
@@ -121,6 +122,10 @@ def RunWorkflow(json_dict, workflow_id, name, depends=[]):
 		depends_on=[item.get_id() for item in depends], \
 		folder="/TargetedSTR/results/{name}".format(name=name))
 	sys.stderr.write("Started analysis %s (%s)\n"%(analysis.get_id(), name))
+    # sleep to delay launches between analyses as each analysis mounts
+    # a bunch of files which can put pressure on the API call limits
+    # imposed by DNANexus that they care about but don't cleanly enforce
+	time.sleep(30)
 	return analysis
 
 def UploadDNANexus(fname, name):
@@ -164,15 +169,15 @@ def main():
 	parser.add_argument("--period", help="Repeat unit length (bp) of TR", required=False, type=int)
 	parser.add_argument("--refcopies", help="Ref num. of copies of the TR", required=False, type=float)
 	parser.add_argument("--name", help="Name of the TR job", required=True, type=str)
-	parser.add_argument("--batch-size", help="HipSTR batch size", required=False, type=int, default=500)
-	parser.add_argument("--batch-num", help="Number of batches. Default: -1 (all)", required=False, default=-1)
-	parser.add_argument("--workflow-id", help="DNA Nexus workflow ID", required=False, default="workflow-GPfbXV8Jv7B27kpf6Y50QyQ9 ")
+	parser.add_argument("--batch-size", help="HipSTR batch size", type=int, default=500)
+	parser.add_argument("--batch-num", help="Number of batches. Default: -1 (all)", required=False, default=-1, type=int)
+	parser.add_argument("--workflow-id", help="DNA Nexus workflow ID", required=False, default="workflow-GQp8j10Jv7B776168j65V6Kk")
 	parser.add_argument("--file-list", help="List of crams and indices to process"
 		"Format of each line: cram-file-id cram-index-id", type=str, required=True)
 	parser.add_argument("--genome-id", help="File id of ref genome", type=str, default="file-GGJ1z28JbVqbpqB93YbPqbzz")
 	parser.add_argument("--genome-idx-id", help="File id of ref genome index", type=str, default="file-GGJ94JQJv7BGFYq8BGp62xPV")
 	# Options for multi-batches
-	parser.add_argument("--merge-workflow-id", help="DNA Nexus workflow ID for merging", required=False, default="workflow-GPfv050Jv7B5ZQqpZb0jG5k6")
+	parser.add_argument("--merge-workflow-id", help="DNA Nexus workflow ID for merging", required=False, default="workflow-GQKzVkjJv7B62BbZ0y30vKj7")
 	parser.add_argument("--max-batches-per-workflow", help="Maximum number of batches to launch at once. Default: -1 (all)", required=False, default=-1, type=int)
 	parser.add_argument("--concurrent", help="Launch all batches at once", action="store_true")
 	args = parser.parse_args()
@@ -200,7 +205,7 @@ def main():
 
 	# Set up batches of files
 	sys.stderr.write("Setting up batches...\n")
-	cram_batches, cram_idx_batches = GetFileBatches(args.file_list, int(args.batch_size), int(args.batch_num))
+	cram_batches, cram_idx_batches = GetFileBatches(args.file_list, args.batch_size, args.batch_num)
 
 	# Run batches
 	final_vcf = None
