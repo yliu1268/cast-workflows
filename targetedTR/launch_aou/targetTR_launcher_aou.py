@@ -152,11 +152,11 @@ def main():
 	json_dict["targetTR.genome_index"] = args.genome_idx_id
 	json_dict["targetTR.tr_bed"] = tr_bedfile_gcs
 	json_dict["targetTR.str_name"] = args.name
+	json_dict["targetTR.using_aou"] = True
 
 	# Set up batches of files
 	cram_batches, cram_idx_batches = GetFileBatches(args.file_list, int(args.batch_size), int(args.batch_num))
-	json_dict["targetTR.cram_file_batches"] = cram_batches
-	json_dict["targetTR.cram_index_batches"] = cram_idx_batches
+	json_dict["targetTR.cram_file_batches_str"] = cram_batches
 
 	# Convert to json and save as a file
 	json_file = args.name+".aou.json"

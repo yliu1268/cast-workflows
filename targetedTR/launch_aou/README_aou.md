@@ -10,7 +10,7 @@ mkdir mgymrek-workspace
 cd mgymrek-workspace/
 git clone https://github.com/cast-genomics/cast-workflows/
 cd cast-workflows/
-git checkout targetedTR
+git checkout melissa/aou
 cd targetedTR/launch
 ```
 
