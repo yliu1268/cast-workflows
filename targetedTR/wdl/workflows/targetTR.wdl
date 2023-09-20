@@ -13,18 +13,32 @@ import "../tasks/dumpstr.wdl" as dumpstr_t
 workflow targetTR {
 	input {
 		String str_name
-		Array[Array[File]] cram_file_batches
-		Array[Array[File]] cram_index_batches
+		Array[Array[File]] cram_file_batches = []
+		Array[Array[File]] cram_index_batches = []
 		File genome
 		File genome_index
 		File tr_bed
     	Boolean ukb_names = false
+    	Boolean using_aou = false
+    	Array[Array[String]] cram_file_batches_str = []
 	}
 
 	### Call HipSTR on batches of samples ###
-	scatter(i in range(length(cram_file_batches))) {
-		Array[File] crams = cram_file_batches[i]
-		Array[File] cram_indices = cram_index_batches[i]
+	Int num_batches = length(cram_file_batches)
+	if (using_aou) {
+		Int num_batches = length(cram_file_batches_str)
+	}
+	scatter(i in range(num_batches)) {
+		if (using_aou) {
+			Array[String] crams_str = cram_file_batches_str[i]
+			Array[File] crams = []
+			Array[File] cram_indices = []
+		}
+		if (!using_aou) {
+			Array[String] crams_str = []
+			Array[File] crams = cram_file_batches[i]
+			Array[File] cram_indices = cram_index_batches[i]
+		}
 		call hipstr_multi_t.run_hipstr as run_hipstr {
 			input :
 				bams=crams,
@@ -33,7 +47,9 @@ workflow targetTR {
 				genome_index=genome_index,
 				str_ref=tr_bed,
 				out_prefix=str_name+".BATCH"+i,
-        		ukb_names = ukb_names
+        		ukb_names = ukb_names,
+        		using_aou = using_aou,
+        		crams_str = crams_str
 		}
 	}
 
