@@ -2,13 +2,15 @@ version 1.0
 
 workflow run_hipstr {
     input {
-        Array[File] bams
-        Array[File] bam_indices
+        Array[File] bams = []
+        Array[File] bam_indices = []
         File genome
         File genome_index
         File str_ref
         String out_prefix
         Boolean ukb_names = false
+        Boolean using_aou = false
+        Array[String] bams_str = []
     }
 
     call hipstr {
@@ -19,7 +21,9 @@ workflow run_hipstr {
           genome_index=genome_index,
           str_ref=str_ref,
           out_prefix=out_prefix,
-          ukb_names = ukb_names
+          ukb_names=ukb_names,
+          using_aou=using_aou,
+          bams_str=bams_str
     }
 
     call sort_index_hipstr {
@@ -46,6 +50,8 @@ task hipstr {
         File str_ref
         String out_prefix
         Boolean ukb_names = false
+        Boolean using_aou = false
+        Array[String] bams_str = []
     } 
 
     command <<<
@@ -58,8 +64,14 @@ task hipstr {
         samps=${samps:1} # remove beginning excess comma
         samps_flags="--bam-samps ${samps} --bam-libs ${samps}"
       fi
+
+      # If using AOU, get bamfiles from bams_str
+      bams_input=~{sep=',' bams}
+      if [[ "~{using_aou}" == true ]] ; then
+        bams_input=~{sep=',' bams_str}
+      fi
       HipSTR \
-          --bams ~{sep=',' bams} \
+          --bams ${bams_input} \
           --fasta ~{genome} \
           --regions ~{str_ref} \
           --str-vcf ~{out_prefix}.vcf.gz \
@@ -68,7 +80,7 @@ task hipstr {
     >>>
     
     runtime {
-        docker: "gcr.io/ucsd-medicine-cast/hipstr-gymreklab"
+        docker: "gcr.io/ucsd-medicine-cast/hipstr-gymreklab-gcs"
         memory: "16 GB"
         cpu: 1
     }

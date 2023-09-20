@@ -24,18 +24,14 @@ workflow targetTR {
 	}
 
 	### Call HipSTR on batches of samples ###
-	Int num_batches = length(cram_file_batches)
-	if (using_aou) {
-		Int num_batches = length(cram_file_batches_str)
-	}
+	Int num_batches = if using_aou
+		then length(cram_file_batches_str)  
+		else length(cram_file_batches)
 	scatter(i in range(num_batches)) {
 		if (using_aou) {
 			Array[String] crams_str = cram_file_batches_str[i]
-			Array[File] crams = []
-			Array[File] cram_indices = []
 		}
 		if (!using_aou) {
-			Array[String] crams_str = []
 			Array[File] crams = cram_file_batches[i]
 			Array[File] cram_indices = cram_index_batches[i]
 		}
@@ -49,7 +45,7 @@ workflow targetTR {
 				out_prefix=str_name+".BATCH"+i,
         		ukb_names = ukb_names,
         		using_aou = using_aou,
-        		crams_str = crams_str
+        		bams_str = crams_str
 		}
 	}
 
