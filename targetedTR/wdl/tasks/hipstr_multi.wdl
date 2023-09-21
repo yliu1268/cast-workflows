@@ -72,7 +72,7 @@ task hipstr {
       bams_input=~{sep=',' bams}
       if [[ "~{using_aou}" == true ]] ; then
         bams_input=~{sep=',' bams_str}
-        export GCS_REQUESTER_PAYS_PROJECT={GOOGLE_PROJECT};
+        export GCS_REQUESTER_PAYS_PROJECT=~{GOOGLE_PROJECT};
         echo "PROJECT: ${GCS_REQUESTER_PAYS_PROJECT} - {GOOGLE_PROJECT}"
       fi
       HipSTR \
