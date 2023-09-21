@@ -69,6 +69,7 @@ task hipstr {
       bams_input=~{sep=',' bams}
       if [[ "~{using_aou}" == true ]] ; then
         bams_input=~{sep=',' bams_str}
+        echo "PROJECT: ${GCS_REQUESTER_PAYS_PROJECT} ${GOOGLE_PROJECT}"
       fi
       HipSTR \
           --bams ${bams_input} \
