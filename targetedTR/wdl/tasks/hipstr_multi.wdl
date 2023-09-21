@@ -69,9 +69,6 @@ task hipstr {
       bams_input=~{sep=',' bams}
       if [[ "~{using_aou}" == true ]] ; then
         bams_input=~{sep=',' bams_str}
-        echo ${GOOGLE_PROJECT}
-        export GCS_OAUTH_TOKEN=$(gcloud auth application-default print-access-token)
-        export GCS_REQUESTER_PAYS_PROJECT=${GOOGLE_PROJECT};
       fi
       HipSTR \
           --bams ${bams_input} \
