@@ -153,6 +153,7 @@ def main():
 	json_dict["targetTR.tr_bed"] = tr_bedfile_gcs
 	json_dict["targetTR.str_name"] = args.name
 	json_dict["targetTR.using_aou"] = True
+	json_dict["targetTR.GOOGLE_PROJECT"] = project
 
 	# Set up batches of files
 	cram_batches, cram_idx_batches = GetFileBatches(args.file_list, int(args.batch_size), int(args.batch_num))

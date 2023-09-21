@@ -21,6 +21,7 @@ workflow targetTR {
     	Boolean ukb_names = false
     	Boolean using_aou = false
     	Array[Array[String]] cram_file_batches_str = []
+    	String GOOGLE_PROJECT = ""
 	}
 
 	### Call HipSTR on batches of samples ###
@@ -45,7 +46,8 @@ workflow targetTR {
 				out_prefix=str_name+".BATCH"+i,
         		ukb_names = ukb_names,
         		using_aou = using_aou,
-        		bams_str = crams_str
+        		bams_str = crams_str,
+        		GOOGLE_PROJECT = GOOGLE_PROJECT
 		}
 	}
 

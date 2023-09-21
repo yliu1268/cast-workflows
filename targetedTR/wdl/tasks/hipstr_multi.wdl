@@ -11,6 +11,7 @@ workflow run_hipstr {
         Boolean ukb_names = false
         Boolean using_aou = false
         Array[String] bams_str = []
+        String GOOGLE_PROJECT = ""
     }
 
     call hipstr {
@@ -23,7 +24,8 @@ workflow run_hipstr {
           out_prefix=out_prefix,
           ukb_names=ukb_names,
           using_aou=using_aou,
-          bams_str=bams_str
+          bams_str=bams_str,
+          GOOGLE_PROJECT=GOOGLE_PROJECT
     }
 
     call sort_index_hipstr {
@@ -52,6 +54,7 @@ task hipstr {
         Boolean ukb_names = false
         Boolean using_aou = false
         Array[String] bams_str = []
+        String GOOGLE_PROJECT = ""
     } 
 
     command <<<
@@ -69,7 +72,8 @@ task hipstr {
       bams_input=~{sep=',' bams}
       if [[ "~{using_aou}" == true ]] ; then
         bams_input=~{sep=',' bams_str}
-        echo "PROJECT: ${GCS_REQUESTER_PAYS_PROJECT} ${GOOGLE_PROJECT}"
+        export GCS_REQUESTER_PAYS_PROJECT={GOOGLE_PROJECT};
+        echo "PROJECT: ${GCS_REQUESTER_PAYS_PROJECT} - {GOOGLE_PROJECT}"
       fi
       HipSTR \
           --bams ${bams_input} \
