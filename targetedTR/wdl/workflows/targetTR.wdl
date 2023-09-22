@@ -93,7 +93,7 @@ task sort_index {
 	>>>
 
 	runtime {
-        docker:"mgymrek/vcfutils:latest"
+        docker:"gcr.io/ucsd-medicine-cast/vcfutils:latest"
     }
 
 	output {
