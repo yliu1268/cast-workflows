@@ -138,6 +138,7 @@ def main():
 	# Set up output bucket
 	bucket = os.getenv("WORKSPACE_BUCKET")
 	project = os.getenv("GOOGLE_PROJECT")
+	token = os.getenv("GCS_OAUTH_TOKEN")
 	output_bucket = bucket + "/" + args.name
 
 	# Generate TR Bed file
@@ -154,6 +155,7 @@ def main():
 	json_dict["targetTR.str_name"] = args.name
 	json_dict["targetTR.using_aou"] = True
 	json_dict["targetTR.GOOGLE_PROJECT"] = project
+	json_dict["targetTR.GCS_OAUTH_TOKEN"] = token
 
 	# Set up batches of files
 	cram_batches, cram_idx_batches = GetFileBatches(args.file_list, int(args.batch_size), int(args.batch_num))

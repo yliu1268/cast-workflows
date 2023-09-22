@@ -22,6 +22,7 @@ workflow targetTR {
     	Boolean using_aou = false
     	Array[Array[String]] cram_file_batches_str = []
     	String GOOGLE_PROJECT = ""
+    	String GCS_OAUTH_TOKEN = ""
 	}
 
 	### Call HipSTR on batches of samples ###
@@ -47,7 +48,8 @@ workflow targetTR {
         		ukb_names = ukb_names,
         		using_aou = using_aou,
         		bams_str = crams_str,
-        		GOOGLE_PROJECT = GOOGLE_PROJECT
+        		GOOGLE_PROJECT = GOOGLE_PROJECT,
+        		GCS_OAUTH_TOKEN = GCS_OAUTH_TOKEN
 		}
 	}
 
