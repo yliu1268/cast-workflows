@@ -22,6 +22,7 @@ curl -s "https://get.sdkman.io" -o install_sdkman.sh
 bash install_sdkman.sh
 source "/home/jupyter/.sdkman/bin/sdkman-init.sh"
 sdk install java 11.0.14-tem
+
 ```
 
 3. Copy the `manifest.csv` file with the CRAM paths to the launch directory.
@@ -32,6 +33,9 @@ gsutil -u $GOOGLE_PROJECT cp gs://fc-aou-datasets-controlled/v6/wgs/cram/manifes
 4. Run a test job:
 
 ```
+export GCS_OAUTH_TOKEN=$(gcloud auth application-default print-access-token)
+export GCS_REQUESTER_PAYS_PROJECT=${GOOGLE_PROJECT};
+
 ./targetTR_launcher_aou.py \
   --region chr21:43776445-43776479 \
   --period 5 \
