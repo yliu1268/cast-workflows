@@ -6,9 +6,9 @@ version 1.0
 # Hipstr mergefix broke with only one record
 #  commenting for now, need to bring back
 
-import "../tasks/hipstr_multi.wdl" as hipstr_multi_t
-import "../tasks/merge_hipstr.wdl" as merge_t
-import "../tasks/dumpstr.wdl" as dumpstr_t
+import "targetedTR/wdl/tasks/hipstr_multi.wdl" as hipstr_multi_t
+import "targetedTR/wdl/tasks/merge_hipstr.wdl" as merge_t
+import "targetedTR/wdl/tasks/dumpstr.wdl" as dumpstr_t
 
 workflow targetTR {
 	input {
