@@ -1,8 +1,6 @@
 # TargetTR on All of Us workbench
 
-All of this must be run on the workbench itself. Once in the workbench,
-
-Start both cromwell and cloud environment on workbench. Open notebook and add cromwell setup snippet. Run the cell and launch a terminal session adn do the following.
+All of this must be run on the workbench itself. Once in the workbench,start both cromwell and cloud environment. Open notebook and add cromwell setup snippet. Run the cell and launch a terminal session and do the following.
  
 1. Clone the github and navigate to the launch directory.
 
