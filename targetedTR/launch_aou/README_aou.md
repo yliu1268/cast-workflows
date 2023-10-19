@@ -1,7 +1,9 @@
 # TargetTR on All of Us workbench
 
-All of this must be run on the workbench itself. Once in the workbench, launch a terminal session and to the following.
+All of this must be run on the workbench itself. Once in the workbench,
 
+Start both cromwell and cloud environment on workbench. Open notebook and add cromwell setup snippet. Run the cell and launch a terminal session adn do the following.
+ 
 1. Clone the github and navigate to the launch directory.
 
 ```
@@ -10,21 +12,12 @@ mkdir mgymrek-workspace
 cd mgymrek-workspace/
 git clone https://github.com/cast-genomics/cast-workflows/
 cd cast-workflows/
-git checkout melissa/aou
+git checkout nichole/cromshell
 cd targetedTR/launch_aou
 ```
 
-2. Set up
+2. Set up (already set up in jupyter snippet)
 ```
-curl https://github.com/broadinstitute/cromwell/releases/download/77/womtool-77.jar -o womtool-77.jar -L
-curl https://github.com/broadinstitute/cromwell/releases/download/77/cromwell-77.jar -o cromwell-77.jar -L
-curl -s "https://get.sdkman.io" -o install_sdkman.sh
-bash install_sdkman.sh
-source "/home/jupyter/.sdkman/bin/sdkman-init.sh"
-sdk install java 11.0.14-tem
-
-```
-
 3. Copy the `manifest.csv` file with the CRAM paths to the launch directory.
 ```
 gsutil -u $GOOGLE_PROJECT cp gs://fc-aou-datasets-controlled/v6/wgs/cram/manifest.csv .
@@ -37,11 +30,12 @@ export GCS_OAUTH_TOKEN=$(gcloud auth application-default print-access-token)
 export GCS_REQUESTER_PAYS_PROJECT=${GOOGLE_PROJECT};
 
 ./targetTR_launcher_aou.py \
-  --region chr21:43776445-43776479 \
-  --period 5 \
-  --refcopies 7.0 \
-  --name CSTB-mini \
-  --batch-size 1 \
+  --region chr11:119206290-119206323 \
+  --period 3 \
+  --refcopies 11.0 \
+  --name CBL-mini \
+  --batch-size 2 \
   --batch-num 2 \
   --file-list manifest.csv
 ```
+(AoU use batch-size 300)
