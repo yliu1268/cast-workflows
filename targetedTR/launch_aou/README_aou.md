@@ -15,7 +15,7 @@ cd targetedTR/launch_aou
 ```
 
 2. Set up (already set up in jupyter snippet)
-```
+
 3. Copy the `manifest.csv` file with the CRAM paths to the launch directory.
 ```
 gsutil -u $GOOGLE_PROJECT cp gs://fc-aou-datasets-controlled/v6/wgs/cram/manifest.csv .
