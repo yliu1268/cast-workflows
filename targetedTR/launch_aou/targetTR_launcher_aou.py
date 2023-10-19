@@ -107,7 +107,7 @@ def RunWorkflow(json_file, json_options_file):
 	    Used to determine where to store output
 	"""
 	conf_file = "/home/jupyter/cromwell.conf"
-	cmd = "java -jar -Dconfig.file={conf} cromwell-77.jar run ../wdl/workflows/targetTR.wdl -i {json} -o {options}".format(conf=conf_file, json=json_file, options=json_options_file)
+	cmd = "cromshell-alpha submit ../wdl/workflows/targetTR.wdl {json}".format(json=json_file)
 	output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
 	print(output.decode("utf-8"))
 
