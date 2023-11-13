@@ -18,7 +18,7 @@ workflow targetTR {
 		File genome
 		File genome_index
 		File tr_bed
-    	Boolean ukb_names = false
+    	Boolean aou_names = false
     	Boolean using_aou = false
     	Array[Array[String]] cram_file_batches_str = []
     	String GOOGLE_PROJECT = ""
@@ -45,7 +45,7 @@ workflow targetTR {
 				genome_index=genome_index,
 				str_ref=tr_bed,
 				out_prefix=str_name+".BATCH"+i,
-        		ukb_names = ukb_names,
+        		aou_names = aou_names,
         		using_aou = using_aou,
         		bams_str = crams_str,
         		GOOGLE_PROJECT = GOOGLE_PROJECT,

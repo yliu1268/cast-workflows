@@ -154,6 +154,7 @@ def main():
 	json_dict["targetTR.tr_bed"] = tr_bedfile_gcs
 	json_dict["targetTR.str_name"] = args.name
 	json_dict["targetTR.using_aou"] = True
+	json_dict["targetTR.aou_names"] = True
 	json_dict["targetTR.GOOGLE_PROJECT"] = project
 	json_dict["targetTR.GCS_OAUTH_TOKEN"] = token
 
