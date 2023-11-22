@@ -100,10 +100,10 @@ def GetFileBatches(file_list, batch_size, batch_num=-1, gsprefix=None):
 	for i in range(len(cram_batches)):
 		cram_batch_fname = "batch-%s-crams.txt"%i
 		cram_index_batch_fname = "batch-%s-crams-indices.txt"%i
-		with open(cram_batch_fname, "w"):
+		with open(cram_batch_fname, "w") as f:
 			for item in cram_batches[i]:
 				f.write(item.strip()+"\n")
-		with open(cram_index_batch_fname, "w"):
+		with open(cram_index_batch_fname, "w") as f:
 			for item in cram_idx_batches[i]:
 				f.write(item.strip()+"\n")
 		if gsprefix is not None:
