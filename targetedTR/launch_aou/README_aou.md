@@ -19,14 +19,12 @@ git checkout mgymrek/cromshell
 cd targetedTR/launch_aou
 ```
 
-2. Set up (already set up in jupyter snippet)
-
-3. Copy the `manifest.csv` file with the CRAM paths to the launch directory.
+2. Copy the `manifest.csv` file with the CRAM paths to the launch directory.
 ```
 gsutil -u $GOOGLE_PROJECT cp gs://fc-aou-datasets-controlled/v6/wgs/cram/manifest.csv .
 ```
 
-4. Run a test job:
+3. Run a test job:
 
 ```
 export GCS_OAUTH_TOKEN=$(gcloud auth application-default print-access-token)

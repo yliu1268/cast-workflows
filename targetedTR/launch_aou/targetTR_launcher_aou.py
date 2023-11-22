@@ -42,7 +42,7 @@ def ParseRegion(str_region):
 	end = int(str_region.split(":")[1].split("-")[1])
 	return chrom, start, end
 
-def GetFileBatches(file_list, batch_size, batch_num=-1):
+def GetFileBatches(file_list, batch_size, batch_num=-1, gsprefix=None):
 	"""
 	Given a file containing a list of file IDs for the 
 	crams and their indices, divide into batches of 
@@ -62,10 +62,12 @@ def GetFileBatches(file_list, batch_size, batch_num=-1):
 
 	Returns
 	-------
-	cram_batches : list of lists
-	   Each internal list is a list of file IDs for crams
-	cram_idx_batches : list of lists
-	   Each internal list is a list of file IDs for cram indices
+	cram_batches : list of str (GCP paths)
+	   Each path links to a google cloud file listing the
+	   crams to be processed
+	cram_idx_batches : list of str (GCP paths)
+	   Each path links to a google cloud file listing the
+	   indices of crams to be processed
 	"""
 
 	# Keep track of batches
@@ -93,7 +95,23 @@ def GetFileBatches(file_list, batch_size, batch_num=-1):
 			curr_batch_crams.append(cram_id)
 			curr_batch_indices.append(idx_id)
 	assert(len(cram_batches) == len(cram_idx_batches))
-	return cram_batches, cram_idx_batches
+	cram_batches_paths = []
+	cram_idx_batches_paths = []
+	for i in range(len(cram_batches)):
+		cram_batch_fname = "batch-%s-crams.txt"%i
+		cram_index_batch_fname = "batch-%s-crams-indices.txt"%i
+		with open(cram_batch_fname, "w"):
+			for item in cram_batches[i]:
+				f.write(item.strip()+"\n")
+		with open(cram_index_batch_fname, "w"):
+			for item in cram_idx_batches[i]:
+				f.write(item.strip()+"\n")
+		if gsprefix is not None:
+			UploadGS(cram_batch_fname, gsprefix + "/" + cram_batch_fname)
+			UploadGS(cram_index_batch_fname, gsprefix + "/" + cram_index_batch_fname)
+		cram_batches_paths.append(gsprefix + "/" + cram_batch_fname)
+		cram_idx_batches_paths.append(gsprefix + "/" + cram_index_batch_fname)
+	return cram_batches_paths, cram_idx_batches_paths
 
 def RunWorkflow(json_file, json_options_file):
 	"""
@@ -111,7 +129,7 @@ def RunWorkflow(json_file, json_options_file):
 	output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
 	print(output.decode("utf-8"))
 
-def UploadTRBed(tr_bedfile, tr_bedfile_gcs):
+def UploadGS(tr_bedfile, tr_bedfile_gcs):
 	cmd = "gsutil cp {src} {dest}".format(src=tr_bedfile, dest=tr_bedfile_gcs)
 	output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
 	print(output.decode("utf-8"))	
@@ -133,6 +151,7 @@ def main():
 		"Format: person_id,cram_uri,cram_index_uri", type=str, required=True)
 	parser.add_argument("--genome-id", help="File id of ref genome", type=str, default="gs://genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.fasta")
 	parser.add_argument("--genome-idx-id", help="File id of ref genome index", type=str, default="gs://genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.fasta.fai")
+	parser.add_argument("--dryrun", help="Don't actually run the workflow. Just set up", action="store_true")
 	args = parser.parse_args()
 
 	# Set up output bucket
@@ -145,7 +164,7 @@ def main():
 	tr_bedfile = args.name+".bed"
 	tr_bedfile_gcs = output_bucket + "/" + args.name + "/" + tr_bedfile
 	WriteTRBed(args.region, args.period, args.refcopies, args.name, tr_bedfile)
-	UploadTRBed(tr_bedfile, tr_bedfile_gcs)
+	UploadGS(tr_bedfile, tr_bedfile_gcs)
 
 	# Set up workflow JSON
 	json_dict = {}
@@ -159,8 +178,10 @@ def main():
 	json_dict["targetTR.GCS_OAUTH_TOKEN"] = token
 
 	# Set up batches of files
-	cram_batches, cram_idx_batches = GetFileBatches(args.file_list, int(args.batch_size), int(args.batch_num))
-	json_dict["targetTR.cram_file_batches_str"] = cram_batches
+	cram_batches_paths, cram_idx_batches_paths = \
+		GetFileBatches(args.file_list, int(args.batch_size), int(args.batch_num), \
+			gsprefix = output_bucket + "/" + args.name + "/")
+	json_dict["targetTR.cram_file_batches_str"] = cram_batches_paths
 
 	# Convert to json and save as a file
 	json_file = args.name+".aou.json"
@@ -174,7 +195,7 @@ def main():
 		json.dump(json_options_dict, f, indent=4)
 
 	# Run workflow on AoU using cromwell
-	RunWorkflow(json_file, json_options_file)
+	if not args.dryrun: RunWorkflow(json_file, json_options_file)
 
 if __name__ == "__main__":
 	main()
