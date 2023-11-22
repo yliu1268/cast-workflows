@@ -74,10 +74,10 @@ task hipstr {
       # If using AOU, get bamfiles from bams_str
       bams_input=~{sep=',' bams}
       if [[ "~{using_aou}" == true ]] ; then
-        bams_input=~{sep=',' bams_str}
+        #bams_input=~{sep=',' bams_str}
+        bams_input=$(paste -sd, ~{bams_file})
         export GCS_REQUESTER_PAYS_PROJECT=~{GOOGLE_PROJECT}
         export GCS_OAUTH_TOKEN=~{GCS_OAUTH_TOKEN}
-        echo "Using project: ${GCS_REQUESTER_PAYS_PROJECT}"
       fi
       HipSTR \
           --bams ${bams_input} \

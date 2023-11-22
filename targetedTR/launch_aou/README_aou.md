@@ -40,3 +40,10 @@ export GCS_REQUESTER_PAYS_PROJECT=${GOOGLE_PROJECT};
   --file-list manifest.csv
 ```
 (AoU use batch-size 300)
+
+# TDL
+
+* remove raw urls to wdl dependencies
+* rename aou/ukb options to be more general
+* document all wdl options
+* test new aou workflow on ukb
