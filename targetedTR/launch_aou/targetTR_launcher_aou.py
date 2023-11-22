@@ -16,8 +16,9 @@ Desired usage:
 
 import argparse
 import json
-import os 
+import os
 import subprocess
+import sys
 
 def ParseRegion(str_region):
 	"""
@@ -113,7 +114,7 @@ def GetFileBatches(file_list, batch_size, batch_num=-1, gsprefix=None):
 		cram_idx_batches_paths.append(gsprefix + "/" + cram_index_batch_fname)
 	return cram_batches_paths, cram_idx_batches_paths
 
-def RunWorkflow(json_file, json_options_file):
+def RunWorkflow(json_file, json_options_file, dryrun=False):
 	"""
 	Run workflow on AoU
 
@@ -123,8 +124,13 @@ def RunWorkflow(json_file, json_options_file):
 	    JSON file path with input arguments
 	name : str
 	    Used to determine where to store output
+	dryrun : bool
+	    Just print the command, don't actually run cromshell
 	"""
 	cmd = "cromshell-alpha submit ../wdl/workflows/targetTR.wdl {json}".format(json=json_file)
+	if dryrun:
+		sys.stderr.write("Run: %s\n"%cmd)
+		return
 	output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
 	print(output.decode("utf-8"))
 
@@ -194,7 +200,7 @@ def main():
 		json.dump(json_options_dict, f, indent=4)
 
 	# Run workflow on AoU using cromwell
-	if not args.dryrun: RunWorkflow(json_file, json_options_file)
+	RunWorkflow(json_file, json_options_file, dryrun=args.dryrun)
 
 if __name__ == "__main__":
 	main()
