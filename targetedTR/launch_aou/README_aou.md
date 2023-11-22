@@ -41,10 +41,16 @@ export GCS_REQUESTER_PAYS_PROJECT=${GOOGLE_PROJECT};
 ```
 (AoU use batch-size 300)
 
+To check the status of your job, you can run:
+```
+cromshell-alpha status $JOBID
+```
+
 # TDL
 
+* where does output go? we don't use json_options_file anymore
 * remove raw urls to wdl dependencies
 * rename aou/ukb options to be more general
-* document all wdl options
 * test new aou workflow on ukb
+* document all wdl options
 * merge to master branch of cast-workflows

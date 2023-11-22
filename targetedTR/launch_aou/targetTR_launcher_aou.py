@@ -122,8 +122,6 @@ def RunWorkflow(json_file, json_options_file, dryrun=False):
 	---------
 	json_file : str
 	    JSON file path with input arguments
-	name : str
-	    Used to determine where to store output
 	dryrun : bool
 	    Just print the command, don't actually run cromshell
 	"""

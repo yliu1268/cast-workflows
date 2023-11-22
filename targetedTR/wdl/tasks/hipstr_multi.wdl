@@ -77,6 +77,7 @@ task hipstr {
         bams_input=$(paste -sd, ~{bams_file})
         export GCS_REQUESTER_PAYS_PROJECT=~{GOOGLE_PROJECT}
         export GCS_OAUTH_TOKEN=~{GCS_OAUTH_TOKEN}
+        echo "Using project: ${GCS_REQUESTER_PAYS_PROJECT}"
       fi
       HipSTR \
           --bams ${bams_input} \
