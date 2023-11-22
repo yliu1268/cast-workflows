@@ -1,16 +1,21 @@
 # TargetTR on All of Us workbench
 
-All of this must be run on the workbench itself. Once in the workbench,start both cromwell and cloud environment. Open notebook and add cromwell setup snippet. Run the cell and launch a terminal session and do the following.
+All of this must be run on the workbench itself. Once in the workbench, before running the commands below:
+
+* Start the cromwell environment (pink circle icon on the right).
+* Start a cloud environment (Jupyter icon on the right). The instructions below were tested tih the "Recommended environment" with 4 CPUs/26GB RAM.
+* Navigate to the "Analysis" tab in the workspace and open the "cromwell.ipynb" notebook. Run the first cell to configure cromshell. 
+* Open a terminal (terminal icon on the right) and run the commands below.
  
 1. Clone the github and navigate to the launch directory.
 
 ```
-cd workspaces/impactofglobalandlocalancestryongenomewideassociationv6studies/
+cd workspaces/impactofglobalandlocalancestryongenomewideassociationv7v6studies
 mkdir mgymrek-workspace
 cd mgymrek-workspace/
 git clone https://github.com/cast-genomics/cast-workflows/
 cd cast-workflows/
-git checkout nichole/cromshell
+git checkout mgymrek/cromshell
 cd targetedTR/launch_aou
 ```
 
