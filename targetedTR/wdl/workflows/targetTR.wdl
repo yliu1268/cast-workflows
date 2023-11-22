@@ -1,11 +1,5 @@
 version 1.0
 
-#### AoU
-# make a notebook launcher. since apparently other things go away?
-
-# Hipstr mergefix broke with only one record
-#  commenting for now, need to bring back
-
 import "https://raw.githubusercontent.com/CAST-genomics/cast-workflows/nichole/cromshell/targetedTR/wdl/tasks/hipstr_multi.wdl" as hipstr_multi_t
 import "https://raw.githubusercontent.com/CAST-genomics/cast-workflows/nichole/cromshell/targetedTR/wdl/tasks/merge_hipstr.wdl" as merge_t
 import "https://raw.githubusercontent.com/CAST-genomics/cast-workflows/nichole/cromshell/targetedTR/wdl/tasks/dumpstr.wdl" as dumpstr_t
@@ -18,9 +12,9 @@ workflow targetTR {
 		File genome
 		File genome_index
 		File tr_bed
-    	Boolean aou_names = false
+    	Boolean ukb_names = false
     	Boolean using_aou = false
-    	Array[Array[String]] cram_file_batches_str = []
+    	Array[File] cram_file_batches_str = []
     	String GOOGLE_PROJECT = ""
     	String GCS_OAUTH_TOKEN = ""
 	}
@@ -31,7 +25,7 @@ workflow targetTR {
 		else length(cram_file_batches)
 	scatter(i in range(num_batches)) {
 		if (using_aou) {
-			Array[String] crams_str = cram_file_batches_str[i]
+			File crams_file = cram_file_batches_str[i]
 		}
 		if (!using_aou) {
 			Array[File] crams = cram_file_batches[i]
@@ -45,9 +39,9 @@ workflow targetTR {
 				genome_index=genome_index,
 				str_ref=tr_bed,
 				out_prefix=str_name+".BATCH"+i,
-        		aou_names = aou_names,
+        		ukb_names = ukb_names,
         		using_aou = using_aou,
-        		bams_str = crams_str,
+        		bams_file = crams_file,
         		GOOGLE_PROJECT = GOOGLE_PROJECT,
         		GCS_OAUTH_TOKEN = GCS_OAUTH_TOKEN
 		}

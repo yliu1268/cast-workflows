@@ -8,9 +8,9 @@ workflow run_hipstr {
         File genome_index
         File str_ref
         String out_prefix
-        Boolean aou_names = false
+        Boolean ukb_names = false
         Boolean using_aou = false
-        Array[String] bams_str = []
+        File? bams_file
         String GOOGLE_PROJECT = ""
         String GCS_OAUTH_TOKEN = ""
     }
@@ -23,9 +23,9 @@ workflow run_hipstr {
           genome_index=genome_index,
           str_ref=str_ref,
           out_prefix=out_prefix,
-          aou_names=aou_names,
+          ukb_names=ukb_names,
           using_aou=using_aou,
-          bams_str=bams_str,
+          bams_file=bams_file,
           GOOGLE_PROJECT=GOOGLE_PROJECT,
           GCS_OAUTH_TOKEN=GCS_OAUTH_TOKEN
     }
@@ -53,16 +53,16 @@ task hipstr {
         File genome_index
         File str_ref
         String out_prefix
-        Boolean aou_names = false
+        Boolean ukb_names = false
         Boolean using_aou = false
-        Array[String] bams_str = []
+        File? bams_file
         String GOOGLE_PROJECT = ""
         String GCS_OAUTH_TOKEN = ""
     } 
 
     command <<<
       samps_flags=""
-      if [[ "~{aou_names}" == true ]] ; then
+      if [[ "~{ukb_names}" == true ]] ; then
         samps=""
         for bam in ~{sep=" " bams} ; do
           samps="${samps},$(basename "${bam}" | cut -f 1 -d _)"

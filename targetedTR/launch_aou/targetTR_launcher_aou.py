@@ -124,7 +124,6 @@ def RunWorkflow(json_file, json_options_file):
 	name : str
 	    Used to determine where to store output
 	"""
-	conf_file = "/home/jupyter/cromwell.conf"
 	cmd = "cromshell-alpha submit ../wdl/workflows/targetTR.wdl {json}".format(json=json_file)
 	output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
 	print(output.decode("utf-8"))
@@ -173,14 +172,14 @@ def main():
 	json_dict["targetTR.tr_bed"] = tr_bedfile_gcs
 	json_dict["targetTR.str_name"] = args.name
 	json_dict["targetTR.using_aou"] = True
-	json_dict["targetTR.aou_names"] = True
+	json_dict["targetTR.ukb_names"] = False
 	json_dict["targetTR.GOOGLE_PROJECT"] = project
 	json_dict["targetTR.GCS_OAUTH_TOKEN"] = token
 
 	# Set up batches of files
 	cram_batches_paths, cram_idx_batches_paths = \
 		GetFileBatches(args.file_list, int(args.batch_size), int(args.batch_num), \
-			gsprefix = output_bucket + "/" + args.name + "/")
+			gsprefix = output_bucket + "/" + args.name)
 	json_dict["targetTR.cram_file_batches_str"] = cram_batches_paths
 
 	# Convert to json and save as a file
