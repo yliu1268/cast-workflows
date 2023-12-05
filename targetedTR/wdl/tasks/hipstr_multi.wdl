@@ -93,6 +93,7 @@ task hipstr {
         memory: "25 GB"
         cpu: 2
 	maxRetries: 3
+	preemptible: 3
     }
 
     output {
