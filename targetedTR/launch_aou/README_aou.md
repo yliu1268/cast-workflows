@@ -4,7 +4,7 @@ All of this must be run on the workbench itself. Once in the workbench, before r
 
 * Start the cromwell environment (pink circle icon on the right).
 * Start a cloud environment (Jupyter icon on the right). The instructions below were tested tih the "Recommended environment" with 4 CPUs/26GB RAM.
-* Navigate to the "Analysis" tab in the workspace and open the "cromwell.ipynb" notebook. Run the first cell to configure cromshell. 
+* Navigate to the "Analysis" tab in the workspace and open the "cromshell.ipynb" notebook. Run the first cell to configure cromshell. 
 * Open a terminal (terminal icon on the right) and run the commands below.
  
 1. Clone the github and navigate to the launch directory.
@@ -15,7 +15,7 @@ mkdir mgymrek-workspace
 cd mgymrek-workspace/
 git clone https://github.com/cast-genomics/cast-workflows/
 cd cast-workflows/
-git checkout mgymrek/cromshell
+git checkout nichole/cromshell3
 cd targetedTR/launch_aou
 ```
 
@@ -43,12 +43,20 @@ export GCS_REQUESTER_PAYS_PROJECT=${GOOGLE_PROJECT};
 
 To check the status of your job, you can run:
 ```
-cromshell-alpha status $JOBID
+cromshell status $JOBID
+```  
+       
+To check medata and log, you can run:
 ```
+cromshell -t 20 metadata $JOBID
+cromshell logs -s ALL $JOBID
+```
+List all output files produced by a workflow, you can run:
+cromshell list-outputs $JOBID
 
 # TDL
 
-* where does output go? we don't use json_options_file anymore
+
 * remove raw urls to wdl dependencies
 * rename aou/ukb options to be more general
 * test new aou workflow on ukb

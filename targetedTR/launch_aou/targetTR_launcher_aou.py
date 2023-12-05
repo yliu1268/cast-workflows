@@ -192,11 +192,7 @@ def main():
 		json.dump(json_dict, f, indent=4)
 
 	# Set up json options
-	json_options_dict = {"jes_gcs_root": output_bucket,
-			     "final_workflow_outputs_dir": "bucket/cromwell/outputs",
-    			     "use_relative_output_paths": true,
-    			     "final_workflow_log_dir": "bucket/cromwell/wf_logs",
-    			     "final_call_logs_dir": "bucket/cromwell/call_logs"}}
+	json_options_dict = {"jes_gcs_root": output_bucket}
 	json_options_file = args.name+".options.aou.json"
 	with open(json_options_file, "w") as f:
 		json.dump(json_options_dict, f, indent=4)
