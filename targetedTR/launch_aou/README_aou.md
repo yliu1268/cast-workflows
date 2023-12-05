@@ -52,8 +52,9 @@ cromshell -t 20 metadata $JOBID
 cromshell logs -s ALL $JOBID
 ```
 List all output files produced by a workflow, you can run:
+```
 cromshell list-outputs $JOBID
-
+```
 # TDL
 
 
