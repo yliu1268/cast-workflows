@@ -94,6 +94,7 @@ task hipstr {
         cpu: 3
 	maxRetries: 3
 	preemptible: 3
+	continueOnReturnCode: true
     }
 
     output {
