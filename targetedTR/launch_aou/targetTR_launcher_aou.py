@@ -43,7 +43,8 @@ def ParseRegion(str_region):
 	end = int(str_region.split(":")[1].split("-")[1])
 	return chrom, start, end
 
-def GetFileBatches(file_list, batch_size, batch_num=-1, gsprefix=None):
+def GetFileBatches(file_list, batch_size, \
+	batch_num=-1, gsprefix=None, action="both"):
 	"""
 	Given a file containing a list of file IDs for the 
 	crams and their indices, divide into batches of 
@@ -60,13 +61,18 @@ def GetFileBatches(file_list, batch_size, batch_num=-1, gsprefix=None):
 	   Number of batches to create. If -1, make batches
 	   out of everything. Primarily used for debugging
 	   to make small test sets
+	gsprefix : str
+	   Prefix to upload to google cloud
+	action : str
+	   If set to "run-batches", we don't actually
+	   need to create any files, just return file names
 
 	Returns
 	-------
-	cram_batches : list of str (GCP paths)
+	cram_batches_paths : list of str (GCP paths)
 	   Each path links to a google cloud file listing the
 	   crams to be processed
-	cram_idx_batches : list of str (GCP paths)
+	cram_idx_batches_paths : list of str (GCP paths)
 	   Each path links to a google cloud file listing the
 	   indices of crams to be processed
 	"""
@@ -101,15 +107,20 @@ def GetFileBatches(file_list, batch_size, batch_num=-1, gsprefix=None):
 	for i in range(len(cram_batches)):
 		cram_batch_fname = "batch-%s-crams.txt"%i
 		cram_index_batch_fname = "batch-%s-crams-indices.txt"%i
-		with open(cram_batch_fname, "w") as f:
-			for item in cram_batches[i]:
-				f.write(item.strip()+"\n")
-		with open(cram_index_batch_fname, "w") as f:
-			for item in cram_idx_batches[i]:
-				f.write(item.strip()+"\n")
-		if gsprefix is not None:
-			UploadGS(cram_batch_fname, gsprefix + "/" + cram_batch_fname)
-			UploadGS(cram_index_batch_fname, gsprefix + "/" + cram_index_batch_fname)
+		##### only actually generate batch files
+		##### if action is either "create-batches"
+		##### or "both"
+		if action in ["both", "create-batches"]:
+			with open(cram_batch_fname, "w") as f:
+				for item in cram_batches[i]:
+					f.write(item.strip()+"\n")
+			with open(cram_index_batch_fname, "w") as f:
+				for item in cram_idx_batches[i]:
+					f.write(item.strip()+"\n")
+			if gsprefix is not None:
+				UploadGS(cram_batch_fname, gsprefix + "/" + cram_batch_fname)
+				UploadGS(cram_index_batch_fname, gsprefix + "/" + cram_index_batch_fname)
+		##########################
 		cram_batches_paths.append(gsprefix + "/" + cram_batch_fname)
 		cram_idx_batches_paths.append(gsprefix + "/" + cram_index_batch_fname)
 	return cram_batches_paths, cram_idx_batches_paths
@@ -154,14 +165,28 @@ def main():
 		"Format: person_id,cram_uri,cram_index_uri", type=str, required=True)
 	parser.add_argument("--genome-id", help="File id of ref genome", type=str, default="gs://genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.fasta")
 	parser.add_argument("--genome-idx-id", help="File id of ref genome index", type=str, default="gs://genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.fasta.fai")
+	parser.add_argument("--action", help="Options: create-batches, run-batches, both", type=str, default="both")
 	parser.add_argument("--dryrun", help="Don't actually run the workflow. Just set up", action="store_true")
 	args = parser.parse_args()
+
+	# Check if action is valid
+	if args.action not in ["create-batches", "run-batches", "both"]:
+		sys.stderr.write("Invalid action: %s\n"%args.action)
+		sys.exit(1)
 
 	# Set up output bucket
 	bucket = os.getenv("WORKSPACE_BUCKET")
 	project = os.getenv("GOOGLE_PROJECT")
 	token = os.getenv("GCS_OAUTH_TOKEN")
 	output_bucket = bucket + "/" + args.name
+
+	# Set up batches of files
+	cram_batches_paths, cram_idx_batches_paths = \
+		GetFileBatches(args.file_list, int(args.batch_size), int(args.batch_num), \
+			gsprefix = output_bucket + "/" + args.name +"/" + args.batch_size, args.action)
+	if action == "create-batches":
+		# We're done! quit before running jobs
+		sys.exit(1)
 
 	# Generate TR Bed file
 	tr_bedfile = args.name+".bed"
@@ -179,11 +204,6 @@ def main():
 	json_dict["targetTR.ukb_names"] = False
 	json_dict["targetTR.GOOGLE_PROJECT"] = project
 	json_dict["targetTR.GCS_OAUTH_TOKEN"] = token
-
-	# Set up batches of files
-	cram_batches_paths, cram_idx_batches_paths = \
-		GetFileBatches(args.file_list, int(args.batch_size), int(args.batch_num), \
-			gsprefix = output_bucket + "/" + args.name)
 	json_dict["targetTR.cram_file_batches_str"] = cram_batches_paths
 
 	# Convert to json and save as a file
