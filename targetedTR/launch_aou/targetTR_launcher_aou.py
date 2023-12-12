@@ -184,7 +184,7 @@ def main():
 	cram_batches_paths, cram_idx_batches_paths = \
 		GetFileBatches(args.file_list, int(args.batch_size), int(args.batch_num), \
 			gsprefix = output_bucket + "/" + args.name +"/" + str(args.batch_size), action=args.action)
-	if action == "create-batches":
+	if args.action == "create-batches":
 		# We're done! quit before running jobs
 		sys.exit(1)
 
