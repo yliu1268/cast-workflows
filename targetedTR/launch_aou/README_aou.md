@@ -15,13 +15,13 @@ mkdir mgymrek-workspace
 cd mgymrek-workspace/
 git clone https://github.com/cast-genomics/cast-workflows/
 cd cast-workflows/
-git checkout nichole/cromshell3
+git checkout mgymrek/cromshell3
 cd targetedTR/launch_aou
 ```
 
 2. Copy the `manifest.csv` file with the CRAM paths to the launch directory.
 ```
-gsutil -u $GOOGLE_PROJECT cp gs://fc-aou-datasets-controlled/v6/wgs/cram/manifest.csv .
+gsutil -u $GOOGLE_PROJECT cp gs://fc-aou-datasets-controlled/v7/wgs/cram/manifest.csv .
 ```
 
 3. Run a test job:
@@ -38,6 +38,7 @@ export GCS_REQUESTER_PAYS_PROJECT=${GOOGLE_PROJECT};
   --batch-size 2 \
   --batch-num 2 \
   --file-list manifest.csv
+  --action run-batches (create-batches,both)
 ```
 (AoU use batch-size 300)
 
@@ -48,12 +49,19 @@ cromshell status $JOBID
        
 To check medata and log, you can run:
 ```
-cromshell -t 20 metadata $JOBID
+cromshell -t 20 metadata $JOBID (increase -t timeout for large batches)
+cromshell slim-metadata $JOBID
 cromshell logs -s ALL $JOBID
+
 ```
 List all output files produced by a workflow, you can run:
 ```
 cromshell list-outputs $JOBID
+```
+
+To get the summarized status of all jobs in the workflow:
+```
+cromshell count $JOBID
 ```
 # TDL
 
