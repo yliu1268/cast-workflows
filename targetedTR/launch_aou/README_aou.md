@@ -37,8 +37,8 @@ export GCS_REQUESTER_PAYS_PROJECT=${GOOGLE_PROJECT};
   --name CBL-mini \
   --batch-size 2 \
   --batch-num 2 \
-  --file-list manifest.csv
-  --action run-batches (create-batches,both)
+  --file-list manifest.csv \
+  --action run-batches --dryrun
 ```
 (AoU use batch-size 300)
 
