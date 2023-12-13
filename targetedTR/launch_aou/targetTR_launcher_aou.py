@@ -17,8 +17,10 @@ Desired usage:
 import argparse
 import json
 import os
+import shutil
 import subprocess
 import sys
+import tempfile
 
 def ParseRegion(str_region):
 	"""
@@ -125,7 +127,7 @@ def GetFileBatches(file_list, batch_size, \
 		cram_idx_batches_paths.append(gsprefix + "/" + cram_index_batch_fname)
 	return cram_batches_paths, cram_idx_batches_paths
 
-def RunWorkflow(json_file, json_options_file, dryrun=False):
+def RunWorkflow(json_file, json_options_file, wdl_dependencies_file, dryrun=False):
 	"""
 	Run workflow on AoU
 
@@ -136,7 +138,7 @@ def RunWorkflow(json_file, json_options_file, dryrun=False):
 	dryrun : bool
 	    Just print the command, don't actually run cromshell
 	"""
-	cmd = "cromshell submit ../wdl/workflows/targetTR.wdl {json}".format(json=json_file)
+	cmd = "cromshell submit ../wdl/workflows/targetTR.wdl {json} {options} {otherwdl}".format(json=json_file, options=json_options_file, otherwdl=wdl_dependencies_file)
 	if dryrun:
 		sys.stderr.write("Run: %s\n"%cmd)
 		return
@@ -152,6 +154,21 @@ def WriteTRBed(region, period, refcopies, name, filename):
 	chrom, start, end = ParseRegion(region)
 	with open(filename, "w") as f:
 		f.write("\t".join([chrom, str(start), str(end), str(period), str(refcopies), name])+"\n")
+
+def ZipWDL(wdl_dependencies_file):
+	"""
+	Put all WDL dependencies into a zip file
+
+	Arguments
+	---------
+	wdl_dependencies_fie : str
+	    Zip file to put other wdls in
+	"""
+	files = ["hipstr_multi.wdl", "merge_hipstr.wdl", "dumpstr.wdl"]
+	dirname = tempfile.mkdtemp()
+	for f in files:
+		shutil.copyfile("../wdl/%s"%f, dirname)
+	shutil.make_archive(wdl_dependencies_file.strip(".wdl"), "zip", root_dir=dirname)
 
 def main():
 	parser = argparse.ArgumentParser(__doc__)
@@ -212,13 +229,17 @@ def main():
 		json.dump(json_dict, f, indent=4)
 
 	# Set up json options
-	json_options_dict = {"jes_gcs_root": output_bucket}
+	json_options_dict = {}
 	json_options_file = args.name+".options.aou.json"
 	with open(json_options_file, "w") as f:
 		json.dump(json_options_dict, f, indent=4)
 
+	# Zip all the WDL depencies
+	wdl_dependencies_file = args.name + "-wdl.zip"
+	ZipWDL(wdl_dependencies_file)
+
 	# Run workflow on AoU using cromwell
-	RunWorkflow(json_file, json_options_file, dryrun=args.dryrun)
+	RunWorkflow(json_file, json_options_file, wdl_dependencies_file, dryrun=args.dryrun)
 
 if __name__ == "__main__":
 	main()

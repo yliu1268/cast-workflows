@@ -1,12 +1,8 @@
 version 1.0
 
-import "https://raw.githubusercontent.com/CAST-genomics/cast-workflows/mgymrek/cromshell/targetedTR/wdl/tasks/hipstr_multi.wdl" as hipstr_multi_t
-import "https://raw.githubusercontent.com/CAST-genomics/cast-workflows/mgymrek/cromshell/targetedTR/wdl/tasks/merge_hipstr.wdl" as merge_t
-import "https://raw.githubusercontent.com/CAST-genomics/cast-workflows/mgymrek/cromshell/targetedTR/wdl/tasks/dumpstr.wdl" as dumpstr_t
-
-#import "../tasks/hipstr_multi.wdl" as hipstr_multi_t
-#import "../tasks/merge_hipstr.wdl" as merge_t
-#import "../tasks/dumpstr.wdl" as dumpstr_t
+import "hipstr_multi.wdl" as hipstr_multi_t
+import "merge_hipstr.wdl" as merge_t
+import "dumpstr.wdl" as dumpstr_t
 
 workflow targetTR {
 	input {
