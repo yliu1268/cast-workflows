@@ -127,7 +127,7 @@ def GetFileBatches(file_list, batch_size, \
 		cram_idx_batches_paths.append(gsprefix + "/" + cram_index_batch_fname)
 	return cram_batches_paths, cram_idx_batches_paths
 
-def RunWorkflow(json_file, json_options_file, wdl_dependencies_file, dryrun=False):
+def RunWorkflow(json_file, json_options_file, wdl_dependencies_file="", dryrun=False):
 	"""
 	Run workflow on AoU
 
@@ -135,10 +135,16 @@ def RunWorkflow(json_file, json_options_file, wdl_dependencies_file, dryrun=Fals
 	---------
 	json_file : str
 	    JSON file path with input arguments
+	json_options_file : str
+	    JSON with additional options for cromshell
+	wdl_dependencies_file : str (optional)
+	    Zip file with other WDLs that are imported
 	dryrun : bool
 	    Just print the command, don't actually run cromshell
 	"""
-	cmd = "cromshell submit ../wdl/targetTR.wdl {json} -op {options} -d {otherwdl}".format(json=json_file, options=json_options_file, otherwdl=wdl_dependencies_file)
+	cmd = "cromshell submit ../wdl/targetTR.wdl {json} -op {options}".format(json=json_file, options=json_options_file)
+	if wdl_dependencies_file.strip() != "":
+		cmd += " -d {otherwdl}".format(otherwdl=wdl_dependencies_file)
 	if dryrun:
 		sys.stderr.write("Run: %s\n"%cmd)
 		return
