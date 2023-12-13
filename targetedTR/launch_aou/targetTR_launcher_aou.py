@@ -168,7 +168,7 @@ def ZipWDL(wdl_dependencies_file):
 	dirname = tempfile.mkdtemp()
 	for f in files:
 		shutil.copyfile("../wdl/%s"%f, dirname+"/"+f)
-	shutil.make_archive(wdl_dependencies_file.strip(".wdl"), "zip", root_dir=dirname)
+	shutil.make_archive(wdl_dependencies_file.strip(".zip"), "zip", root_dir=dirname)
 
 def main():
 	parser = argparse.ArgumentParser(__doc__)
