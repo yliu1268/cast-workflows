@@ -136,7 +136,7 @@ def RunWorkflow(json_file, json_options_file, dryrun=False):
 	dryrun : bool
 	    Just print the command, don't actually run cromshell
 	"""
-	cmd = "cromshell-alpha submit ../wdl/workflows/targetTR.wdl {json}".format(json=json_file)
+	cmd = "cromshell submit ../wdl/workflows/targetTR.wdl {json}".format(json=json_file)
 	if dryrun:
 		sys.stderr.write("Run: %s\n"%cmd)
 		return
