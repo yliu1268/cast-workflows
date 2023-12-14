@@ -203,8 +203,7 @@ def main():
 		sys.exit(1)
 
 	# Get token
-	user_email = os.environ.get('PET_SA_EMAIL', default = os.environ['OWNER_EMAIL'])
-	token_fetch_command = subprocess.run(['gcloud', 'auth', 'print-access-token', user_email], \
+	token_fetch_command = subprocess.run(['gcloud', 'auth', 'application-default', 'print-access-token'], \
 		capture_output=True, check=True, encoding='utf-8')
 	token = str.strip(token_fetch_command.stdout)
 
