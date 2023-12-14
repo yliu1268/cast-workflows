@@ -197,10 +197,14 @@ def main():
 		sys.stderr.write("Invalid action: %s\n"%args.action)
 		sys.exit(1)
 
+	# Get token
+	token_fetch_command = subprocess.run(['gcloud', 'auth', 'print-access-token', env['user_email']], \
+		capture_output=True, check=True, encoding='utf-8')
+	token = str.strip(token_fetch_command.stdout)
+
 	# Set up output bucket
 	bucket = os.getenv("WORKSPACE_BUCKET")
 	project = os.getenv("GOOGLE_PROJECT")
-	token = os.getenv("GCS_OAUTH_TOKEN")
 	output_bucket = bucket + "/" + args.name
 
 	# Set up batches of files

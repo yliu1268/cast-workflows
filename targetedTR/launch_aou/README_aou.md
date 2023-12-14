@@ -28,8 +28,6 @@ gsutil -u $GOOGLE_PROJECT cp gs://fc-aou-datasets-controlled/v7/wgs/cram/manifes
 
 ```
 export GCS_OAUTH_TOKEN=$(gcloud auth application-default print-access-token)
-export GCS_REQUESTER_PAYS_PROJECT=${GOOGLE_PROJECT};
-
 ./targetTR_launcher_aou.py \
   --region chr11:119206290-119206323 \
   --period 3 \
@@ -83,7 +81,7 @@ cromshell count $JOBID
 # TDL
 
 * Notes on running full:
-*  seems to get a loy of "RetryableFailure" with segfault that then succeed on later tries. only happens when we run a huge amount at once. wonder if we can decrease batch size, or CPU?, or number of jobs run simultaneously? if that would help
+*  seems to get a loy of "RetryableFailure" with segfault that then succeed on later tries. only happens when we run a huge amount at once. wonder if we can decrease batch size, or CPU?, or number of jobs run simultaneously? if that would help. maybe we overwhelm the system when we submit >800 jobs in parallel?
 * see if we can fix this message No logs with status ['ALL'] found for workflow, try adding the argument '-s ALL' to list logs with any status
 * configuration of environment variables directly in launcher script
 * change names of premade batches
