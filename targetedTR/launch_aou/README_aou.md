@@ -27,7 +27,6 @@ gsutil -u $GOOGLE_PROJECT cp gs://fc-aou-datasets-controlled/v7/wgs/cram/manifes
 3. Run a test job:
 
 ```
-export GCS_OAUTH_TOKEN=$(gcloud auth application-default print-access-token)
 ./targetTR_launcher_aou.py \
   --region chr11:119206290-119206323 \
   --period 3 \
