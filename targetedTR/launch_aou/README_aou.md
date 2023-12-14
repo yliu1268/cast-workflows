@@ -37,10 +37,27 @@ export GCS_REQUESTER_PAYS_PROJECT=${GOOGLE_PROJECT};
   --name CBL-mini \
   --batch-size 2 \
   --batch-num 2 \
-  --file-list manifest.csv \
-  --action run-batches --dryrun
+  --file-list manifest.csv 
 ```
 (AoU use batch-size 300)
+
+Here is a command for a full run
+```
+# First run the below with --action create-batches
+# Then subsequent runs can skip that step with
+# --action run-batches as long as 
+# --batch-size and --name are the same
+# TODO - change to require only batch-size is the same
+# so we can reuse batches across jobs
+./targetTR_launcher_aou.py \
+  --region chr11:119206290-119206323 \
+  --period 3 \
+  --refcopies 11.0 \
+  --name CBL-mini \
+  --batch-size 300 \
+  --file-list manifest.csv \
+  --action run-batches
+```
 
 To check the status of your job, you can run:
 ```
@@ -65,9 +82,13 @@ cromshell count $JOBID
 ```
 # TDL
 
-
-* remove raw urls to wdl dependencies
+* Notes on running full:
+*  seems to get a loy of "RetryableFailure" with segfault that then succeed on later tries. only happens when we run a huge amount at once. wonder if we can decrease batch size, or CPU?, or number of jobs run simultaneously? if that would help
+* see if we can fix this message No logs with status ['ALL'] found for workflow, try adding the argument '-s ALL' to list logs with any status
+* configuration of environment variables directly in launcher script
+* change names of premade batches
 * rename aou/ukb options to be more general
 * test new aou workflow on ukb
 * document all wdl options
 * merge to master branch of cast-workflows
+* github actions for dockers? also move dockers up one directory level so they can be shared by different pipelines?
