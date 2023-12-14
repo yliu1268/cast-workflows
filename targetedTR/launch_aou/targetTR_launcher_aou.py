@@ -103,6 +103,11 @@ def GetFileBatches(file_list, batch_size, \
 			cram_id, idx_id = line.strip().split(",")[1:3]
 			curr_batch_crams.append(cram_id)
 			curr_batch_indices.append(idx_id)
+	# Add any leftovers
+	if len(curr_batch_crams) > 0 and \
+		(len(cram_batches)<batch_num or batch_num==-1):
+		cram_batches.append(curr_batch_crams)
+		cram_idx_batches.append(curr_batch_indices)
 	assert(len(cram_batches) == len(cram_idx_batches))
 	cram_batches_paths = []
 	cram_idx_batches_paths = []
@@ -211,7 +216,7 @@ def main():
 	# Set up batches of files
 	cram_batches_paths, cram_idx_batches_paths = \
 		GetFileBatches(args.file_list, int(args.batch_size), int(args.batch_num), \
-			gsprefix = output_bucket + "/" + args.name +"/" + str(args.batch_size), action=args.action)
+			gsprefix = output_bucket + "/" + "targetTRv7" +"/" + str(args.batch_size), action=args.action)
 	if args.action == "create-batches":
 		# We're done! quit before running jobs
 		sys.exit(1)
