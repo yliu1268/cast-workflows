@@ -78,6 +78,7 @@ task hipstr {
         export GCS_REQUESTER_PAYS_PROJECT=~{GOOGLE_PROJECT}
         export GCS_OAUTH_TOKEN=~{GCS_OAUTH_TOKEN}
         echo "${bams_input}"
+        lscpu # print CPU info
       fi
       HipSTR \
           --bams ${bams_input} \
