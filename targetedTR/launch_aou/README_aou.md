@@ -79,11 +79,20 @@ cromshell count $JOBID
 ```
 # TDL
 
-* configuration of environment variables directly in launcher script. otherwise we get timeout
-* Notes on running full:
+Next attempts:
+* print out chip/hardware info being used to see if it correlates with segfaults?
+* catch 139 (segfault) gracefully and still create good (empty) vcf+index
+
+Notes on running full:
 *  seems to get a loy of "RetryableFailure" with segfault that then succeed on later tries. only happens when we run a huge amount at once. wonder if we can decrease batch size, or CPU?, or number of jobs run simultaneously? if that would help. maybe we overwhelm the system when we submit >800 jobs in parallel?
-* see if we can fix this message No logs with status ['ALL'] found for workflow, try adding the argument '-s ALL' to list logs with any status
-* change names of premade batches
+* what is memoryMin and cpuMin in WDL runtime?
+
+Weird stuff for cromshell logs:
+* "No logs with status ['ALL'] found for workflow, try adding the argument '-s ALL' to list logs with any status"
+* cromshell list status change after I run cromshell status on a particulra job id
+* cromshell logs -s ALL seem to be missing at least one line each time in output
+
+After this works on AoU:
 * rename aou/ukb options to be more general
 * test new aou workflow on ukb
 * document all wdl options
