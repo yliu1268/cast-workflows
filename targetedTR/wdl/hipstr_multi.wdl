@@ -91,7 +91,8 @@ task hipstr {
     runtime {
         docker: "gcr.io/ucsd-medicine-cast/hipstr-gymreklab-gcs"
         memory: "25 GB"
-        cpu: 8
+        memoryMin: "25 GB"
+        cpu: 4
       	maxRetries: 1	
     }
 
