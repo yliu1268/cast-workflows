@@ -81,10 +81,11 @@ cromshell count $JOBID
 
 Next attempts:
 * print out chip/hardware info being used to see if it correlates with segfaults?
+* rerun batch generation for 300
 * catch 139 (segfault) gracefully and still create good (empty) vcf+index
 
 Notes on running full:
-*  seems to get a loy of "RetryableFailure" with segfault that then succeed on later tries. only happens when we run a huge amount at once. wonder if we can decrease batch size, or CPU?, or number of jobs run simultaneously? if that would help. maybe we overwhelm the system when we submit >800 jobs in parallel?
+*  seems to get a lot of "RetryableFailure" with segfault that then succeed on later tries. only happens when we run a huge amount at once. wonder if we can decrease batch size, or CPU?, or number of jobs run simultaneously? if that would help. maybe we overwhelm the system when we submit >800 jobs in parallel?
 * what is memoryMin and cpuMin in WDL runtime?
 
 Weird stuff for cromshell logs:
