@@ -80,6 +80,7 @@ cromshell count $JOBID
 # TDL
 
 Next attempts:
+* make our hipstr use new version of htslib
 * print out chip/hardware info being used to see if it correlates with segfaults?
 * rerun batch generation for 300
 * catch 139 (segfault) gracefully and still create good (empty) vcf+index
