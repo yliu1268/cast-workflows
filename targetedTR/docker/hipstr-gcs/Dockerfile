@@ -27,10 +27,11 @@ RUN ./configure --enable-gcs --enable-s3 --enable-libcurl
 RUN make -j && make install
 
 # Install HipSTR GCS version
-RUN echo "TODO need to clone specific commit"
-RUN git clone -b gcs-htslib-update https://github.com/gymrek-lab/HipSTR.git 
+RUN git clone https://github.com/gymrek-lab/HipSTR.git 
 WORKDIR HipSTR/
+RUN git checkout 2c83bed
 RUN make version
-RUN make
+RUN make -j
 RUN cp HipSTR /usr/local/bin/
-WORKDIR ..  
+WORKDIR ..
+RUN ldconfig
