@@ -31,6 +31,9 @@ workflow targetTR {
 			Array[File] crams = cram_file_batches[i]
 			Array[File] cram_indices = cram_index_batches[i]
 		}
+		Int sleep_seconds = if using_aou
+		then i
+		else 0
 		call hipstr_multi_t.run_hipstr as run_hipstr {
 			input :
 				bams=crams,
@@ -43,7 +46,8 @@ workflow targetTR {
         		using_aou = using_aou,
         		bams_file = crams_file,
         		GOOGLE_PROJECT = GOOGLE_PROJECT,
-        		GCS_OAUTH_TOKEN = GCS_OAUTH_TOKEN
+        		GCS_OAUTH_TOKEN = GCS_OAUTH_TOKEN,
+        		sleep_seconds = sleep_seconds
 		}
 	}
 

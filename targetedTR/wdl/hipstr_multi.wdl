@@ -13,6 +13,7 @@ workflow run_hipstr {
         File? bams_file
         String GOOGLE_PROJECT = ""
         String GCS_OAUTH_TOKEN = ""
+        Int? sleep_seconds = 0
     }
 
     call hipstr {
@@ -27,7 +28,8 @@ workflow run_hipstr {
           using_aou=using_aou,
           bams_file=bams_file,
           GOOGLE_PROJECT=GOOGLE_PROJECT,
-          GCS_OAUTH_TOKEN=GCS_OAUTH_TOKEN
+          GCS_OAUTH_TOKEN=GCS_OAUTH_TOKEN,
+          sleep_seconds=sleep_seconds
     }
 
     call sort_index_hipstr {
@@ -58,6 +60,7 @@ task hipstr {
         File? bams_file
         String GOOGLE_PROJECT = ""
         String GCS_OAUTH_TOKEN = ""
+        Int? sleep_seconds = 0
     } 
 
     command <<<
@@ -72,13 +75,13 @@ task hipstr {
       fi
 
       # If using AOU, get bamfiles from bams_file
+      # Also sleep before launching HipSTR
       bams_input=~{sep=',' bams}
       if [[ "~{using_aou}" == true ]] ; then
         bams_input=$(paste -sd, ~{bams_file})
         export GCS_REQUESTER_PAYS_PROJECT=~{GOOGLE_PROJECT}
         export GCS_OAUTH_TOKEN=~{GCS_OAUTH_TOKEN}
-        echo "${bams_input}"
-        lscpu # print CPU info
+        sleep ${sleep_seconds}
       fi
       HipSTR \
           --bams ${bams_input} \
