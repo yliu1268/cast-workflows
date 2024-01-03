@@ -14,14 +14,7 @@ workflow merge_hipstr {
           out_prefix=out_prefix+".merged"
     }
 
-    #call mergefix {
-    #    input :
-    #      vcf=mergestr.outvcf,
-    #      outfile=out_prefix+".merged.vcf"
-    #}
-
     output {
-       #File outfile = mergefix.outvcf 
        File outfile = mergestr.outvcf
     }
 
@@ -35,37 +28,25 @@ task mergestr {
     Array[File] vcfs
     Array[File] vcf_indexes
     String out_prefix
+    Int total = length(vcfs)
   }
 
   command <<<
-      mergeSTR --vcfs ~{sep=',' vcfs} --out ~{out_prefix}
+      touch vcf.list
+      FILEARRAY=(~{sep=' ' vcfs}) # Load array into bash variable
+      for (( c = 0; c < ~{total}; c++ )) # bash array are 0-indexed ;)
+      do
+           echo ${FILEARRAY[$c]} >> vcf.list
+      done
+      mergeSTR --vcfs-list vcf.list --out ~{out_prefix}
   >>>
     
   runtime {
-      docker: "gcr.io/ucsd-medicine-cast/trtools-5.0.1:latest"
+      docker: "gcr.io/ucsd-medicine-cast/trtools-mergestr-files:latest"
       memory: "8 GB"
   }
 
   output {
       File outvcf = "${out_prefix}.vcf"
-  }
-}
-
-task mergefix {
-  input {
-    File vcf
-    String outfile
-  }
-
-  command <<<
-    Hipstr_correction.py ~{vcf} ~{outfile}
-  >>>
-
-  runtime {
-    docker: "gcr.io/ucsd-medicine-cast/ensembletr:latest"
-  }
-
-  output {
-    File outvcf = "${outfile}"
   }
 }
