@@ -79,20 +79,15 @@ cromshell count $JOBID
 ```
 # TDL
 
-Notes on running full:
-*  seems to get a lot of "RetryableFailure" with segfault that then succeed on later tries. only happens when we run a huge amount at once. wonder if we can decrease batch size, or CPU?, or number of jobs run simultaneously? if that would help. maybe we overwhelm the system when we submit >800 jobs in parallel?
-* try lower memory
-
 Weird stuff for cromshell logs:
 * "No logs with status ['ALL'] found for workflow, try adding the argument '-s ALL' to list logs with any status"
 * cromshell list status change after I run cromshell status on a particulra job id
 * cromshell logs -s ALL seem to be missing at least one line each time in output
 
 After this works on AoU:
+* merge to master branch of cast-workflowsdocument all wdl options
 * rename aou/ukb options to be more general
 * can remove batches of batches on UKB with same filenames in file trick as for AoU
 * rerun all the tests since paths have changed and things probably broke
 * test new aou workflow on ukb
-* document all wdl options
-* merge to master branch of cast-workflows
 * github actions for dockers? also move dockers up one directory level so they can be shared by different pipelines?
