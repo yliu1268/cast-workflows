@@ -28,7 +28,7 @@ Additional optional inputs:
 Specifying input sequencing files:
 
 Users must specify input sequencing files (BAM or CRAM) to be processed in one of two ways:
-* . `Array[Array[File]] cram_file_batches` and `Array[Array[File]] cram_index_batches` are lists of lists of CRAM file paths and CRAM file index paths. Each internal list contains files to be processed in a single batch. e.g. to process 6 CRAM files in 2 batches of 3, you would specify:
+* `Array[Array[File]] cram_file_batches` and `Array[Array[File]] cram_index_batches` are lists of lists of CRAM file paths and CRAM file index paths. Each internal list contains files to be processed in a single batch. e.g. to process 6 CRAM files in 2 batches of 3, you would specify:
 
 ```
 cram_file_batches = [["cram1.cram", "cram2.cram", "cram3.cram"], \
@@ -39,7 +39,7 @@ cram_index_batches = [["cram1.crai", "cram2.crai", "cram3.crai"], \
 
   Note when using this set of options, by default files are copied over to the instance where the WDL is running to be processed. If using DNA Nexus, files can be streamed instead of copying. It is not recommended to use these options when streaming is not available, since it will have large and expensive space requirements.
 
-* . `Array[File] cram_file_batches_str`: provides a list of text files, where each text file contains a list of paths (e.g. google cloud paths) to CRAM or BAM files to be processed (one file per line). Notes:
+* `Array[File] cram_file_batches_str`: provides a list of text files, where each text file contains a list of paths (e.g. google cloud paths) to CRAM or BAM files to be processed (one file per line). Notes:
   * If using this option, files are not copied over to the instance. Instead, the strings of the filenames are passed to HipSTR genotyping. TargetTR invokes a version of HipSTR that can read directly from cloud paths.
 
   * This option assumes index files are available at the expected cloud paths (e.g. if `gs://mysample.cram` is one of the filenames, it will expect that `gs://mysample.crai` is available).
