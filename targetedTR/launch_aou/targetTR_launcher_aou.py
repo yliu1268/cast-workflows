@@ -231,9 +231,10 @@ def main():
 	json_dict["targetTR.genome"] = args.genome_id
 	json_dict["targetTR.genome_index"] = args.genome_idx_id
 	json_dict["targetTR.tr_bed"] = tr_bedfile_gcs
-	json_dict["targetTR.str_name"] = args.name
-	json_dict["targetTR.using_aou"] = True
-	json_dict["targetTR.ukb_names"] = False
+	json_dict["targetTR.outprefix"] = args.name
+	json_dict["targetTR.using_batch_files"] = True
+	json_dict["targetTR.sleep_constant"] = 0.5
+	json_dict["targetTR.infer_samps_from_file"] = False
 	json_dict["targetTR.GOOGLE_PROJECT"] = project
 	json_dict["targetTR.GCS_OAUTH_TOKEN"] = token
 	json_dict["targetTR.cram_file_batches_str"] = cram_batches_paths
