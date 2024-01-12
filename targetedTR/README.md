@@ -10,7 +10,7 @@ For most of our use cases, users do not interact with the WDL directly, but rath
 
 ## WDL Inputs
 
-Specifying input sequencing files:
+### Specifying input sequencing files:
 
 Users must specify input sequencing files (BAM or CRAM) to be processed in one of two ways:
 * `Array[Array[File]] cram_file_batches` and `Array[Array[File]] cram_index_batches` are lists of lists of CRAM file paths and CRAM file index paths. Each internal list contains files to be processed in a single batch. e.g. to process 6 CRAM files in 2 batches of 3, you would specify:
@@ -31,7 +31,7 @@ cram_index_batches = [["cram1.crai", "cram2.crai", "cram3.crai"], \
 
   * if reading from non-public Google cloud buckets, you must also set the `String GOOGLE_PROJECT` and `String GCS_OAUTH_TOKEN` variables.
 
-Additional required inputs are:
+### Additional required inputs are:
 
 * `String outprefix`: Output files all start with this string
 
@@ -41,7 +41,7 @@ Additional required inputs are:
 
 * `File tr_bed`: path to bed file used for HipSTR genotyping
 
-Additional optional inputs:
+### Additional optional inputs:
 
 * `Boolean infer_samps_from_file`: If set to `true`, use the BAM/CRAM filenames to infer sample names rather than relying on the read group tag. Set to true for UKB.
 * `Float sleep_constant`: To avoid launching too many jobs at once, HipSTR jobs can sleep for a bit before running. The number of seconds to sleep for each batch is set to `sleep_constant*batch_num`. If `sleep_constant` is 0, jobs will not sleep.
