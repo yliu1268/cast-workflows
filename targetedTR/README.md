@@ -10,21 +10,6 @@ For most of our use cases, users do not interact with the WDL directly, but rath
 
 ## WDL Inputs
 
-Required inputs are:
-
-* `String outprefix`: Output files all start with this string
-
-* `File genome`: path to reference fasta file
-
-* `File genome_index`: path to fasta file index
-
-* `File tr_bed`: path to bed file used for HipSTR genotyping
-
-Additional optional inputs:
-
-* `Boolean infer_samps_from_file`: If set to `true`, use the BAM/CRAM filenames to infer sample names rather than relying on the read group tag. Set to true for UKB.
-* `Float sleep_constant`: To avoid launching too many jobs at once, HipSTR jobs can sleep for a bit before running. The number of seconds to sleep for each batch is set to `sleep_constant*batch_num`. If `sleep_constant` is 0, jobs will not sleep.
-
 Specifying input sequencing files:
 
 Users must specify input sequencing files (BAM or CRAM) to be processed in one of two ways:
@@ -46,6 +31,22 @@ cram_index_batches = [["cram1.crai", "cram2.crai", "cram3.crai"], \
 
   * if reading from non-public Google cloud buckets, you must also set the `String GOOGLE_PROJECT` and `String GCS_OAUTH_TOKEN` variables.
 
+Additional required inputs are:
+
+* `String outprefix`: Output files all start with this string
+
+* `File genome`: path to reference fasta file
+
+* `File genome_index`: path to fasta file index
+
+* `File tr_bed`: path to bed file used for HipSTR genotyping
+
+Additional optional inputs:
+
+* `Boolean infer_samps_from_file`: If set to `true`, use the BAM/CRAM filenames to infer sample names rather than relying on the read group tag. Set to true for UKB.
+* `Float sleep_constant`: To avoid launching too many jobs at once, HipSTR jobs can sleep for a bit before running. The number of seconds to sleep for each batch is set to `sleep_constant*batch_num`. If `sleep_constant` is 0, jobs will not sleep.
+
+## WDL Outputs 
 ## Testing the WDL
 
 To validate the wdl:
