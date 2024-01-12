@@ -20,8 +20,15 @@ Required inputs are:
 
 * `File tr_bed`: path to bed file used for HipSTR genotyping
 
-* Users must specify input sequencing files (BAM or CRAM) to be processed in one of two ways:
-  1. `Array[Array[File]] cram_file_batches` and `Array[Array[File]] cram_index_batches` are lists of lists of CRAM file paths and CRAM file index paths. Each internal list contains files to be processed in a single batch. e.g. to process 6 CRAM files in 2 batches of 3, you would specify:
+Additional optional inputs:
+
+* `Boolean infer_samps_from_file`: If set to `true`, use the BAM/CRAM filenames to infer sample names rather than relying on the read group tag. Set to true for UKB.
+* `Float sleep_constant`: To avoid launching too many jobs at once, HipSTR jobs can sleep for a bit before running. The number of seconds to sleep for each batch is set to `sleep_constant*batch_num`. If `sleep_constant` is 0, jobs will not sleep.
+
+Specifying input sequencing files:
+
+Users must specify input sequencing files (BAM or CRAM) to be processed in one of two ways:
+* . `Array[Array[File]] cram_file_batches` and `Array[Array[File]] cram_index_batches` are lists of lists of CRAM file paths and CRAM file index paths. Each internal list contains files to be processed in a single batch. e.g. to process 6 CRAM files in 2 batches of 3, you would specify:
 
 ```
 cram_file_batches = [["cram1.cram", "cram2.cram", "cram3.cram"], \
@@ -32,18 +39,12 @@ cram_index_batches = [["cram1.crai", "cram2.crai", "cram3.crai"], \
 
   Note when using this set of options, by default files are copied over to the instance where the WDL is running to be processed. If using DNA Nexus, files can be streamed instead of copying. It is not recommended to use these options when streaming is not available, since it will have large and expensive space requirements.
 
-  2. `Array[File] cram_file_batches_str`: provides a list of text files, where each text file contains a list of paths (e.g. google cloud paths) to CRAM or BAM files to be processed (one file per line).
+* . `Array[File] cram_file_batches_str`: provides a list of text files, where each text file contains a list of paths (e.g. google cloud paths) to CRAM or BAM files to be processed (one file per line). Notes:
+  * If using this option, files are not copied over to the instance. Instead, the strings of the filenames are passed to HipSTR genotyping. TargetTR invokes a version of HipSTR that can read directly from cloud paths.
 
-  Note 1: If using this option, files are not copied over to the instance. Instead, the strings of the filenames are passed to HipSTR genotyping. TargetTR invokes a version of HipSTR that can read directly from cloud paths.
+  * This option assumes index files are available at the expected cloud paths (e.g. if `gs://mysample.cram` is one of the filenames, it will expect that `gs://mysample.crai` is available).
 
-  Note 2: this option assumes index files are available at the expected cloud paths (e.g. if `gs://mysample.cram` is one of the filenames, it will expect that `gs://mysample.crai` is available).
-
-  Note 3: if reading from non-public Google cloud buckets, you must also set the `String GOOGLE_PROJECT` and `String GCS_OAUTH_TOKEN` variables.
-
-Additional optional inputs:
-
-* `Boolean infer_samps_from_file`: If set to `true`, use the BAM/CRAM filenames to infer sample names rather than relying on the read group tag. Set to true for UKB.
-* `Float sleep_constant`: To avoid launching too many jobs at once, HipSTR jobs can sleep for a bit before running. The number of seconds to sleep for each batch is set to `sleep_constant*batch_num`. If `sleep_constant` is 0, jobs will not sleep.
+  * if reading from non-public Google cloud buckets, you must also set the `String GOOGLE_PROJECT` and `String GCS_OAUTH_TOKEN` variables.
 
 ## Testing the WDL
 
