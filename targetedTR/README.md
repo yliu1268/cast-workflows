@@ -4,7 +4,7 @@ The goal of TargetTR is to perform tareted genotyping of one or more TRs from ne
 
 1. **Genotype one or more STRs using HipSTR.** TargetTR performs multi-sample calling in batches. This is because using HipSTR to jointly genotype a huge number of samples (e.g. 200,000) is too memory intensive. After genotyping each batch, it uses mergeSTR to combine the output VCF files.
 2. **Perform basic quality filters with dumpSTR.** DumpSTR is invoked with the following best practice filters for HipSTR genotyping: `--hipstr-min-call-Q 0.9 --hipstr-min-call-DP 10 --hipstr-max-call-DP 10000 --hipstr-min-supp-reads 2 --hipstr-max-call-stutter 0.15 --hipstr-max-call-flank-indel 0.15`
-3. **Bgzip and tabix index the output VCF file.**
+3. **Sort, bgzip and tabix index the output VCF file.**
 
 For most of our use cases, users do not interact with the WDL directly, but rather call launcher scripts (see the `launch_ukb` and `launch_aou` folders) which handle setting up inputs and calling the WDL on particular cloud systems. Sections below give additional WDL details which can be helpful for development/testing or debugging.
 
@@ -47,6 +47,11 @@ cram_index_batches = [["cram1.crai", "cram2.crai", "cram3.crai"], \
 * `Float sleep_constant`: To avoid launching too many jobs at once, HipSTR jobs can sleep for a bit before running. The number of seconds to sleep for each batch is set to `sleep_constant*batch_num`. If `sleep_constant` is 0, jobs will not sleep.
 
 ## WDL Outputs 
+
+TargetTR outputs:
+* `outprefix+.filtered.vcf.gz`: Sorted and bgzipped VCF file with TR genotypes
+* `outprefix+.filtered.vcf.gz.tbi` VCF index
+
 ## Testing the WDL
 
 To validate the wdl:
