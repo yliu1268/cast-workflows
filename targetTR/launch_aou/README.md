@@ -1,8 +1,3 @@
-# TODO:
-* do we need to set infer_samps_from_file to True?
-* where to get output
-* add cost info
-
 # Running TargetTR on the All of Us workbench
 
 ## Setup
@@ -122,3 +117,8 @@ To get the summarized status of all jobs in the workflow:
 ```
 cromshell count $JOBID
 ```
+
+# TODO:
+* do we need to set infer_samps_from_file to True?
+* where to get output, how long full job takes
+* add cost info
