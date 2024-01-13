@@ -10,6 +10,19 @@ For most of our use cases, users do not interact with the WDL directly, but rath
 
 ## WDL Inputs
 
+WDL inputs are specified in a JSON file. Below is an example targetTR input json. More details on options are described below:
+
+```
+{
+  "targetTR.cram_file_batches": [["tests/HG00138.cstb.cram","tests/NA12878.cstb.cram","tests/HG00190.cstb.cram"]],
+  "targetTR.cram_index_batches": [["tests/HG00138.cstb.cram.crai","tests/NA12878.cstb.cram.crai","tests/HG00190.cstb.cram.crai"]],
+  "targetTR.genome": "tests/chr21.fa",
+  "targetTR.genome_index": "tests/chr21.fa.fai",
+  "targetTR.outprefix": "CSTB",
+  "targetTR.tr_bed": "tests/CSTB-mini.bed"
+}
+```
+
 ### Specifying input sequencing files:
 
 Users must specify input sequencing files (BAM or CRAM) to be processed in one of two ways:
@@ -44,7 +57,7 @@ cram_index_batches = [["cram1.crai", "cram2.crai", "cram3.crai"], \
 ### Additional optional inputs:
 
 * `Boolean infer_samps_from_file`: If set to `true`, use the BAM/CRAM filenames to infer sample names rather than relying on the read group tag. Set to true for UKB.
-* `Float sleep_constant`: To avoid launching too many jobs at once, HipSTR jobs can sleep for a bit before running. The number of seconds to sleep for each batch is set to `sleep_constant*batch_num`. If `sleep_constant` is 0, jobs will not sleep.
+* `Float sleep_const`: To avoid launching too many jobs at once, HipSTR jobs can sleep for a bit before running. The number of seconds to sleep for each batch is set to `sleep_constant*batch_num`. If `sleep_const` is 0, jobs will not sleep.
 
 ## WDL Outputs 
 
@@ -53,6 +66,8 @@ TargetTR outputs:
 * `outprefix+.filtered.vcf.gz.tbi` VCF index
 
 ## Testing the WDL
+
+Note the validation steps below assume you have the files `womtool-84.jar` and `cromwell-84.jar` in the current directory.
 
 To validate the wdl:
 
@@ -70,7 +85,9 @@ java -jar cromwell-84.jar run -i tests/test_local.json wdl/targetTR.wdl
 # 3 batches of 1 sample each
 java -jar cromwell-84.jar run -i tests/test_local_2.json wdl/targetTR.wdl
 
-# 3 batches of 1 sample each - string input as in AOU analyses
-# This isn't working... file paths change in the dockers
+# Test optional infer_samps_from_file and sleep_constant
+java -jar cromwell-84.jar run -i tests/test_local_3.json wdl/targetTR.wdl
+
+# String input as in AOU analyses
 java -jar cromwell-84.jar run -i tests/test_local_strings.json wdl/targetTR.wdl
 ```

@@ -3,6 +3,8 @@
   "targetTR.cram_index_batches": [["tests/HG00138.cstb.cram.crai"],["tests/NA12878.cstb.cram.crai"],["tests/HG00190.cstb.cram.crai"]],
   "targetTR.genome": "tests/chr21.fa",
   "targetTR.genome_index": "tests/chr21.fa.fai",
-  "targetTR.outprefix": "CSTB2",
-  "targetTR.tr_bed": "tests/CSTB-mini.bed"
+  "targetTR.outprefix": "CSTB3",
+  "targetTR.tr_bed": "tests/CSTB-mini.bed",
+  "targetTR.infer_samps_from_file": true,
+  "targetTR.sleep_const": 0.25
 }
