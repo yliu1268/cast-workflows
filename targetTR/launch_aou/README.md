@@ -61,8 +61,6 @@ The above runs the test TR provided in `test.bed` all samples. You will need to 
   --action run-batches 
 ```
 
-**IMPORTANT**: By default, the launcher runs analysis in batches of size 300. Setting up the batches takes a long time (30 minutes) so this has already been precomputed. Setting `--action run-batches` avoids the batch creation step. To run on a different batch size, see "Modifying the batch size" below.
-
 ## Detailed usage for targetTR_launcher_aou.py
 
 Required options:
@@ -88,6 +86,7 @@ You can run the following once to precompute batches for a particular batch size
 ```
 # Note: tr-bed and name are ignored
 # when just creating batches
+# This takes around 30 minutes
 ./targetTR_launcher_aou.py \
   --tr-bed test.bed \
   --name myrunname \
