@@ -78,7 +78,7 @@ task hipstr {
       if [[ "~{infer_samps_from_file}" == true ]] ; then
         samps=""
         for bam in $(echo ${bams_input} | sed 's/,/ /g') ; do
-          samps="${samps},$(basename ${bam})"
+          samps="${samps},$(basename ${bam} | sed 's/wgs_//' | cut -f1 -d'_')"
         done
         samps=${samps:1} # remove beginning excess comma
         samps_flags="--bam-samps ${samps} --bam-libs ${samps}"
