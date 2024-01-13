@@ -16,8 +16,7 @@ In all cases you'll have to run the following steps in the AoU workbench before 
     * Compute type: Standard VM
     * Automatically pause after: 30 minutes
     * Storage disk options: standard disk, 120GB
-3. Open a terminal (terminal icon) and run the commands below.
-4. Clone the github, navigate to the launch directory, and set up cromshell:
+3. Open a terminal (terminal icon) and run the commands below:
 
 ```
 git clone https://github.com/cast-genomics/cast-workflows/
