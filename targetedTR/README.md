@@ -76,7 +76,7 @@ To validate the wdl:
 java -jar womtool-84.jar validate wdl/targetTR.wdl
 ```
 
-To test locally:
+To test locally (note the `test/chr21.fa` file is not in the github because it is too large):
 
 ```
 # One batch of 3 samples
