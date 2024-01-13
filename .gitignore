@@ -1,1 +1,4 @@
 *.swp
+*.jar
+*/cromwell-executions/
+chr21.fa*
