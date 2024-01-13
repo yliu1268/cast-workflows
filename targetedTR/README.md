@@ -6,7 +6,7 @@ The goal of TargetTR is to perform tareted genotyping of one or more TRs from ne
 2. **Perform basic quality filters with dumpSTR.** DumpSTR is invoked with the following best practice filters for HipSTR genotyping: `--hipstr-min-call-Q 0.9 --hipstr-min-call-DP 10 --hipstr-max-call-DP 10000 --hipstr-min-supp-reads 2 --hipstr-max-call-stutter 0.15 --hipstr-max-call-flank-indel 0.15`
 3. **Sort, bgzip and tabix index the output VCF file.**
 
-**For most of our use cases, users do not interact with the WDL described here directly, but rather call launcher scripts (see the [launch_ukb](launch_ukb/README.md) and [launch_aou](laungh_aou/README.md) folders)** which handle setting up inputs and calling the WDL on particular cloud systems. Sections below give additional WDL details which can be helpful for development/testing or debugging.
+**For most of our use cases, users do not interact with the WDL described here directly, but rather call launcher scripts (see the [launch_ukb](launch_ukb/README.md) and [launch_aou](laungh_aou/README.md) instructions)** which handle setting up inputs and calling the WDL on particular cloud systems. Sections below give additional WDL details which can be helpful for development/testing or debugging.
 
 ## WDL Inputs
 
@@ -44,7 +44,7 @@ cram_index_batches = [["cram1.crai", "cram2.crai", "cram3.crai"], \
 
   * if reading from non-public Google cloud buckets, you must also set the `String GOOGLE_PROJECT` and `String GCS_OAUTH_TOKEN` variables.
 
-### Additional required inputs are:
+### Additional required inputs:
 
 * `String outprefix`: Output files all start with this string
 
@@ -62,8 +62,8 @@ cram_index_batches = [["cram1.crai", "cram2.crai", "cram3.crai"], \
 ## WDL Outputs 
 
 TargetTR outputs:
-* `outprefix+.filtered.vcf.gz`: Sorted and bgzipped VCF file with TR genotypes
-* `outprefix+.filtered.vcf.gz.tbi` VCF index
+* `$outprefix.filtered.vcf.gz`: Sorted and bgzipped VCF file with TR genotypes
+* `$outprefix.filtered.vcf.gz.tbi` VCF index
 
 ## Testing the WDL
 
