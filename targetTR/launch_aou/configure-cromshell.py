@@ -95,6 +95,27 @@ def configure_cromwell(env, proxy_url):
      with open(file, 'w') as filetowrite:
         filetowrite.write(json.dumps(configuration, indent=2))
 
+def get_app_details(env, app_name):
+    get_app_url = f'{env["leonardo_url"]}/api/google/v1/apps/{env["google_project"]}/{app_name}'
+    print('start')
+    r = requests.get(
+        get_app_url,
+        params={
+            'includeDeleted': 'true',
+            'role': 'creator'
+        },
+        headers={
+            'Authorization': f'Bearer {env["token"]}'
+        }
+    )
+    if r.status_code == 404:
+        return 'DELETED', None, None, None
+    else:
+        r.raise_for_status()
+    result_json = r.json()
+    custom_environment_variables = result_json['customEnvironmentVariables']
+    return result_json['status'], custom_environment_variables['WORKSPACE_NAMESPACE'], result_json.get('proxyUrls')
+
 def main():
     # Iteration 1: these ENV reads will throw errors if not set.
     env = {
