@@ -32,7 +32,7 @@ It is recommended to first run a small test on a couple samples to make sure eve
   --action both
 ```
 
-This will print out a friendly turtle with the job ID if successful. Use the following to check the status of your job. It will take around 10 minutes to run. If successful the status will eventually change to "Succeeded".
+This will print out a friendly turtle with the job ID if successful. Use the following to check the status of your job. It will take around 10-20 minutes to run. If successful the status will eventually change to "Succeeded".
 
 ```
 cromshell status $JOBID
