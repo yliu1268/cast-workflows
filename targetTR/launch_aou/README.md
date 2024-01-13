@@ -44,6 +44,11 @@ If you see "Failed", you can look at the logs to see what happened:
 cromshell logs -s ALL $JOBID
 ```
 
+If successful, you can find the output VCF at:
+```
+${WORKSPACE_BUCKET}/cromwell-execution/targetTR/${JOBID}/call-sort_index/${JOBNAME}.filtered.sorted.vcf.gz
+```
+
 ## Run a full job on all samples
 
 The above runs the test TR provided in `test.bed` all samples. You will need to change the `--tr-bed` file and `--name` options according to your run.
@@ -119,6 +124,5 @@ cromshell count $JOBID
 ```
 
 # TODO:
-* do we need to set infer_samps_from_file to True?
-* where to get output, how long full job takes
+* how long full job takes
 * add cost info
