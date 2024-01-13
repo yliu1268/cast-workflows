@@ -22,14 +22,15 @@ cd cast-workflows/targetTR/launch_aou
 
 ## Run a small test job
 
-It is recommended to first do a small test on a couple samples to make sure everything is set up correctly. e.g.:
+It is recommended to first run a small test on a couple samples to make sure everything is set up correctly. e.g.:
 
 ```
 ./targetTR_launcher_aou.py \
   --tr-bed test.bed \
   --name mytest \
   --batch-size 2 \
-  --batch-num 2 
+  --batch-num 2 \
+  --action both
 ```
 
 This will print out a friendly turtle with the job ID if successful. Use the following to check the status of your job. It will take around 10 minutes to run. If successful the status will eventually change to "Succeeded".
@@ -38,75 +39,78 @@ This will print out a friendly turtle with the job ID if successful. Use the fol
 cromshell status $JOBID
 ```
 
+If you see "Failed", you can look at the logs to see what happened:
+
+```
+cromshell logs -s ALL $JOBID
+```
+
 ## Run a full job on all samples
 
-TODO - relies on precomputed batches of size 300
-to create new batch size see below
+The above runs the test TR provided in `test.bed` all samples. You will need to change the `--tr-bed` file and `--name` options according to your run.
 
-## Full usage
+```
+./targetTR_launcher_aou.py \
+  --tr-bed test.bed \
+  --name myrunname \
+  --action run-batches 
+```
 
-TODO
+**IMPORTANT**: By default, the launcher runs analysis in batches of size 300. Setting up the batches takes a long time (30 minutes) so this has already been precomputed. Setting `--action run-batches` avoids the batch creation step. To run on a different batch size, see "Modifying the batch size" below.
+
+## Detailed usage for targetTR_launcher_aou.py
+
+Required options:
+* `--name <STRING>`: Name of the run. Used as the prefix to output files.
+* `--tr-bed <PATH>`: Path (local file or GCP path) to BED file of TRs to run (HipSTR reference format). 
+* `--action <STRING>`: One of: `create-batches`, `run-batches`, or `both`. Typically set to `run-batches`. See "Modifying the batch size" below.
+
+Additional input files:
+* `--file-list <PATH>`: GCP path to manifest file describing sequencing data paths. Defaults to the AoU v7 manifest.
+* `--genome-id <PATH>`: GCP path to reference genome. Defaults to a path to `Homo_sapiens_assembly38.fasta`.
+* `--genome-idx-id <PATH>`: GCP path to the index (`.fai`) file of the reference genome.
+
+Additional run options:
+* `--batch-size <INT>`: Number of samples to process in each batch. Default: 300.
+* `--batch-num <INT>`: Number of batches to process. Default: -1 (process all batches). This is helpful to set during debugging to consider a small number of batches.
+* `--dryrun`: Don't actually submit the cromshell job, just print the command that would have been run.
 
 ## Modifying the batch size
 
-TODO
+**NOTE**: By default we use batches of size 300. We do not recommend changing the batch size. If you do so, you might need to also change settings in the WDL (e.g. memory used by HipSTR).
 
-## code TDL
-- default manifest file so no need to copy
-- take in bed file rather than TR details
-- default batch size
-
-
-2. Copy the `manifest.csv` file with the CRAM paths to the launch directory.
+You can run the following once to precompute batches for a particular batch size:
 ```
-gsutil -u $GOOGLE_PROJECT cp gs://fc-aou-datasets-controlled/v7/wgs/cram/manifest.csv .
-```
-
-3. Run a test job:
-
-```
+# Note: tr-bed and name are ignored
+# when just creating batches
 ./targetTR_launcher_aou.py \
-  --region chr11:119206290-119206323 \
-  --period 3 \
-  --refcopies 11.0 \
-  --name CBL-mini \
-  --batch-size 2 \
-  --batch-num 2 \
-  --file-list manifest.csv 
+  --tr-bed test.bed \
+  --name myrunname \
+  --action create-batches --batch-size $batchsize
 ```
-(AoU use batch-size 300)
 
-Here is a command for a full run
+Then, you can use the new batch size in a future run:
 ```
-# First run the below with --action create-batches
-# Then subsequent runs can skip that step with
-# --action run-batches as long as 
-# --batch-size and --name are the same
-# TODO - change to require only batch-size is the same
-# so we can reuse batches across jobs
+# Note: tr-bed and name are ignored
+# when just creating batches
 ./targetTR_launcher_aou.py \
-  --region chr11:119206290-119206323 \
-  --period 3 \
-  --refcopies 11.0 \
-  --name CBL-mini \
-  --batch-size 300 \
-  --file-list manifest.csv \
-  --action run-batches
+  --tr-bed test.bed \
+  --name myrunname \
+  --action run-batches --batch-size $batchsize
 ```
 
-To check the status of your job, you can run:
-```
-cromshell status $JOBID
-```  
-       
-To check medata and log, you can run:
+To run batch creation and the batch jobs at the same time, set `--action both`. This is only recommended for small tests.
+
+## Additional helpful cromshell commands
+
+To check metadata and logs, you can run:
 ```
 cromshell -t 20 metadata $JOBID (increase -t timeout for large batches)
 cromshell slim-metadata $JOBID
 cromshell logs -s ALL $JOBID
-
 ```
-List all output files produced by a workflow, you can run:
+
+To list all output files produced by a workflow:
 ```
 cromshell list-outputs $JOBID
 ```
@@ -115,12 +119,3 @@ To get the summarized status of all jobs in the workflow:
 ```
 cromshell count $JOBID
 ```
-# TDL
-
-Weird stuff for cromshell logs:
-* "No logs with status ['ALL'] found for workflow, try adding the argument '-s ALL' to list logs with any status"
-* cromshell list status change after I run cromshell status on a particulra job id
-* cromshell logs -s ALL seem to be missing at least one line each time in output
-
-After this works on AoU:
-* test new aou workflow on ukb

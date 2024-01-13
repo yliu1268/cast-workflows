@@ -191,7 +191,7 @@ def main():
 		default="gs://fc-aou-datasets-controlled/v7/wgs/cram/manifest.csv")
 	parser.add_argument("--genome-id", help="File id of ref genome", type=str, default="gs://genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.fasta")
 	parser.add_argument("--genome-idx-id", help="File id of ref genome index", type=str, default="gs://genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.fasta.fai")
-	parser.add_argument("--action", help="Options: create-batches, run-batches, both", type=str, default="both")
+	parser.add_argument("--action", help="Options: create-batches, run-batches, both", type=str, required=True)
 	parser.add_argument("--dryrun", help="Don't actually run the workflow. Just set up", action="store_true")
 	args = parser.parse_args()
 
@@ -225,8 +225,11 @@ def main():
 		sys.exit(1)
 
 	# Upload TR bed file
-	tr_bedfile_gcs = output_bucket + "/" + args.name + "/" + args.name + ".bed"
-	UploadGS(args.tr_bed, tr_bedfile_gcs)
+	if args.tr_bed.startswith("gs://"):
+		tr_bedfile_gcs = args.tr_bed
+	else:
+		tr_bedfile_gcs = output_bucket + "/" + args.name + "/" + args.name + ".bed"
+		UploadGS(args.tr_bed, tr_bedfile_gcs)
 
 	# Set up workflow JSON
 	json_dict = {}
