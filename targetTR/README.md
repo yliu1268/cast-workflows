@@ -56,7 +56,12 @@ cram_index_batches = [["cram1.crai", "cram2.crai", "cram3.crai"], \
 
 ### Additional optional inputs:
 
-* `Boolean infer_samps_from_file`: If set to `true`, use the BAM/CRAM filenames to infer sample names rather than relying on the read group tag. Set to true for UKB.
+* `Boolean infer_samps_from_file`: If set to `true`, use the BAM/CRAM filenames to infer sample names rather than relying on the read group tag. This uses the following to parse filenames:
+```
+# AoU crams are e.g. wgs_XXXXX.cram
+# UKB crams are ???
+basename ${bam} | sed 's/wgs_//' | cut -f1 -d'_'
+```
 * `Float sleep_const`: To avoid launching too many jobs at once, HipSTR jobs can sleep for a bit before running. The number of seconds to sleep for each batch is set to `sleep_constant*batch_num`. If `sleep_const` is 0, jobs will not sleep.
 
 ## WDL Outputs 
