@@ -60,6 +60,11 @@ The above runs the test TR provided in `test.bed` all samples. You will need to 
   --action run-batches 
 ```
 
+Note for the full job, you might need to add the `-t` option when checking status so the request doesn't time out, e.g.:
+```
+cromshell -t 200 status $JOBID
+```
+
 ## Detailed usage for targetTR_launcher_aou.py
 
 Required options:
