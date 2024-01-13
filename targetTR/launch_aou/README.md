@@ -1,23 +1,30 @@
-# TargetTR on All of Us workbench
+# Running TargetTR on the All of Us workbench
 
-All of this must be run on the workbench itself. Once in the workbench, before running the commands below:
+## Setup
 
-* Start the cromwell environment (pink circle icon on the right).
-* Start a cloud environment (Jupyter icon on the right). The instructions below were tested tih the "Recommended environment" with 4 CPUs/26GB RAM.
-* Navigate to the "Analysis" tab in the workspace and open the "cromshell.ipynb" notebook. Run the first cell to configure cromshell. 
-* Open a terminal (terminal icon on the right) and run the commands below.
- 
-1. Clone the github and navigate to the launch directory.
+All of these steps must be run in the workbench itself. In all cases you'll have to run the following steps before starting a workflow:
+
+1. Start the cromwell environment (pink circle icon on the right).
+2. Start a cloud environment (Jupyter icon) with:
+  * "General Analysis" environment
+  * 2 CPU/7.5GB RAM
+  * Compute type: Standard VM
+  * Automatically pause after: 30 minutes
+  * Storage disk options: standard disk, 120GB
+3. Open a terminal (terminal icon) and run the commands below.
+4. Clone the github, navigate to the launch directory, and set up cromshell:
 
 ```
-cd workspaces/impactofglobalandlocalancestryongenomewideassociationv7v6studies
-mkdir mgymrek-workspace
-cd mgymrek-workspace/
 git clone https://github.com/cast-genomics/cast-workflows/
-cd cast-workflows/
-git checkout mgymrek/cromshell3
-cd targetedTR/launch_aou
+cd cast-workflows/targetTR/launch_aou
+./configure-cromshell.py
 ```
+
+
+
+
+* Navigate to the "Analysis" tab in the workspace and open the "cromshell.ipynb" notebook. Run the first cell to configure cromshell. 
+ 
 
 2. Copy the `manifest.csv` file with the CRAM paths to the launch directory.
 ```
@@ -85,9 +92,4 @@ Weird stuff for cromshell logs:
 * cromshell logs -s ALL seem to be missing at least one line each time in output
 
 After this works on AoU:
-* merge to master branch of cast-workflowsdocument all wdl options
-* rename aou/ukb options to be more general
-* can remove batches of batches on UKB with same filenames in file trick as for AoU
-* rerun all the tests since paths have changed and things probably broke
 * test new aou workflow on ukb
-* github actions for dockers? also move dockers up one directory level so they can be shared by different pipelines?

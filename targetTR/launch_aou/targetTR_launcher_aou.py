@@ -11,7 +11,6 @@ Desired usage:
   --batch-size 5 \
   --batch-num 3 \
   --file-list manifest.csv
-
 """
 
 import argparse
