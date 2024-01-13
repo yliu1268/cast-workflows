@@ -2,7 +2,7 @@
 
 ## Setup
 
-All of these steps must be run in the workbench itself. In all cases you'll have to run the following steps before starting a workflow:
+In all cases you'll have to run the following steps in the AoU workbench before starting a workflow:
 
 1. Start the cromwell environment (pink circle icon on the right).
 2. Start a cloud environment (Jupyter icon) with:
@@ -20,11 +20,36 @@ cd cast-workflows/targetTR/launch_aou
 ./configure-cromshell.py
 ```
 
+## Run a small test job
 
+It is recommended to first do a small test on a couple samples to make sure everything is set up correctly. e.g.:
 
+```
+./targetTR_launcher_aou.py \
+  --tr-bed test.bed \
+  --name mytest \
+  --batch-size 2 \
+  --batch-num 2 
+```
 
-* Navigate to the "Analysis" tab in the workspace and open the "cromshell.ipynb" notebook. Run the first cell to configure cromshell. 
- 
+## Run a full job on all samples
+
+TODO - relies on precomputed batches of size 300
+to create new batch size see below
+
+## Full usage
+
+TODO
+
+## Modifying the batch size
+
+TODO
+
+## code TDL
+- default manifest file so no need to copy
+- take in bed file rather than TR details
+- default batch size
+
 
 2. Copy the `manifest.csv` file with the CRAM paths to the launch directory.
 ```
