@@ -11,11 +11,11 @@ In all cases you'll have to run the following steps in the AoU workbench before 
 
 1. Start the cromwell environment (pink circle icon on the right).
 2. Start a cloud environment (Jupyter icon) with:
-  * "General Analysis" environment
-  * 2 CPU/7.5GB RAM
-  * Compute type: Standard VM
-  * Automatically pause after: 30 minutes
-  * Storage disk options: standard disk, 120GB
+    * "General Analysis" environment
+    * 2 CPU/7.5GB RAM
+    * Compute type: Standard VM
+    * Automatically pause after: 30 minutes
+    * Storage disk options: standard disk, 120GB
 3. Open a terminal (terminal icon) and run the commands below.
 4. Clone the github, navigate to the launch directory, and set up cromshell:
 
