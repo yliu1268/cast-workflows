@@ -1,4 +1,4 @@
-# Run analysis of a small number of TRs
+# Targeted genotyping of a small number of STRs in large cohorts
 
 The goal of TargetTR is to perform tareted genotyping of one or more TRs from next-generation sequencing data for a cohort of samples. The workflow performs the following steps:
 
