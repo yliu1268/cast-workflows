@@ -32,6 +32,12 @@ It is recommended to first do a small test on a couple samples to make sure ever
   --batch-num 2 
 ```
 
+This will print out a friendly turtle with the job ID if successful. Use the following to check the status of your job. It will take around 10 minutes to run. If successful the status will eventually change to "Succeeded".
+
+```
+cromshell status $JOBID
+```
+
 ## Run a full job on all samples
 
 TODO - relies on precomputed batches of size 300
