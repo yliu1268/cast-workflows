@@ -64,16 +64,6 @@ task hipstr {
     } 
 
     command <<<
-      samps_flags=""
-      if [[ "~{infer_samps_from_file}" == true ]] ; then
-        samps=""
-        for bam in ~{sep=" " bams} ; do
-          samps="${samps},$(basename "${bam}" | cut -f 1 -d _)"
-        done
-        samps=${samps:1} # remove beginning excess comma
-        samps_flags="--bam-samps ${samps} --bam-libs ${samps}"
-      fi
-
       # If using AOU, get bamfiles from bams_file
       # Also sleep before launching HipSTR
       bams_input=~{sep=',' bams}
@@ -83,6 +73,17 @@ task hipstr {
         export GCS_OAUTH_TOKEN=~{GCS_OAUTH_TOKEN}
         sleep ${sleep_seconds}
       fi
+
+      samps_flags=""
+      if [[ "~{infer_samps_from_file}" == true ]] ; then
+        samps=""
+        for bam in $(echo ${bams_input} | sed 's/,/ /g') ; do
+          samps="${samps},$(basename "${bam}" | cut -f 1 -d _)"
+        done
+        samps=${samps:1} # remove beginning excess comma
+        samps_flags="--bam-samps ${samps} --bam-libs ${samps}"
+      fi
+
       HipSTR \
           --bams ${bams_input} \
           --fasta ~{genome} \
