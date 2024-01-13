@@ -6,7 +6,7 @@ The goal of TargetTR is to perform tareted genotyping of one or more TRs from ne
 2. **Perform basic quality filters with dumpSTR.** DumpSTR is invoked with the following best practice filters for HipSTR genotyping: `--hipstr-min-call-Q 0.9 --hipstr-min-call-DP 10 --hipstr-max-call-DP 10000 --hipstr-min-supp-reads 2 --hipstr-max-call-stutter 0.15 --hipstr-max-call-flank-indel 0.15`
 3. **Sort, bgzip and tabix index the output VCF file.**
 
-For most of our use cases, users do not interact with the WDL directly, but rather call launcher scripts (see the `launch_ukb` and `launch_aou` folders) which handle setting up inputs and calling the WDL on particular cloud systems. Sections below give additional WDL details which can be helpful for development/testing or debugging.
+**For most of our use cases, users do not interact with the WDL described here directly, but rather call launcher scripts (see the [launch_ukb](launch_ukb/README.md) and [launch_aou](laungh_aou/README.md) folders)** which handle setting up inputs and calling the WDL on particular cloud systems. Sections below give additional WDL details which can be helpful for development/testing or debugging.
 
 ## WDL Inputs
 
