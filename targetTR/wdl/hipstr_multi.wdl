@@ -74,6 +74,8 @@ task hipstr {
         sleep ${sleep_seconds}
       fi
 
+      # AoU crams are e.g. wgs_XXXXX.cram
+      # UKB crams are ???
       samps_flags=""
       if [[ "~{infer_samps_from_file}" == true ]] ; then
         samps=""
