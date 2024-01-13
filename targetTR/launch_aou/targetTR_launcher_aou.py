@@ -1,16 +1,6 @@
 #!/usr/bin/env python3
 """
 Script to launch AOU targeted TR analysis
-
-Desired usage:
-./targetTR_launcher_aou.py \
-  --region chr21:43776445-43776479 \
-  --period 5 \
-  --refcopies 7.0 \
-  --name CSTB-mini \
-  --batch-size 5 \
-  --batch-num 3 \
-  --file-list manifest.csv
 """
 
 import argparse
@@ -20,29 +10,6 @@ import shutil
 import subprocess
 import sys
 import tempfile
-
-def ParseRegion(str_region):
-	"""
-	Parse region into chrom, start, end
-
-	Arguments
-	---------
-	str_region : str
-	   Region in the format chr:start-end
-
-	Returns
-	-------
-	chrom : str
-	   Chromosome
-	start : int
-	   start coordinate
-	end : int
-	   end coordinate
-	"""
-	chrom = str_region.split(":")[0]
-	start = int(str_region.split(":")[1].split("-")[0])
-	end = int(str_region.split(":")[1].split("-")[1])
-	return chrom, start, end
 
 def GetFileBatches(file_list, batch_size, \
 	batch_num=-1, gsprefix=None, action="both"):
@@ -156,12 +123,30 @@ def RunWorkflow(json_file, json_options_file, wdl_dependencies_file="", dryrun=F
 	print(output.decode("utf-8"))
 
 def DownloadGS(filename):
+	"""
+	Download a GCP path locally
+
+	Arguments
+	---------
+	filename : str
+	   GCP path
+	"""
 	cmd = "gsutil -u $GOOGLE_PROJECT cp {filename} .".format(filename=filename)
 	output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
 	print(output.decode("utf-8"))	
 
-def UploadGS(tr_bedfile, tr_bedfile_gcs):
-	cmd = "gsutil cp {src} {dest}".format(src=tr_bedfile, dest=tr_bedfile_gcs)
+def UploadGS(local_path, gcp_path):
+	"""
+	Upload a local file to GCP
+
+	Arguments
+	---------
+	local_path : str
+	   Local path
+	gcp_path : str
+	   GCP path to upload to
+	"""
+	cmd = "gsutil cp {src} {dest}".format(src=local_path, dest=gcp_path)
 	output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
 	print(output.decode("utf-8"))	
 
