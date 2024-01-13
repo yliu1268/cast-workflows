@@ -157,6 +157,7 @@ def RunWorkflow(json_file, json_options_file, wdl_dependencies_file="", dryrun=F
 
 def DownloadGS(filename):
 	cmd = "gsutil -u $GOOGLE_PROJECT cp ${filename} .".format(filename=filename)
+	print(cmd)
 	output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
 	print(output.decode("utf-8"))	
 
