@@ -238,7 +238,7 @@ def main():
 	json_dict["targetTR.tr_bed"] = tr_bedfile_gcs
 	json_dict["targetTR.outprefix"] = args.name
 	json_dict["targetTR.sleep_const"] = 0.5
-	json_dict["targetTR.infer_samps_from_file"] = False
+	json_dict["targetTR.infer_samps_from_file"] = True
 	json_dict["targetTR.GOOGLE_PROJECT"] = project
 	json_dict["targetTR.GCS_OAUTH_TOKEN"] = token
 	json_dict["targetTR.cram_file_batches_str"] = cram_batches_paths

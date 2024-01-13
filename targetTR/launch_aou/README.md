@@ -1,3 +1,8 @@
+# TODO:
+* do we need to set infer_samps_from_file to True?
+* where to get output
+* add cost info
+
 # Running TargetTR on the All of Us workbench
 
 ## Setup
