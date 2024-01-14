@@ -49,6 +49,11 @@ If successful, you can find the output VCF at:
 ${WORKSPACE_BUCKET}/cromwell-execution/targetTR/${JOBID}/call-sort_index/${JOBNAME}.filtered.sorted.vcf.gz
 ```
 
+You can copy it to your workspace to check it:
+```
+gsutil cp ${WORKSPACE_BUCKET}/cromwell-execution/targetTR/${JOBID}/call-sort_index/${JOBNAME}.filtered.sorted.vcf.gz .
+```
+
 ## Run a full job on all samples
 
 The above runs the test TR provided in `test.bed` all samples. You will need to change the `--tr-bed` file and `--name` options according to your run.
@@ -64,6 +69,8 @@ Note for the full job, you might need to add the `-t` option when checking statu
 ```
 cromshell -t 200 status $JOBID
 ```
+
+The job will take 2-3 hours to run on all samples.
 
 ## Detailed usage for targetTR_launcher_aou.py
 
@@ -129,5 +136,4 @@ cromshell count $JOBID
 ```
 
 # TODO:
-* how long full job takes
 * add cost info
