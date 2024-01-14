@@ -191,8 +191,8 @@ def main():
 	json_dict["stage-common.genome_index"] = {}
 	json_dict["stage-common.genome"] = dxpy.dxlink(args.genome_id)
 	json_dict["stage-common.genome_index"] = dxpy.dxlink(args.genome_idx_id)
-	json_dict["stage-common.str_name"] = args.name
-	json_dict["stage-common.ukb_names"] = True
+	json_dict["stage-common.outprefix"] = args.name
+	json_dict["stage-common.infer_samps_from_file"] = True
 	
 	# Make bed file
 	if args.region:
@@ -226,7 +226,7 @@ def main():
 			if len(curr_cram_batches) == args.max_batches_per_workflow:
 				batch_name = args.name + "-CHUNK%s"%batch_num
 				batch_dict = json_dict.copy()
-				batch_dict["stage-common.str_name"] = batch_name
+				batch_dict["stage-common.outprefix"] = batch_name
 				batch_dict["stage-common.cram_file_batches"] = curr_cram_batches
 				batch_dict["stage-common.cram_index_batches"] = curr_idx_batches
 				if args.concurrent:
@@ -245,7 +245,7 @@ def main():
 		if len(curr_cram_batches) > 0:
 			batch_name = args.name + "-CHUNK%s"%batch_num
 			batch_dict = json_dict.copy()
-			batch_dict["stage-common.str_name"] = batch_name
+			batch_dict["stage-common.outprefix"] = batch_name
 			batch_dict["stage-common.cram_file_batches"] = curr_cram_batches
 			batch_dict["stage-common.cram_index_batches"] = curr_idx_batches
 			if args.concurrent:

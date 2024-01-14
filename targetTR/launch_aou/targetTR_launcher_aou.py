@@ -1,17 +1,6 @@
 #!/usr/bin/env python3
 """
 Script to launch AOU targeted TR analysis
-
-Desired usage:
-./targetTR_launcher_aou.py \
-  --region chr21:43776445-43776479 \
-  --period 5 \
-  --refcopies 7.0 \
-  --name CSTB-mini \
-  --batch-size 5 \
-  --batch-num 3 \
-  --file-list manifest.csv
-
 """
 
 import argparse
@@ -21,29 +10,6 @@ import shutil
 import subprocess
 import sys
 import tempfile
-
-def ParseRegion(str_region):
-	"""
-	Parse region into chrom, start, end
-
-	Arguments
-	---------
-	str_region : str
-	   Region in the format chr:start-end
-
-	Returns
-	-------
-	chrom : str
-	   Chromosome
-	start : int
-	   start coordinate
-	end : int
-	   end coordinate
-	"""
-	chrom = str_region.split(":")[0]
-	start = int(str_region.split(":")[1].split("-")[0])
-	end = int(str_region.split(":")[1].split("-")[1])
-	return chrom, start, end
 
 def GetFileBatches(file_list, batch_size, \
 	batch_num=-1, gsprefix=None, action="both"):
@@ -156,15 +122,33 @@ def RunWorkflow(json_file, json_options_file, wdl_dependencies_file="", dryrun=F
 	output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
 	print(output.decode("utf-8"))
 
-def UploadGS(tr_bedfile, tr_bedfile_gcs):
-	cmd = "gsutil cp {src} {dest}".format(src=tr_bedfile, dest=tr_bedfile_gcs)
+def DownloadGS(filename):
+	"""
+	Download a GCP path locally
+
+	Arguments
+	---------
+	filename : str
+	   GCP path
+	"""
+	cmd = "gsutil -u $GOOGLE_PROJECT cp {filename} .".format(filename=filename)
 	output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
 	print(output.decode("utf-8"))	
 
-def WriteTRBed(region, period, refcopies, name, filename):
-	chrom, start, end = ParseRegion(region)
-	with open(filename, "w") as f:
-		f.write("\t".join([chrom, str(start), str(end), str(period), str(refcopies), name])+"\n")
+def UploadGS(local_path, gcp_path):
+	"""
+	Upload a local file to GCP
+
+	Arguments
+	---------
+	local_path : str
+	   Local path
+	gcp_path : str
+	   GCP path to upload to
+	"""
+	cmd = "gsutil cp {src} {dest}".format(src=local_path, dest=gcp_path)
+	output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
+	print(output.decode("utf-8"))	
 
 def ZipWDL(wdl_dependencies_file):
 	"""
@@ -183,17 +167,16 @@ def ZipWDL(wdl_dependencies_file):
 
 def main():
 	parser = argparse.ArgumentParser(__doc__)
-	parser.add_argument("--region", help="chrom:start-end of TR region", required=True, type=str)
-	parser.add_argument("--period", help="Repeat unit length (bp) of TR", required=True, type=int)
-	parser.add_argument("--refcopies", help="Ref num. of copies of the TR", required=True, type=float)
+	parser.add_argument("--tr-bed", help="BED file with TR regions to genotype", required=True, type=str)
 	parser.add_argument("--name", help="Name of the TR job", required=True, type=str)
-	parser.add_argument("--batch-size", help="HipSTR batch size", required=False, type=int, default=1000)
+	parser.add_argument("--batch-size", help="HipSTR batch size", required=False, type=int, default=300)
 	parser.add_argument("--batch-num", help="Number of batches. Default: -1 (all)", required=False, default=-1)
 	parser.add_argument("--file-list", help="List of crams and indices to process (manifest.csv)"
-		"Format: person_id,cram_uri,cram_index_uri", type=str, required=True)
+		"Format: person_id,cram_uri,cram_index_uri", type=str, required=False, \
+		default="gs://fc-aou-datasets-controlled/v7/wgs/cram/manifest.csv")
 	parser.add_argument("--genome-id", help="File id of ref genome", type=str, default="gs://genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.fasta")
 	parser.add_argument("--genome-idx-id", help="File id of ref genome index", type=str, default="gs://genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.fasta.fai")
-	parser.add_argument("--action", help="Options: create-batches, run-batches, both", type=str, default="both")
+	parser.add_argument("--action", help="Options: create-batches, run-batches, both", type=str, required=True)
 	parser.add_argument("--dryrun", help="Don't actually run the workflow. Just set up", action="store_true")
 	args = parser.parse_args()
 
@@ -212,28 +195,35 @@ def main():
 	project = os.getenv("GOOGLE_PROJECT")
 	output_bucket = bucket + "/" + args.name
 
+	# Set up file list
+	if args.file_list.startswith("gs://"):
+		DownloadGS(args.file_list)
+		file_list = os.path.basename(args.file_list)
+	else: file_list = args.file_list
+
 	# Set up batches of files
 	cram_batches_paths, cram_idx_batches_paths = \
-		GetFileBatches(args.file_list, int(args.batch_size), int(args.batch_num), \
+		GetFileBatches(file_list, int(args.batch_size), int(args.batch_num), \
 			gsprefix = bucket + "/" + "targetTRv7" +"/" + str(args.batch_size), action=args.action)
 	if args.action == "create-batches":
 		# We're done! quit before running jobs
 		sys.exit(1)
 
-	# Generate TR Bed file
-	tr_bedfile = args.name+".bed"
-	tr_bedfile_gcs = output_bucket + "/" + args.name + "/" + tr_bedfile
-	WriteTRBed(args.region, args.period, args.refcopies, args.name, tr_bedfile)
-	UploadGS(tr_bedfile, tr_bedfile_gcs)
+	# Upload TR bed file
+	if args.tr_bed.startswith("gs://"):
+		tr_bedfile_gcs = args.tr_bed
+	else:
+		tr_bedfile_gcs = output_bucket + "/" + args.name + "/" + args.name + ".bed"
+		UploadGS(args.tr_bed, tr_bedfile_gcs)
 
 	# Set up workflow JSON
 	json_dict = {}
 	json_dict["targetTR.genome"] = args.genome_id
 	json_dict["targetTR.genome_index"] = args.genome_idx_id
 	json_dict["targetTR.tr_bed"] = tr_bedfile_gcs
-	json_dict["targetTR.str_name"] = args.name
-	json_dict["targetTR.using_aou"] = True
-	json_dict["targetTR.ukb_names"] = False
+	json_dict["targetTR.outprefix"] = args.name
+	json_dict["targetTR.sleep_const"] = 0.5
+	json_dict["targetTR.infer_samps_from_file"] = True
 	json_dict["targetTR.GOOGLE_PROJECT"] = project
 	json_dict["targetTR.GCS_OAUTH_TOKEN"] = token
 	json_dict["targetTR.cram_file_batches_str"] = cram_batches_paths

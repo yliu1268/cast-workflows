@@ -1,0 +1,1 @@
+gs://gatk-test-data/wgs_cram/NA12878_20k_hg38/NA12878.cram

@@ -1,0 +1,9 @@
+{
+  "targetTR.cram_file_batches_str": ["tests/batch.txt"],
+  "targetTR.genome": "tests/chr21.fa",
+  "targetTR.genome_index": "tests/chr21.fa.fai",
+  "targetTR.outprefix": "CSTB-string",
+  "targetTR.tr_bed": "tests/CSTB-mini.bed",
+  "targetTR.GOOGLE_PROJECT": "testproject",
+  "targetTR.GCS_OAUTH_TOKEN": "dummy"
+}

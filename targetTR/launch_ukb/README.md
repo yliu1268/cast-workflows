@@ -1,3 +1,10 @@
+# TODO
+
+* check final batch error
+* use new wdl arguments
+* move extra mergestr thing to a subfolder of wdl/ and add tests
+* Remove phewas/associatr stuff as that will go somewhere else
+
 # TargetTR on UKB RAP
 
 ## Setup WDL workflow

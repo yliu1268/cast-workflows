@@ -1,0 +1,8 @@
+{
+  "targetTR.cram_file_batches": [["tests/HG00138.cstb.cram"],["tests/NA12878.cstb.cram"],["tests/HG00190.cstb.cram"]],
+  "targetTR.cram_index_batches": [["tests/HG00138.cstb.cram.crai"],["tests/NA12878.cstb.cram.crai"],["tests/HG00190.cstb.cram.crai"]],
+  "targetTR.genome": "tests/chr21.fa",
+  "targetTR.genome_index": "tests/chr21.fa.fai",
+  "targetTR.outprefix": "CSTB2",
+  "targetTR.tr_bed": "tests/CSTB-mini.bed"
+}

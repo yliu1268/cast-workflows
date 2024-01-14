@@ -6,34 +6,33 @@ import "dumpstr.wdl" as dumpstr_t
 
 workflow targetTR {
 	input {
-		String str_name
+		String outprefix
 		Array[Array[File]] cram_file_batches = []
 		Array[Array[File]] cram_index_batches = []
 		File genome
 		File genome_index
 		File tr_bed
-    	Boolean ukb_names = false
-    	Boolean using_aou = false
+    	Boolean infer_samps_from_file = false
     	Array[File] cram_file_batches_str = []
     	String GOOGLE_PROJECT = ""
     	String GCS_OAUTH_TOKEN = ""
+    	Float sleep_const = 0
 	}
 
 	### Call HipSTR on batches of samples ###
-	Int num_batches = if using_aou
+	Boolean using_batch_files = (length(cram_file_batches_str)>0)
+	Int num_batches = if using_batch_files
 		then length(cram_file_batches_str)  
 		else length(cram_file_batches)
 	scatter(i in range(num_batches)) {
-		if (using_aou) {
+		if (using_batch_files) {
 			File crams_file = cram_file_batches_str[i]
 		}
-		if (!using_aou) {
+		if (!using_batch_files) {
 			Array[File] crams = cram_file_batches[i]
 			Array[File] cram_indices = cram_index_batches[i]
 		}
-		Int sleep_seconds = if using_aou
-		then i
-		else 0
+		Int sleep_seconds = ceil(i*sleep_const)
 		call hipstr_multi_t.run_hipstr as run_hipstr {
 			input :
 				bams=crams,
@@ -41,9 +40,9 @@ workflow targetTR {
 				genome=genome,
 				genome_index=genome_index,
 				str_ref=tr_bed,
-				out_prefix=str_name+".BATCH"+i,
-        		ukb_names = ukb_names,
-        		using_aou = using_aou,
+				out_prefix=outprefix+".BATCH"+i,
+        		infer_samps_from_file = infer_samps_from_file,
+        		using_batch_files = using_batch_files,
         		bams_file = crams_file,
         		GOOGLE_PROJECT = GOOGLE_PROJECT,
         		GCS_OAUTH_TOKEN = GCS_OAUTH_TOKEN,
@@ -56,14 +55,14 @@ workflow targetTR {
 		input :
 			vcfs=run_hipstr.outfile,
 			vcf_indexes=run_hipstr.outfile_index,
-			out_prefix=str_name
+			out_prefix=outprefix
 	}
 
 	### DumpSTR on merged VCF ###
 	call dumpstr_t.run_dumpstr as dumpstr {
 		input :
 			vcf=merge_hipstr.outfile,
-			out_prefix=str_name+".filtered"
+			out_prefix=outprefix+".filtered"
 	}
 
 	### Zip and index the VCF ###

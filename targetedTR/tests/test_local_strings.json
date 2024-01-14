@@ -1,9 +1,0 @@
-{
-  "targetTR.cram_file_batches_str": [["tests/HG00138.cstb.cram"],["tests/NA12878.cstb.cram"],["tests/HG00190.cstb.cram"]],
-  "targetTR.genome": "tests/chr21.fa",
-  "targetTR.genome_index": "tests/chr21.fa.fai",
-  "targetTR.str_name": "CSTB-string",
-  "targetTR.tr_bed": "tests/CSTB-mini.bed",
-  "targetTR.using_aou": true,
-  "targetTR.GOOGLE_PROJECT": "testproject"
-}
