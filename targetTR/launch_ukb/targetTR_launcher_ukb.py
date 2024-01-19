@@ -4,11 +4,9 @@ Script to launch UKB targeted TR analysis
 """
 
 import argparse
-import datetime
+import dxpy
 import sys
 import time
-
-import dxpy
 
 def GetFileBatches(file_list, batch_size, batch_num=-1):
 	"""
@@ -63,6 +61,11 @@ def GetFileBatches(file_list, batch_size, batch_num=-1):
 			cram_id, idx_id = line.strip().split()
 			curr_batch_crams.append(dxpy.dxlink(cram_id))
 			curr_batch_indices.append(dxpy.dxlink(idx_id))
+	# Add any leftovers
+	if len(curr_batch_crams) > 0 and \
+		(len(cram_batches)<batch_num or batch_num==-1):
+		cram_batches.append(curr_batch_crams)
+		cram_idx_batches.append(curr_batch_indices)
 	assert(len(cram_batches) == len(cram_idx_batches))
 	return cram_batches, cram_idx_batches
 
@@ -115,11 +118,6 @@ def UploadDNANexus(fname, name):
 	dxfile = dxpy.upload_local_file(fname, folder=folder, parents=True)
 	return dxpy.dxlink(dxfile)
 
-def WriteTRBed(region, period, refcopies, name, filename):
-	chrom, start, end = ParseRegion(region)
-	with open(filename, "w") as f:
-		f.write("\t".join([chrom, str(start), str(end), str(period), str(refcopies), name])+"\n")
-
 def GetJBOR(analysis, filename):
 	return {
 		"$dnanexus_link": {
@@ -135,18 +133,15 @@ def main():
 	parser.add_argument("--batch-size", help="HipSTR batch size", type=int, default=500)
 	parser.add_argument("--batch-num", help="Number of batches. Default: -1 (all)", required=False, default=-1, type=int)
 	parser.add_argument("--file-list", help="List of crams and indices to process"
-		"Format of each line: cram-file-id cram-index-id", type=str, required=True)
+		"Format of each line: cram-file-id cram-index-id", type=str, required=False, default="ukb_cram_and_index_files.txt")
 	parser.add_argument("--genome-id", help="File id of ref genome", type=str, default="file-GGJ1z28JbVqbpqB93YbPqbzz")
 	parser.add_argument("--genome-idx-id", help="File id of ref genome index", type=str, default="file-GGJ94JQJv7BGFYq8BGp62xPV")
 	parser.add_argument("--workflow-id", help="DNA Nexus workflow ID", required=False, default="workflow-Gfb049jJv7B4gj3g5vzZgY4x")
 	# Options for multi-batches
 	parser.add_argument("--merge-workflow-id", help="DNA Nexus workflow ID for merging", required=False, default="workflow-Gfb056QJv7BPp14Y3gPZZ66F")
-	parser.add_argument("--max-batches-per-workflow", help="Maximum number of batches to launch at once. Default: -1 (all)", required=False, default=-1, type=int)
+	parser.add_argument("--max-batches-per-workflow", help="Maximum number of batches to launch at once. -1 means all", required=False, default=10, type=int)
 	parser.add_argument("--concurrent", help="Launch all batches at once", action="store_true")
 	args = parser.parse_args()
-
-	assert bool(args.region) == bool(args.period) == bool(args.refcopies)
-	assert bool(args.region) != bool(args.str_ref)
 
 	# Set up workflow JSON
 	json_dict = {}
@@ -157,14 +152,11 @@ def main():
 	json_dict["stage-common.outprefix"] = args.name
 	json_dict["stage-common.infer_samps_from_file"] = True
 	
-	# Make bed file
-	if args.region:
-		sys.stderr.write("Preparing bed file...\n")
-		tr_bedfile = args.name+".bed"
-		WriteTRBed(args.region, args.period, args.refcopies, args.name, tr_bedfile)
+	# Upload
+	if args.tr_bed.startswith("file-"):
+		json_dict["stage-common.tr_bed"] = args.tr_bed
 	else:
-		tr_bedfile = args.str_ref
-	json_dict["stage-common.tr_bed"] = UploadDNANexus(tr_bedfile, args.name)
+		json_dict["stage-common.tr_bed"] = UploadDNANexus(args.tr_bed, args.name)
 
 	# Set up batches of files
 	sys.stderr.write("Setting up batches...\n")
@@ -221,9 +213,6 @@ def main():
 		merge_vcfs = []
 		merge_vcfs_idx = []
 		for analysis in depends:
-			#analysis.wait_on_done()
-			#vcf = analysis.describe()["output"]["stage-outputs.finalvcf"]
-			#vcf_idx = analysis.describe()["output"]["stage-outputs.finalvcf_index"]
 			vcf = GetJBOR(analysis, "stage-outputs.finalvcf")
 			vcf_idx = GetJBOR(analysis, "stage-outputs.finalvcf_index")
 			merge_vcfs.append(vcf)

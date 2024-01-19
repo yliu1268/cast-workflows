@@ -4,8 +4,9 @@
 
 * where are the reads in the new release??
 * check final batch error
-* Make take a bed file rather than region, similar to AoU  launcher
 * use new wdl arguments
+* `GetFileBatches` function is shared by AoU/UKB. could put in single library to avoid copying code
+* Related ambitious goal: could make a launcher super class, and have AoU UKB subclasses that extend that. the launchers basically have same functions but different implementations now (`RunWorkflow`, `RunWorkflow`/`UploadGS`). Some of those are even more general than just targetTR
 
 # TargetTR on UKB RAP
 
@@ -61,21 +62,23 @@ done > ukb_cram_files_long.txt
 
 ## Run a small test job
 
-The code below shows a small example (3 batches of 25 samples each).
+The code below shows a small example:
 ```
 ./targetTR_launcher_ukb.py \
-  --region chr21:43776445-43776479 \
-  --period 5 \
-  --refcopies 7.0 \
-  --name CSTB-mini \
-  --batch-size 25 \
-  --batch-num 3 \
-  --workflow-id workflow-GPfbXV8Jv7B27kpf6Y50QyQ9 \
-  --file-list ukb_cram_and_index_files.txt
+  --tr-bed test.bed \
+  --name mytest \
+  --batch-size 2 \
+  --batch-num 2
 ```
 
 ## Run a full job on all samples
-TODO
+
+```
+./targetTR_launcher_ukb.py \
+  --tr-bed test.bed \
+  --name myrunname \
+  --concurrent
+```
 
 See `launch_scripts/` for full launches.
 
@@ -84,9 +87,9 @@ See `launch_scripts/` for full launches.
 Required options:
 * `--name <STRING>`: Name of the run. Used as the prefix to output files.
 * `--tr-bed <PATH>`: Path (local file or DNA Nexus file ID) to BED file of TRs to run (HipSTR reference format). 
-* `--file-list <PATH>`: Path (local file) with list of samples to be processed. Format of each line: cram-file-id cram-index-id. This is created above by `process_cram_list.py`.
 
 Additional input files:
+* `--file-list <PATH>`: Path (local file) with list of samples to be processed. Format of each line: cram-file-id cram-index-id. This is created above by `process_cram_list.py`. Defaults to `ukb_cram_and_index_files.txt` assuming you followed the steps above.
 * `--genome-id <PATH>`: DNANexus file ID of reference genome. Defaults to a path to a version of `Homo_sapiens_assembly38.fasta`.
 * `--genome-idx-id <PATH>`: DNANexus file ID of the index (`.fai`) file of the reference genome. Defaults to a version of `Homo_sapiens_assembly38.fasta.fai`
 
@@ -95,6 +98,6 @@ Additional run options:
 * `--batch-size <INT>`: Number of samples to process in each batch. Default: 300.
 * `--batch-num <INT>`: Number of batches to process. Default: -1 (process all batches). This is helpful to set during debugging to consider a small number of batches.
 * `--merge-workflow-id <STR>`: DNANexus workflow ID of the merge index workflow. Defaults to a recent working version.
-* `--max-batches-per-workflow <INT>`: Maximum number of batches to launch at once. Default: -1 (all)
+* `--max-batches-per-workflow <INT>`: Maximum number of batches to launch at once. Defaults to 10. Set to -1 to run all.
 * `--concurrent`: Launch all batches at once. (otherwise, launch one at a time)
 
