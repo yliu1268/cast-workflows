@@ -52,7 +52,7 @@ done > ukb_cram_files_long.txt
 
 ## Run a small test job
 
-The code below shows a small example:
+The code below shows a small example. It assumes you ran the above to create `ukb_cram_and_index_files.txt`.
 ```
 ./targetTR_launcher_ukb.py \
   --tr-bed test.bed \
@@ -63,14 +63,14 @@ The code below shows a small example:
 
 ## Run a full job on all samples
 
+(This assumes you ran the above to create `ukb_cram_and_index_files.txt`.)
+
 ```
 ./targetTR_launcher_ukb.py \
   --tr-bed test.bed \
   --name myrunname \
   --concurrent
 ```
-
-See `launch_scripts/` for full launches.
 
 ## Detailed usage for targetTR_launcher_ukb.py
 
