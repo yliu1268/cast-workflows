@@ -1,13 +1,3 @@
-**UKB launcher under construction**
-
-# TODO
-
-* where are the reads in the new release??
-* check final batch error
-* use new wdl arguments
-* `GetFileBatches` function is shared by AoU/UKB. could put in single library to avoid copying code
-* Related ambitious goal: could make a launcher super class, and have AoU UKB subclasses that extend that. the launchers basically have same functions but different implementations now (`RunWorkflow`, `RunWorkflow`/`UploadGS`). Some of those are even more general than just targetTR
-
 # TargetTR on UKB RAP
 
 The steps below can be run from the command line on your local computer (or anywhere else you prefer to run and test code) to launch jobs on DNA Nexus. You can use the DNA Nexus web console to track job status and browse files.
@@ -100,4 +90,12 @@ Additional run options:
 * `--merge-workflow-id <STR>`: DNANexus workflow ID of the merge index workflow. Defaults to a recent working version.
 * `--max-batches-per-workflow <INT>`: Maximum number of batches to launch at once. Defaults to 10. Set to -1 to run all.
 * `--concurrent`: Launch all batches at once. (otherwise, launch one at a time)
+
+# TODO
+
+* where are the reads in the new release??
+* check final batch error
+* use new wdl arguments
+* `GetFileBatches` function is shared by AoU/UKB. could put in single library to avoid copying code
+* Related ambitious goal: could make a launcher super class, and have AoU UKB subclasses that extend that. the launchers basically have same functions but different implementations now (`RunWorkflow`, `RunWorkflow`/`UploadGS`). Some of those are even more general than just targetTR
 
