@@ -1,17 +1,6 @@
 #!/usr/bin/env python3
 """
 Script to launch UKB targeted TR analysis
-
-Desired usage:
-./targetTR_launcher_ukb.py \
-  --region chr21:43776445-43776479 \
-  --period 5 \
-  --refcopies 7.0 \
-  --name CSTB-mini \
-  --batch-size 5 \
-  --batch-num 3 \
-  --workflow-id workflow-GPfbXV8Jv7B27kpf6Y50QyQ9  \
-  --file-list ukb_cram_and_index_files.txt
 """
 
 import argparse
@@ -20,29 +9,6 @@ import sys
 import time
 
 import dxpy
-
-def ParseRegion(str_region):
-	"""
-	Parse region into chrom, start, end
-
-	Arguments
-	---------
-	str_region : str
-	   Region in the format chr:start-end
-
-	Returns
-	-------
-	chrom : str
-	   Chromosome
-	start : int
-	   start coordinate
-	end : int
-	   end coordinate
-	"""
-	chrom = str_region.split(":")[0]
-	start = int(str_region.split(":")[1].split("-")[0])
-	end = int(str_region.split(":")[1].split("-")[1])
-	return chrom, start, end
 
 def GetFileBatches(file_list, batch_size, batch_num=-1):
 	"""
@@ -164,20 +130,17 @@ def GetJBOR(analysis, filename):
 
 def main():
 	parser = argparse.ArgumentParser(__doc__)
-	parser.add_argument("--str-ref", help="str reference bed file, containing the tab separated columns chrom, start, end, period, refcopies and name. Must either specify --str-ref (for many STRs) or all of --region, --period and --refcopies (for a single STR)", required=False, type=str)
-	parser.add_argument("--region", help="chrom:start-end of TR region, start and end are bed file style (they are zero-indexed and start is inclusive but end is exclusive)", required=False, type=str)
-	parser.add_argument("--period", help="Repeat unit length (bp) of TR", required=False, type=int)
-	parser.add_argument("--refcopies", help="Ref num. of copies of the TR", required=False, type=float)
+	parser.add_argument("--tr-bed", help="BED file with TR regions to genotype", required=True, type=str)
 	parser.add_argument("--name", help="Name of the TR job", required=True, type=str)
 	parser.add_argument("--batch-size", help="HipSTR batch size", type=int, default=500)
 	parser.add_argument("--batch-num", help="Number of batches. Default: -1 (all)", required=False, default=-1, type=int)
-	parser.add_argument("--workflow-id", help="DNA Nexus workflow ID", required=False, default="workflow-GQp8j10Jv7B776168j65V6Kk")
 	parser.add_argument("--file-list", help="List of crams and indices to process"
 		"Format of each line: cram-file-id cram-index-id", type=str, required=True)
 	parser.add_argument("--genome-id", help="File id of ref genome", type=str, default="file-GGJ1z28JbVqbpqB93YbPqbzz")
 	parser.add_argument("--genome-idx-id", help="File id of ref genome index", type=str, default="file-GGJ94JQJv7BGFYq8BGp62xPV")
+	parser.add_argument("--workflow-id", help="DNA Nexus workflow ID", required=False, default="workflow-Gfb049jJv7B4gj3g5vzZgY4x")
 	# Options for multi-batches
-	parser.add_argument("--merge-workflow-id", help="DNA Nexus workflow ID for merging", required=False, default="workflow-GQKzVkjJv7B62BbZ0y30vKj7")
+	parser.add_argument("--merge-workflow-id", help="DNA Nexus workflow ID for merging", required=False, default="workflow-Gfb056QJv7BPp14Y3gPZZ66F")
 	parser.add_argument("--max-batches-per-workflow", help="Maximum number of batches to launch at once. Default: -1 (all)", required=False, default=-1, type=int)
 	parser.add_argument("--concurrent", help="Launch all batches at once", action="store_true")
 	args = parser.parse_args()
