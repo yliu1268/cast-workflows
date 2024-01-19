@@ -1,6 +1,6 @@
 # Wishlist and TDL
 
-* Add timing/cost
+* Add timing/cost and description of where to find outputs
 * set memory for tasks from command line option
 * rename targetTR to hipstr? it can actually be used to perform non-targeted analysis
 * how to extend to other tools (e.g. EH)
