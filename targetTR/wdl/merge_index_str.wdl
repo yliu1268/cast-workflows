@@ -1,6 +1,6 @@
 version 1.0
 
-import "../tasks/merge_hipstr.wdl" as merge_t
+import "merge_hipstr.wdl" as merge_t
 
 workflow merge_index {
 	input {
