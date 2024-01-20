@@ -114,8 +114,10 @@ def UploadDNANexus(fname, name):
 	file : dxlink
 	   {"$dnanexus_link": file_id}
 	"""
+	sys.stderr.write("Uploading BED file...\n")
 	folder = "/TargetedSTR/results/{name}".format(name=name)
 	dxfile = dxpy.upload_local_file(fname, folder=folder, parents=True)
+	print(dxpy.dxlink(dxfile))
 	return dxpy.dxlink(dxfile)
 
 def GetJBOR(analysis, filename):
@@ -151,7 +153,7 @@ def main():
 	json_dict["stage-common.genome_index"] = dxpy.dxlink(args.genome_idx_id)
 	json_dict["stage-common.outprefix"] = args.name
 	json_dict["stage-common.infer_samps_from_file"] = True
-	
+
 	# Upload
 	if args.tr_bed.startswith("file-"):
 		json_dict["stage-common.tr_bed"] = args.tr_bed
