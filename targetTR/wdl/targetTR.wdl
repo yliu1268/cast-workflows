@@ -17,6 +17,7 @@ workflow targetTR {
     	String GOOGLE_PROJECT = ""
     	String GCS_OAUTH_TOKEN = ""
     	Float sleep_const = 0
+	String hipstr_mem=hipstr_mem
 	}
 
 	### Call HipSTR on batches of samples ###
