@@ -30,7 +30,7 @@ workflow run_hipstr {
           bams_file=bams_file,
           GOOGLE_PROJECT=GOOGLE_PROJECT,
           GCS_OAUTH_TOKEN=GCS_OAUTH_TOKEN,
-          sleep_seconds=sleep_seconds
+          sleep_seconds=sleep_seconds,
 	  hipstr_mem=hipstr_mem
     }
 
