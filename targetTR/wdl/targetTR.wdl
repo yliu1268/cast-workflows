@@ -47,6 +47,7 @@ workflow targetTR {
         		GOOGLE_PROJECT = GOOGLE_PROJECT,
         		GCS_OAUTH_TOKEN = GCS_OAUTH_TOKEN,
         		sleep_seconds = sleep_seconds
+			hipstr_mem=hipstr_mem
 		}
 	}
 
