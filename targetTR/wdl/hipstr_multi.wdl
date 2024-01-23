@@ -14,6 +14,7 @@ workflow run_hipstr {
         String GOOGLE_PROJECT = ""
         String GCS_OAUTH_TOKEN = ""
         Int? sleep_seconds = 0
+	String? hipstr_mem = "16GB"
     }
 
     call hipstr {
@@ -30,6 +31,7 @@ workflow run_hipstr {
           GOOGLE_PROJECT=GOOGLE_PROJECT,
           GCS_OAUTH_TOKEN=GCS_OAUTH_TOKEN,
           sleep_seconds=sleep_seconds
+	  hipstr_mem=hipstr_mem
     }
 
     call sort_index_hipstr {
@@ -61,6 +63,7 @@ task hipstr {
         String GOOGLE_PROJECT = ""
         String GCS_OAUTH_TOKEN = ""
         Int? sleep_seconds = 0
+	String? hipstr_mem = "16GB"
     } 
 
     command <<<
@@ -97,8 +100,7 @@ task hipstr {
     
     runtime {
         docker: "gcr.io/ucsd-medicine-cast/hipstr-gymreklab-gcs"
-        memory: "16 GB"
-        memoryMin: "16 GB"
+        memory: ${hipstr_mem}
         cpu: 2
       	maxRetries: 3
         preemptible: 3
