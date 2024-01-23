@@ -18,6 +18,7 @@ workflow targetTR {
     	String GCS_OAUTH_TOKEN = ""
     	Float sleep_const = 0
 	Int hipstr_mem=hipstr_mem
+	Int merge_mem=merge_mem
 	}
 
 	### Call HipSTR on batches of samples ###
@@ -48,7 +49,7 @@ workflow targetTR {
         		GOOGLE_PROJECT = GOOGLE_PROJECT,
         		GCS_OAUTH_TOKEN = GCS_OAUTH_TOKEN,
         		sleep_seconds = sleep_seconds,
-			hipstr_mem=hipstr_mem
+			hipstr_mem = hipstr_mem
 		}
 	}
 
@@ -57,7 +58,8 @@ workflow targetTR {
 		input :
 			vcfs=run_hipstr.outfile,
 			vcf_indexes=run_hipstr.outfile_index,
-			out_prefix=outprefix
+			out_prefix=outprefix,
+			merge_mem=merge_mem
 	}
 
 	### DumpSTR on merged VCF ###

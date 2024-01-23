@@ -178,7 +178,8 @@ def main():
 	parser.add_argument("--genome-idx-id", help="File id of ref genome index", type=str, default="gs://genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.fasta.fai")
 	parser.add_argument("--action", help="Options: create-batches, run-batches, both", type=str, required=True)
 	parser.add_argument("--dryrun", help="Don't actually run the workflow. Just set up", action="store_true")
-	#parser.add_argument("--hip_mem",help="Hipstr run memory, modify if run smaller sample size", required=False, type=str,default="16GB")
+	parser.add_argument("--hipstr-mem",help="Hipstr run memory, modify if run smaller sample size, default=16G", required=False, type=int,default=16)
+	parser.add_argument("--merge-mem",help="Merge hipstr run memory, modify if run smaller sample size, default=4G", required=False, type=int)
 	args = parser.parse_args()
 
 	# Check if action is valid
@@ -224,7 +225,8 @@ def main():
 	json_dict["targetTR.tr_bed"] = tr_bedfile_gcs
 	json_dict["targetTR.outprefix"] = args.name
 	json_dict["targetTR.sleep_const"] = 0.5
-	#json_dict["targetTR.hipstr_mem"] = args.hip_mem
+	json_dict["targetTR.hipstr_mem"] = args.hipstr_mem
+	json_dict["targetTR.merge_mem"] = args.merge_mem
 	json_dict["targetTR.infer_samps_from_file"] = True
 	json_dict["targetTR.GOOGLE_PROJECT"] = project
 	json_dict["targetTR.GCS_OAUTH_TOKEN"] = token
