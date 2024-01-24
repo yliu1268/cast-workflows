@@ -19,7 +19,7 @@ workflow targetTR {
     	Float sleep_const = 0
 	    Int hipstr_mem=hipstr_mem
 	    Int merge_mem=merge_mem
-		String extra_hipstr_args=extra_hipstr_args
+	    String extra_hipstr_args=extra_hipstr_args
 	}
 
 	### Call HipSTR on batches of samples ###

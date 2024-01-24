@@ -65,7 +65,7 @@ task hipstr {
         String GOOGLE_PROJECT = ""
         String GCS_OAUTH_TOKEN = ""
         Int? sleep_seconds = 0
-	      Int? hipstr_mem = 16
+	Int? hipstr_mem = 16
         String? extra_hipstr_args = "--min-reads 10"
     } 
 
