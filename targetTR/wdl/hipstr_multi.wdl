@@ -98,7 +98,7 @@ task hipstr {
           --regions ~{str_ref} \
           --str-vcf ~{out_prefix}.vcf.gz \
           ${samps_flags} \
-          #~{extra_hipstr_args} 
+          ~{extra_hipstr_args} 
           #default --min-reads 10
     >>>
     
