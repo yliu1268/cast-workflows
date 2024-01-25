@@ -127,13 +127,15 @@ To check metadata and logs, you can run:
 cromshell -t 20 metadata $JOBID (increase -t timeout for large batches)
 cromshell slim-metadata $JOBID
 cromshell logs -s ALL $JOBID
+
+cromshell logs -s ALL -des $JOBID (use -des for descriptive log info)
+cromshell logs -s Failed -des $JOBID
 ```
 
 To list all output files produced by a workflow:
 ```
 cromshell list-outputs $JOBID
 ```
-
 To get the summarized status of all jobs in the workflow:
 ```
 cromshell count $JOBID
