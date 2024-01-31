@@ -43,6 +43,7 @@ def main():
     	use_bqstorage_api=("BIGQUERY_STORAGE_API_ENABLED" in os.environ),
     	progress_bar_type="tqdm_notebook")
 	data = pd.merge(ptdata, demog, on="person_id", how="inner")
+	print(data.head())
 
 if __name__ == "__main__":
 	main()
