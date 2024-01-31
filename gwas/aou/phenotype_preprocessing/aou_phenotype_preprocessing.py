@@ -44,6 +44,10 @@ def main():
     	use_bqstorage_api=("BIGQUERY_STORAGE_API_ENABLED" in os.environ),
     	progress_bar_type="tqdm_notebook")
 	data = pd.merge(ptdata, demog, on="person_id", how="inner")
+
+	# Filtering
+	data.dropna(axis=0, subset=['value_as_number'],inplace=True)
+	
 	print(data.head())
 
 if __name__ == "__main__":
