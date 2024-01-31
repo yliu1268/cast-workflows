@@ -2,7 +2,6 @@
 SQL queries for AoU phenotypes
 """
 
-import pandas
 import os
 
 ############################################################

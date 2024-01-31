@@ -11,6 +11,7 @@ WORKSPACE_CDR
 
 import argparse
 import aou_queries
+import pandas as pd
 import sys
 
 def MSG(msg_str):
@@ -26,13 +27,22 @@ def main():
 	args = parser.parse_args()
 	MSG("Processing %s"%args.phenotype)
 
-	# Pull out sql queries
+	# Check if we have info for that phenotype
 	if args.phenotype not in aou_queries.pt_queries.keys():
 		ERROR("Could not find sql query for %s"%args.phenotype)
-	demog_sql = aou_queries.demographics_sql
-	pt_sql = aou_queries.pt_queries[args.phenotype]
 
-
+	# Set up dataframes
+	demog = pd.read_gbq(
+    	aou_queries.demographics_sql,
+    	dialect="standard",
+    	use_bqstorage_api=("BIGQUERY_STORAGE_API_ENABLED" in os.environ),
+    	progress_bar_type="tqdm_notebook")
+	ptdata = pd.read_gbq(
+    	aou_queries.pt_queries[args.phenotype],
+    	dialect="standard",
+    	use_bqstorage_api=("BIGQUERY_STORAGE_API_ENABLED" in os.environ),
+    	progress_bar_type="tqdm_notebook")
+	data = pd.merge(ptdata, demog, on="person_id", how="inner")
 
 if __name__ == "__main__":
 	main()
