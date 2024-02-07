@@ -89,7 +89,7 @@ def ConstructTraitSQL(phenotype):
                                 `""" + os.environ["WORKSPACE_CDR"] + """.cb_criteria` cr 
                             WHERE
                                 concept_id IN (
-                                    %s
+                                    37047736
                                 ) 
                                 AND full_text LIKE '%_rank1]%'
                         ) a 
@@ -148,4 +148,4 @@ def ConstructTraitSQL(phenotype):
                 ON v.visit_concept_id = m_visit.concept_id 
         LEFT JOIN
             `""" + os.environ["WORKSPACE_CDR"] + """.concept` m_source_concept 
-                ON measurement.measurement_source_concept_id = m_source_concept.concept_id"""%(concept_id)
+                ON measurement.measurement_source_concept_id = m_source_concept.concept_id"""
