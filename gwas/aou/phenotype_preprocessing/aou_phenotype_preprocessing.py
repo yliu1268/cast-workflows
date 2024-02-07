@@ -81,9 +81,8 @@ def main():
     	filtered["date_of_birth"].dt.year
 
     # Output final phenotype value
-    cleaned = filtered[["person_id", "value_as_number", "age"]]
-    cleaned.rename({"value_as_number": "phenotype"}, inplace=True, axis=1)
-    cleaned.to_csv(args.phenotype+"_phenotypes.csv", index=False)
+    filtered.rename({"value_as_number": "phenotype"}, inplace=True, axis=1)
+    filtered[["person_id", "value_as_number", "age"]].to_csv(args.phenotype+"_phenotypes.csv", index=False)
 
 if __name__ == "__main__":
     main()
