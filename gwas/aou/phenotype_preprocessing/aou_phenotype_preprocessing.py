@@ -12,6 +12,7 @@ WORKSPACE_CDR
 import argparse
 import aou_queries
 import os
+import numpy as np
 import pandas as pd
 import sys
 
@@ -69,8 +70,12 @@ def main():
                       agg(median_year=('value_as_number', np.median)).reset_index()
 	median_of_medians = median.groupby(['person_id']). \
                       agg(median_median=('median_year', np.median)).reset_index() 
+	
+    # Merge back to whole dataframe to extract measurement time
+    filtered = pd.merge(data, median_of_medians, on=["person_id", "value_as_number"])
+
 	# TODO - how to get correct year?
-	print(data.head())
+	print(filtered.head())
 
 if __name__ == "__main__":
 	main()
