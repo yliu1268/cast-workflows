@@ -54,7 +54,7 @@ def main():
 
 	# Filtering
 	data.dropna(axis=0, subset=['value_as_number'],inplace=True)
-	data = data[data["unit_concept_name"].isin(aou_queries.GetUnits(phenotype))]
+	data = data[data["unit_concept_name"].isin(aou_queries.GetUnits(args.phenotype))]
 	MSG("After filter NA and units, have %s data points"%data.shape[0])
 
 	print(data.head())
