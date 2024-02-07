@@ -69,8 +69,12 @@ def main():
     median_per_year = data.groupby(['person_id','Year']).agg(median_year=('value_as_number', np.median)).reset_index()
     median_of_medians = median.groupby(['person_id']).agg(median_median=('median_year', np.median)).reset_index()
 
-    # Merge back to whole dataframe to extract measurement time
+    # Merge back to whole dataframe to only keep median of median value per person
     filtered = pd.merge(data, median_of_medians, on=["person_id", "value_as_number"])
+
+    # De-duplicate to keep one entry per person
+    filtered.sort_values("measurement_datetime").drop_duplicates(subset=["person_id"], keep="last", inplace=True)
+
 #    # TODO - how to get correct year?
     print(filtered.head())
 
