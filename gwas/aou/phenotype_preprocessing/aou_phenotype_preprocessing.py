@@ -80,9 +80,10 @@ def main():
     filtered["age"] = filtered['measurement_datetime'].dt.year - \
     	filtered["date_of_birth"].dt.year
 
-    # TODO:
-    # output final file with person_id, phenotype, age at measurement
-    print(filtered.head())
+    # Output final phenotype value
+    cleaned = filtered[["person_id", "value_as_number", "age"]]
+    cleaned.rename({"value_as_number": "phenotype"}, inplace=True, axis=1)
+    cleand.to_csv(args.phenotype+"_phenotypes.csv", index=False)
 
 if __name__ == "__main__":
     main()
