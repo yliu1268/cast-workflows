@@ -23,10 +23,6 @@ def ERROR(msg_str):
     MSG("ERROR: " + msg_str)
     sys.exit(1)
 
-def GetAge(x):
-	return x['measurement_datetime'].dt.year \
-		- x["date_of_birth"].dt.year
-
 def main():
     parser = argparse.ArgumentParser(__doc__)
     parser.add_argument("--phenotype", help="Phenotype ID", type=str, required=True)
@@ -81,7 +77,7 @@ def main():
     filtered.sort_values("measurement_datetime").drop_duplicates(subset=["person_id"], keep="last", inplace=True)
 
     # Record age info
-    filtered["age"] = filtered.apply(lambda x: GetAge(x), 1)
+    filtered["age"] = filtered['measurement_datetime'].dt.year - \
 
     # TODO:
     # output final file with person_id, phenotype, age at measurement
