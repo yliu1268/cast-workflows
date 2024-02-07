@@ -54,8 +54,14 @@ def main():
 
 	# Filtering
 	data.dropna(axis=0, subset=['value_as_number'],inplace=True)
+	MSG("After filter NA, have %s data points"%data.shape[0])
 	data = data[data["unit_concept_name"].isin(aou_queries.GetUnits(args.phenotype))]
-	MSG("After filter NA and units, have %s data points"%data.shape[0])
+	MSG("After filter units, have %s data points"%data.shape[0])
+	minval, maxval = aou_queries.GetPhenotypeRange(args.phenotype)
+	if minval is None or maxval is None:
+		ERROR("No minval or maxval specified")
+	data = data[(data["value_as_number"]>minval) & (data["value_as_number"]<maxval)]
+	MSG("After filter range, have %s data points"%data.shape[0])
 
 	print(data.head())
 

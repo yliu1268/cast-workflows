@@ -158,3 +158,9 @@ def GetUnits(phenotype):
             "no value", "unit per liter"]
     else:
         return []
+
+def GetPhenotypeRange(phenotype):
+    if phenotype in ["ALT"]:
+        return 0, 250
+    else:
+        return None, None
