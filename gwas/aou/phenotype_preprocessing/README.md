@@ -1,15 +1,13 @@
 # Phenotype preprocessing for AoU
 
+Usage example:
+
+```
+./aou_phenotype_preprocessing.py --phenotype ALT
+```
+
 Notes:
-* Need person/measurement queries per trait. Store in one python or SQL file?
-* make this as a python script for each pt
-* Combine demog/measurement
-* Drop NAs, check units
-* drop outliers
-* median of medians
-* get trait-specific covars
-
-
-TDL:
-* Can we reuse code for the queries by just replacing the concept IDs for each one?
+* get trait-specific covars (LDL)
 * Take in list of blessed samples from Tara's script
+* Need to hard-code concept IDs of other phenotypes
+* Run on all phenotypes and store in shared bucket
