@@ -71,9 +71,8 @@ def main():
 
     # Merge back to whole dataframe to extract measurement time
     filtered = pd.merge(data, median_of_medians, on=["person_id", "value_as_number"])
-#
 #    # TODO - how to get correct year?
-#    print(filtered.head())
+    print(filtered.head())
 
 if __name__ == "__main__":
     main()
