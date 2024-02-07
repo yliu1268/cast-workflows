@@ -12,3 +12,4 @@ Notes:
 
 TDL:
 * Can we reuse code for the queries by just replacing the concept IDs for each one?
+* Take in list of blessed samples from Tara's script

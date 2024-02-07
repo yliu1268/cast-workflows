@@ -25,6 +25,7 @@ def ERROR(msg_str):
 def main():
 	parser = argparse.ArgumentParser(__doc__)
 	parser.add_argument("--phenotype", help="Phenotype ID", type=str, required=True)
+	parser.add_argument("--samples", help="List of sample IDs to keep", type=str)
 	args = parser.parse_args()
 	MSG("Processing %s"%args.phenotype)
 
@@ -39,11 +40,15 @@ def main():
     	use_bqstorage_api=("BIGQUERY_STORAGE_API_ENABLED" in os.environ),
     	progress_bar_type="tqdm_notebook")
 	ptdata = pd.read_gbq(
-    	aou_queries.pt_queries[args.phenotype],
+		aou_queries.ConstructTraitSQL(args.phenotype),
     	dialect="standard",
     	use_bqstorage_api=("BIGQUERY_STORAGE_API_ENABLED" in os.environ),
     	progress_bar_type="tqdm_notebook")
 	data = pd.merge(ptdata, demog, on="person_id", how="inner")
+
+	# Restrict to samples we want to keep
+	if args.samples is not None:
+		ERROR("Sample subsetting not implemented yet") # TODO
 
 	# Filtering
 	data.dropna(axis=0, subset=['value_as_number'],inplace=True)
