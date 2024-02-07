@@ -88,8 +88,7 @@ def ConstructTraitSQL(phenotype):
                             FROM
                                 `""" + os.environ["WORKSPACE_CDR"] + """.cb_criteria` cr 
                             WHERE
-                                concept_id IN (
-                                    37047736
+                                concept_id IN (""" + concept_id + """
                                 ) 
                                 AND full_text LIKE '%_rank1]%'
                         ) a 
