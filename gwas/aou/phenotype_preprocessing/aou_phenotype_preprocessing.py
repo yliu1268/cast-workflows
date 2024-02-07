@@ -72,15 +72,18 @@ def main():
 
     # Merge back to whole dataframe to only keep median of median value per person
     filtered = pd.merge(data, median_of_medians, on=["person_id", "value_as_number"])
+    MSG("After merge median medians, have %s data points"%filtered.shape[0])
 
     # De-duplicate to keep one entry per person
     filtered.sort_values("measurement_datetime").drop_duplicates(subset=["person_id"], keep="last", inplace=True)
+    MSG("After dedup, have %s data points"%filtered.shape[0])
 
     # Record age info
     filtered["age"] = filtered['measurement_datetime'].dt.year - \
     	filtered["date_of_birth"].dt.year
 
     # Output final phenotype value
+    MSG("Final file has %s data points"%filtered.shape[0])
     filtered.rename({"value_as_number": "phenotype"}, inplace=True, axis=1)
     filtered[["person_id", "phenotype", "age"]].to_csv(args.phenotype+"_phenotypes.csv", index=False)
 
