@@ -30,7 +30,7 @@ def main():
 	MSG("Processing %s"%args.phenotype)
 
 	# Check if we have info for that phenotype
-	if args.phenotype not in aou_queries.pt_queries.keys():
+	if args.phenotype not in aou_queries.AVAILABLE_PHENOTYPES:
 		ERROR("Could not find sql query for %s"%args.phenotype)
 
 	# Set up dataframes

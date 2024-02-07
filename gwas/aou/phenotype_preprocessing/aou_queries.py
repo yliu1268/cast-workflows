@@ -32,6 +32,12 @@ demographics_sql = """
 ############################################################
 # Phenotype-specific queries
 
+pt_concept_ids = {
+    "ALT": 37047736
+}
+
+AVAILABLE_PHENOTYPES = list(pt_concept_ids.keys())
+
 def ConstructTraitSQL(phenotype):
     concept_id = pt_concept_ids.get(phenotype, None)
     if concept_id is None: return None
