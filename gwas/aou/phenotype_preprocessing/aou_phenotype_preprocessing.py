@@ -23,6 +23,10 @@ def ERROR(msg_str):
     MSG("ERROR: " + msg_str)
     sys.exit(1)
 
+def GetAge(x):
+	return x['measurement_datetime'].dt.year \
+		- x["date_of_birth"].dt.year
+
 def main():
     parser = argparse.ArgumentParser(__doc__)
     parser.add_argument("--phenotype", help="Phenotype ID", type=str, required=True)
@@ -65,7 +69,7 @@ def main():
     MSG("After filter range, have %s data points"%data.shape[0])
 
     # Determine a single representative value per person
-    data['Year'] = data['measurement_datetime'].dt.strftime('%Y')
+    data['Year'] = data['measurement_datetime'].dt.year
     median_per_year = data.groupby(['person_id','Year']).agg(median_year=('value_as_number', np.median)).reset_index()
     median_of_medians = median_per_year.groupby(['person_id']).agg(median_median=('median_year', np.median)).reset_index()
     median_of_medians.rename({"median_median": "value_as_number"}, inplace=True, axis=1)
@@ -76,8 +80,10 @@ def main():
     # De-duplicate to keep one entry per person
     filtered.sort_values("measurement_datetime").drop_duplicates(subset=["person_id"], keep="last", inplace=True)
 
+    # Record age info
+    filtered["age"] = filtered.apply(lambda x: GetAge(x), 1)
+
     # TODO:
-    # get age
     # output final file with person_id, phenotype, age at measurement
     print(filtered.head())
 
