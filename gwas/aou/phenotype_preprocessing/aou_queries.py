@@ -148,3 +148,13 @@ def ConstructTraitSQL(phenotype):
         LEFT JOIN
             `""" + os.environ["WORKSPACE_CDR"] + """.concept` m_source_concept 
                 ON measurement.measurement_source_concept_id = m_source_concept.concept_id"""
+
+########## Phenotype-specific units ###########
+
+# TODO how does this differ across phenotypes?
+def GetUnits(phenotype):
+    if phenotype in ["ALT"]:
+        return ["IU/L", "No matching concept", "international unit per liter", \
+            "no value", "unit per liter"]
+    else:
+        return []
