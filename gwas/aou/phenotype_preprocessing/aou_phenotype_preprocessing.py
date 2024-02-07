@@ -65,7 +65,7 @@ def main():
 	MSG("After filter range, have %s data points"%data.shape[0])
 
 	# Determine a single representative value per person
-#	data['Year'] = data['measurement_datetime'].dt.strftime('%Y')
+	data['Year'] = data['measurement_datetime'].dt.strftime('%Y')
 #	median_per_year = data.groupby(['person_id','Year']).agg(median_year=('value_as_number', np.median)).reset_index()
 #	median_of_medians = median.groupby(['person_id']).agg(median_median=('median_year', np.median)).reset_index()
 #
