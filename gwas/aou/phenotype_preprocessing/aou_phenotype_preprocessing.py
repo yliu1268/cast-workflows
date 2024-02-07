@@ -78,6 +78,7 @@ def main():
 
     # Record age info
     filtered["age"] = filtered['measurement_datetime'].dt.year - \
+    	filtered["date_of_birth"].dt.year
 
     # TODO:
     # output final file with person_id, phenotype, age at measurement
