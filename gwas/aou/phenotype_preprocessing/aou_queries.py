@@ -4,6 +4,10 @@ SQL queries for AoU phenotypes
 
 import os
 
+########## Phenotype-specific info ###########
+BLOOD_UNITS = ["IU/L", "No matching concept", "international unit per liter", \
+            "no value", "unit per liter"]
+
 ############################################################
 # Demographics query - general for all phenotypes
 demographics_sql = """
@@ -29,38 +33,16 @@ demographics_sql = """
                 ) 
             )"""
 
-########## Phenotype-specific info ###########
-BLOOD_UNITS = ["IU/L", "No matching concept", "international unit per liter", \
-            "no value", "unit per liter"]
+def GetUnits(units):
+    if units == "blood":
+        return BLOOD_UNITS
+    else: return [item.strip() for item in units.split(",")]
 
-pt_info = {
-    "ALT": {
-        "concept_id": 37047736,
-        "units": BLOOD_UNITS,
-        "range": [0, 250]
-    }
-}
+def GetPhenotypeRange(range):
+    minval, maxval = range.strip().split()
+    return float(minval), float(maxval)
 
-AVAILABLE_PHENOTYPES = list(pt_info.keys())
-
-def GetUnits(phenotype):
-    try:
-        return pt_info[phenotype]["units"]
-    except KeyError:
-        return []
-
-def GetPhenotypeRange(phenotype):
-    try:
-        return pt_info[phenotype]["range"]
-    except KeyError:
-        return None, None
-
-def ConstructTraitSQL(phenotype):
-    try:
-        concept_id = pt_info[phenotype]["concept_id"]
-    except KeyError:
-        concept_id = None
-    if concept_id is None: return None
+def ConstructTraitSQL(concept_id):
     return """
     SELECT
         measurement.person_id,

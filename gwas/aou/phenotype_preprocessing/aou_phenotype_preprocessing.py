@@ -27,12 +27,12 @@ def main():
     parser = argparse.ArgumentParser(__doc__)
     parser.add_argument("--phenotype", help="Phenotype ID", type=str, required=True)
     parser.add_argument("--samples", help="List of sample IDs to keep", type=str)
+    parser.add_argument("--concept-id", help="Concept ID for phenotype", type=str, required=True)
+    parser.add_argument("--units", help="Comma-separated list of acceptable units. Accepted shorthands: blood", type=str, required=True)
+    parser.add_argument("--range", help="min, max acceptable phenotype values", type=str, required=True)
+
     args = parser.parse_args()
     MSG("Processing %s"%args.phenotype)
-
-    # Check if we have info for that phenotype
-    if args.phenotype not in aou_queries.AVAILABLE_PHENOTYPES:
-        ERROR("Could not find concept_id for %s. Please add it to aou_queries.py"%args.phenotype)
 
     # Set up dataframes
     demog = pd.read_gbq(
@@ -41,7 +41,7 @@ def main():
         use_bqstorage_api=("BIGQUERY_STORAGE_API_ENABLED" in os.environ),
         progress_bar_type="tqdm_notebook")
     ptdata = pd.read_gbq(
-        aou_queries.ConstructTraitSQL(args.phenotype),
+        aou_queries.ConstructTraitSQL(args.concept_id),
         dialect="standard",
         use_bqstorage_api=("BIGQUERY_STORAGE_API_ENABLED" in os.environ),
         progress_bar_type="tqdm_notebook")
@@ -58,9 +58,9 @@ def main():
     # Filtering
     data.dropna(axis=0, subset=['value_as_number'],inplace=True)
     MSG("After filter NA, have %s data points"%data.shape[0])
-    data = data[data["unit_concept_name"].isin(aou_queries.GetUnits(args.phenotype))]
+    data = data[data["unit_concept_name"].isin(aou_queries.GetUnits(args.units))]
     MSG("After filter units, have %s data points"%data.shape[0])
-    minval, maxval = aou_queries.GetPhenotypeRange(args.phenotype)
+    minval, maxval = aou_queries.GetPhenotypeRange(args.range)
     if minval is None or maxval is None:
         ERROR("No minval or maxval specified")
     data = data[(data["value_as_number"]>minval) & (data["value_as_number"]<maxval)]

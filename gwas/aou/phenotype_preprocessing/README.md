@@ -5,18 +5,17 @@ This script takes as input a phenotype ID and runs preprocessing to create a fil
 Usage example:
 
 ```
-./aou_phenotype_preprocessing.py --phenotype ALT [--sample samplefile.txt]
+./aou_phenotype_preprocessing.py \
+   --phenotype ALT \
+   --concept-id 37047736 \
+   --units blood \
+   --range 0,250 \
+   [--sample samplefile.txt]
 ```
 
-Usage notes:
-
-* Before you run a new phenotype for the first time, you must edit the variable `pt_info` in `aou_queries.py` to add the following info:
-  * phenotype ID (e.g. "ALT")
-  * concept ID. You'll have to get this from the AoU cohort browser (TODO: add instructions for constructing a concept ID)
-  * Acceptable units for that trait. `BLOOD_UNITS` contains common units as a starting point.
-  * The acceptable range of values (min, max) for the trait.
+* The concept ID must be obtained from the AoU workbench (TODO: add instructions)
+* `--units blood` allows units: "IU/L", "No matching concept", "international unit per liter", "no value", "unit per liter"
 * You can optionally provide a list of samples to restrict to. Typically this would a list of samples that passed upstream sample-level QC info.
-
 
 Notes:
 * get trait-specific covars (LDL)
