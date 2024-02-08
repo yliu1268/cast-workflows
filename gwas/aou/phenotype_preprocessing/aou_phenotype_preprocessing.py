@@ -50,7 +50,7 @@ def main():
 
     # Restrict to samples we want to keep
     if args.samples is not None:
-    	use_samples = [item.strip() for item in \
+    	use_samples = [int(item.strip()) for item in \
     		open(args.samples, "r").readlines()]
     	data = data[data["person_id"].isin(use_samples)]
     MSG("After filter samples, have %s data points"%data.shape[0])
