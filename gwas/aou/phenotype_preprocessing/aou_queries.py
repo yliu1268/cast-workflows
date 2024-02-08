@@ -39,7 +39,7 @@ def GetUnits(units):
     else: return [item.strip() for item in units.split(",")]
 
 def GetPhenotypeRange(range):
-    minval, maxval = range.strip().split()
+    minval, maxval = range.strip().split(",")
     return float(minval), float(maxval)
 
 def ConstructTraitSQL(concept_id):
