@@ -29,17 +29,37 @@ demographics_sql = """
                 ) 
             )"""
 
-############################################################
-# Phenotype-specific queries
+########## Phenotype-specific info ###########
+BLOOD_UNITS = ["IU/L", "No matching concept", "international unit per liter", \
+            "no value", "unit per liter"]
 
-pt_concept_ids = {
-    "ALT": 37047736
+pt_info = {
+    "ALT": {
+        "concept_id": 37047736,
+        "units": BLOOD_UNITS,
+        "range": [0, 250]
+    }
 }
 
-AVAILABLE_PHENOTYPES = list(pt_concept_ids.keys())
+AVAILABLE_PHENOTYPES = list(pt_info.keys())
+
+def GetUnits(phenotype):
+    try:
+        return pt_info[phenotype]["units"]
+    except KeyError:
+        return []
+
+def GetPhenotypeRange(phenotype):
+    try:
+        return pt_info[phenotype]["range"]
+    except KeyError:
+        return None, None
 
 def ConstructTraitSQL(phenotype):
-    concept_id = pt_concept_ids.get(phenotype, None)
+    try:
+        concept_id = pt_info[phenotype]["concept_id"]
+    except KeyError:
+        concept_id = None
     if concept_id is None: return None
     return """
     SELECT
@@ -149,18 +169,3 @@ def ConstructTraitSQL(phenotype):
             `""" + os.environ["WORKSPACE_CDR"] + """.concept` m_source_concept 
                 ON measurement.measurement_source_concept_id = m_source_concept.concept_id"""
 
-########## Phenotype-specific units ###########
-
-# TODO how does this differ across phenotypes?
-def GetUnits(phenotype):
-    if phenotype in ["ALT"]:
-        return ["IU/L", "No matching concept", "international unit per liter", \
-            "no value", "unit per liter"]
-    else:
-        return []
-
-def GetPhenotypeRange(phenotype):
-    if phenotype in ["ALT"]:
-        return 0, 250
-    else:
-        return None, None
