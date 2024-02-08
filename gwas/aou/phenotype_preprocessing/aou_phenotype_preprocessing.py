@@ -77,7 +77,7 @@ def main():
     MSG("After merge median medians, have %s data points"%filtered.shape[0])
 
     # De-duplicate to keep one entry per person
-    filtered.sort_values("measurement_datetime").drop_duplicates(subset=["person_id"], keep="last", inplace=True)
+    filtered = filtered.sort_values("measurement_datetime").drop_duplicates(subset=["person_id"], keep="last")
     MSG("After dedup, have %s data points"%filtered.shape[0])
 
     # Record age info
