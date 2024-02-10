@@ -108,7 +108,7 @@ def main():
             drugdata = pd.merge(drugdata, filtered[["person_id", "measurement_datetime"]], on="person_id")
             drugdata[concept_name] = drugdata.apply(OverlapDrugMeasurement, 1)
             filtered = pd.merge(filtered, drugdata[["person_id", concept_name]], \
-                on="person_id", how="left").fillna(value={"concept_name": 0})
+                on="person_id", how="left").fillna(value={concept_name: 0})
             MSG("After add %s, filtered has %s data points"%(concept_name, filtered.shape[0]))
             covar_cols.append(concept_name)
 
