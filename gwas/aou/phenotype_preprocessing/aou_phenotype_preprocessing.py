@@ -37,6 +37,13 @@ def OverlapDrugMeasurement(x):
 	else:
 		return 1
 
+def GetDrugData(concept_id):
+    drug_sql = aou_queries.ConstructDrugExposureSQL(concept_id)
+    drugdata = SQLToDF(drug_sql)
+    drugdata = drugdata.groupby(["person_id"]).agg(start=('drug_exposure_start_datetime', np.min), \
+        end=('drug_exposure_end_datetime', np.max)).reset_index()
+   	return drugdata
+
 def main():
     parser = argparse.ArgumentParser(__doc__)
     parser.add_argument("--phenotype", help="Phenotype ID", type=str, required=True)
@@ -97,15 +104,11 @@ def main():
         covar_concepts = args.drugexposure_covariate_concept_ids.strip().split(",")
         for ci in covar_concepts:
             concept_id, concept_name = ci.split(":")
-            drug_sql = aou_queries.ConstructDrugExposureSQL(concept_id)
-            drugdata = SQLToDF(drug_sql)
-            drugdata = drugdata.groupby(["person_id"]).agg(start=('drug_exposure_start_datetime', np.min), \
-                end=('drug_exposure_end_datetime', np.max)).reset_index()
+            drugdata = GetDrugData(concept_id)
             drugdata = pd.merge(drugdata, filtered[["person_id", "measurement_datetime"]], on="person_id")
             drugdata[concept_name] = drugdata.apply(OverlapDrugMeasurement, 1)
             filtered = pd.merge(filtered, drugdata[["person_id", concept_name]], \
-                on="person_id", how="left")
-            filtered = filtered.fillna(value={"concept_name": 0})
+                on="person_id", how="left").fillna(value={"concept_name": 0})
             MSG("After add %s, filtered has %s data points"%(concept_name, filtered.shape[0]))
             covar_cols.append(concept_name)
 
