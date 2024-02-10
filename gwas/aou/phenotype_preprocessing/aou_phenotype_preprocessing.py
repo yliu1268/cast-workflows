@@ -32,8 +32,7 @@ def SQLToDF(sql):
 
 # TODO: if endtime < measurement time then also set to 0?
 def OverlapDrugMeasurement(x):
-    print(dir(x))
-    if x["measurement_datetime"] < x["drug_exposure_start_datetime"]:
+    if x["measurement_datetime"] < x["start"]:
         return 0
     else:
         return 1
