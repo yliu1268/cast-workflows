@@ -17,75 +17,75 @@ import pandas as pd
 import sys
 
 def MSG(msg_str):
-	"""
-	Write a helpful progress message to stderr
+    """
+    Write a helpful progress message to stderr
 
-	Arguments
-	---------
-	msg_str : str
+    Arguments
+    ---------
+    msg_str : str
        Message to write
-	"""
+    """
     sys.stderr.write("[aou_phenotype_preprocessing]: %s\n"%msg_str.strip())
 
 def ERROR(msg_str):
-	"""
-	Write an error message to stderr then quit
-	with exit code 1
+    """
+    Write an error message to stderr then quit
+    with exit code 1
 
-	Arguments
-	---------
-	msg_str : str
-	   Message to write
-	"""
+    Arguments
+    ---------
+    msg_str : str
+       Message to write
+    """
     MSG("ERROR: " + msg_str)
     sys.exit(1)
 
 def SQLToDF(sql):
-	"""
-	Extract Google bigquery results to pandas df
+    """
+    Extract Google bigquery results to pandas df
 
-	Arguments
-	---------
-	sql : str
-	   Query string
+    Arguments
+    ---------
+    sql : str
+       Query string
 
-	Returns
-	-------
-	df : pandas.DataFrame
-	   Dataframe with the results
-	"""
+    Returns
+    -------
+    df : pandas.DataFrame
+       Dataframe with the results
+    """
     df = pd.read_gbq(
         sql,
         dialect="standard",
         use_bqstorage_api=("BIGQUERY_STORAGE_API_ENABLED" in os.environ),
         progress_bar_type="tqdm_notebook")
-   	return df
+       return df
 
 def OverlapDrugMeasurement(measurement_datetime, start, end):
-	"""
-	Determine whether a phenotype measurement overlaps
-	the start/end time of a drug
+    """
+    Determine whether a phenotype measurement overlaps
+    the start/end time of a drug
 
-	Currently: counts as no if phenotype measurement
-	is before drug start
+    Currently: counts as no if phenotype measurement
+    is before drug start
 
-	TODO (ask Tara): do we need to also set to no
-	if the drug ends before the phenotype taken?
+    TODO (ask Tara): do we need to also set to no
+    if the drug ends before the phenotype taken?
 
-	Arguments
-	---------
-	measurement_datetime : datetime
-	   Time phenotype measurement taken
-	start : datetime
-	   Time drug started
-	end : datetime
-	   Time drug ended
+    Arguments
+    ---------
+    measurement_datetime : datetime
+       Time phenotype measurement taken
+    start : datetime
+       Time drug started
+    end : datetime
+       Time drug ended
 
-	Returns
-	-------
-	res : int
-	   0 (not on drug) or 1 (on drug)
-	"""
+    Returns
+    -------
+    res : int
+       0 (not on drug) or 1 (on drug)
+    """
     if measurement_datetime < start:
         res = 0
     else:
@@ -93,19 +93,19 @@ def OverlapDrugMeasurement(measurement_datetime, start, end):
     return res
 
 def GetDrugData(concept_id):
-	"""
-	Extract drug data for a concept id
+    """
+    Extract drug data for a concept id
 
-	Arguments
-	---------
-	concept_id : int
-	   AoU concept ID
+    Arguments
+    ---------
+    concept_id : int
+       AoU concept ID
 
-	Returns
-	-------
-	drugdata : pandas.DataFrame
-	   Includes columns: person_id, start (drug start), end (drug end)
-	"""
+    Returns
+    -------
+    drugdata : pandas.DataFrame
+       Includes columns: person_id, start (drug start), end (drug end)
+    """
     drug_sql = aou_queries.ConstructDrugExposureSQL(concept_id)
     drugdata = SQLToDF(drug_sql)
     drugdata = drugdata.groupby(["person_id"]).agg(start=('drug_exposure_start_datetime', np.min), \
@@ -175,7 +175,7 @@ def main():
             drugdata = GetDrugData(concept_id)
             drugdata = pd.merge(drugdata, filtered[["person_id", "measurement_datetime"]], on="person_id")
             drugdata[concept_name] = drugdata.apply(lambda x: \
-            	OverlapDrugMeasurement(x["measurement_datetime"], x["start"], x["end"]), 1)
+                OverlapDrugMeasurement(x["measurement_datetime"], x["start"], x["end"]), 1)
             filtered = pd.merge(filtered, drugdata[["person_id", concept_name]], \
                 on="person_id", how="left").fillna(value={concept_name: 0})
             MSG("After add %s, filtered has %s data points"%(concept_name, filtered.shape[0]))
