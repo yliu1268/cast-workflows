@@ -59,7 +59,7 @@ def SQLToDF(sql):
         dialect="standard",
         use_bqstorage_api=("BIGQUERY_STORAGE_API_ENABLED" in os.environ),
         progress_bar_type="tqdm_notebook")
-       return df
+    return df
 
 def OverlapDrugMeasurement(measurement_datetime, start, end):
     """
