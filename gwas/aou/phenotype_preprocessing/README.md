@@ -15,7 +15,7 @@ Usage example:
 ```
 
 * The concept ID must be obtained from the AoU workbench (TODO: add instructions)
-* `--units blood` allows units: "IU/L", "No matching concept", "international unit per liter", "no value", "unit per liter"
+* `--units blood` allows units: "IU/L", "No matching concept", "international unit per liter", "no value", "unit per liter". Might change this based on units for other phenotypes
 * You can optionally provide a list of samples to restrict to. Typically this would a list of samples that passed upstream sample-level QC info.
 * You can optionally provide a list of conceptid:conceptname to use as drug exposure covariates
 
