@@ -32,17 +32,17 @@ def SQLToDF(sql):
 
 # TODO: if endtime < measurement time then also set to 0?
 def OverlapDrugMeasurement(x):
-	if x["measurement_datetime"] < x["drug_exposure_start_datetime"]:
-		return 0
-	else:
-		return 1
+    if x["measurement_datetime"] < x["drug_exposure_start_datetime"]:
+        return 0
+    else:
+        return 1
 
 def GetDrugData(concept_id):
     drug_sql = aou_queries.ConstructDrugExposureSQL(concept_id)
     drugdata = SQLToDF(drug_sql)
     drugdata = drugdata.groupby(["person_id"]).agg(start=('drug_exposure_start_datetime', np.min), \
         end=('drug_exposure_end_datetime', np.max)).reset_index()
-   	return drugdata
+    return drugdata
 
 def main():
     parser = argparse.ArgumentParser(__doc__)

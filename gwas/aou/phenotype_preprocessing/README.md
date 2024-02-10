@@ -10,6 +10,7 @@ Usage example:
    --concept-id 37047736 \
    --units blood \
    --range 0,250 \
+   --drugexposure-covariate-concept-ids 21601855:statin \
    [--sample samplefile.txt]
 ```
 
