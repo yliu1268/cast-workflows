@@ -19,4 +19,4 @@ Usage example:
 * You can optionally provide a list of samples to restrict to. Typically this would a list of samples that passed upstream sample-level QC info.
 * You can optionally provide a list of conceptid:conceptname to use as drug exposure covariates
 
-The output file will have columns: "person_id", "phenotype", "age", plus an additional column for each drug exposure named by the "conceptname" provided for that drug. e.g. the example above will have columns "person_id", "phenotype", "age", "statin".
+The output file will is a csv file with columns: "person_id", "phenotype", "age", plus an additional column for each drug exposure named by the "conceptname" provided for that drug. e.g. the example above will have columns "person_id", "phenotype", "age", "statin".
