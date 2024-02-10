@@ -184,7 +184,7 @@ def main():
     # Output final phenotype value
     MSG("Final file has %s data points"%filtered.shape[0])
     filtered.rename({"value_as_number": "phenotype"}, inplace=True, axis=1)
-    filtered[["person_id", "phenotype", "age"]+covar_cols].to_csv(args.phenotype+"_phenotypes.csv", index=False)
+    filtered[["person_id", "phenotype", "age"]+covar_cols].to_csv(args.phenotype+"_phenocovar.csv", index=False)
 
 if __name__ == "__main__":
     main()
