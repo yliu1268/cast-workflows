@@ -10,15 +10,13 @@ Usage example:
    --concept-id 37047736 \
    --units blood \
    --range 0,250 \
-   --drugexposure-covariate-concept-ids 21601855:statin \
+   [--drugexposure-covariate-concept-ids 21601855:statin] \
    [--sample samplefile.txt]
 ```
 
 * The concept ID must be obtained from the AoU workbench (TODO: add instructions)
 * `--units blood` allows units: "IU/L", "No matching concept", "international unit per liter", "no value", "unit per liter"
 * You can optionally provide a list of samples to restrict to. Typically this would a list of samples that passed upstream sample-level QC info.
+* You can optionally provide a list of conceptid:conceptname to use as drug exposure covariates
 
-Notes:
-* get trait-specific covars (LDL)
-* Take in list of blessed samples from Tara's script
-* Run on all phenotypes and store in shared bucket
+The output file will have columns: "person_id", "phenotype", "age", plus an additional column for each drug exposure named by the "conceptname" provided for that drug. e.g. the example above will have columns "person_id", "phenotype", "age", "statin".
