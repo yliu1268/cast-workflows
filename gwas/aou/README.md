@@ -2,6 +2,8 @@
 
 **under construction**
 
+**Note: all of this needs to be run on the AoU workbench.**
+
 ## Setup
 
 The GWAS instructions below assume you have:
@@ -16,6 +18,10 @@ ${WORKSPACE_BUCKET}/phenotypes/${phenotype}_phenocovar.csv
 
 ## Running a SNP-based GWAS using Hail
 
+TODO - what kind of environment do we have to run this in if using hail?
+
+```
 ./aou_gwas.py \
   --phenotypes ${phenotype} \
   --method hail
+```
