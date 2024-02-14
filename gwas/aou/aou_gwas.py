@@ -32,7 +32,7 @@ def GetOutPath(phenotype, method, region):
 	outprefix = "%s_%s"%(phenotype, method)
 	if region is not None:
 		outprefix += "_%s"%(region.replace(":", "_").replace("-","_"))
-	return outprefix += ".gwas.tab"
+	return outprefix + ".gwas.tab"
 
 # TODO - deal with which cohort to do
 # TODO - where to get sex covariate
