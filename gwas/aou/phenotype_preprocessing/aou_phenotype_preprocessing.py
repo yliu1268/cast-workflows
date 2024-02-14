@@ -157,6 +157,7 @@ def main():
     MSG("After merge, have %s data points"%data.shape[0])
 
     # Restrict to samples we want to keep
+    # TODO update once we get final format from Tara
     if args.samples is not None:
         use_samples = [int(item.strip()) for item in \
             open(args.samples, "r").readlines()]

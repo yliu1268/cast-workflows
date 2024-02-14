@@ -29,7 +29,8 @@ def GetOutPath(phenotype, method, region):
     return outprefix + ".gwas.tab"
 
 # TODO - deal with which cohort to do
-# TODO - where to get sex covariate
+# TODO - where to get sex covariate (update: Tara's file)
+# TODO - manifest file with these options
 def main():
     parser = argparse.ArgumentParser(__doc__)
     parser.add_argument("--phenotype", help="Phenotypes file path, or phenotype name", type=str, required=True)
@@ -59,7 +60,6 @@ def main():
     # TODO - make separate columns for PCs, get list of covars to pass gwas runners
     print(ancestry.head())
     sys.exit(1)
-
 
     # Set up GWAS method
     #if args.method == "hail":
