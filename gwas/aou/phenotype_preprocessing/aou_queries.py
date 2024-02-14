@@ -13,7 +13,6 @@ BLOOD_UNITS = ["IU/L", "No matching concept", "international unit per liter", \
 demographics_sql = """
     SELECT
         person.person_id,
-        person.sex_at_birth as sex,
         person.birth_datetime as date_of_birth 
     FROM
         `""" + os.environ["WORKSPACE_CDR"] + """.person` person   
