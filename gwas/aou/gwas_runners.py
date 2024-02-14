@@ -2,10 +2,7 @@
 Classes for performing GWAS
 """
 
-import hail as hl
-
 MT_WGS_PATH = 'gs://fc-aou-datasets-controlled/v7/wgs/short_read/snpindel/acaf_threshold/multiMT/hail.mt' 
-ANCESTRY_PRED_PATH = "gs://fc-aou-datasets-controlled/v7/wgs/short_read/snpindel/aux/ancestry/ancestry_preds.tsv"
 
 #change p=0 to smallest value reported
 def change_p (x):
@@ -15,6 +12,7 @@ def change_p (x):
         return x
 
 class HailRunner:
+	import hail as hl
 	def __init__(self, ptcovar_file, ptcovars=[], no_sex=False, num_pcs=10, region=None):
 		self.region = region
 		self.ptcovar = ptcovar_file

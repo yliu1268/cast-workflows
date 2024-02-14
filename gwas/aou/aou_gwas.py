@@ -22,12 +22,6 @@ def CheckRegion(region):
 	if region is None: return True
 	return re.match(r"\w+:\d+-\d+", query_string) is not None
 
-def GetCovars(covar_str):
-	if covar_str == "":
-		return []
-	else:
-		return covar_str.split(",")
-
 def GetOutPath(phenotype, method, region):
 	outprefix = "%s_%s"%(phenotype, method)
 	if region is not None:
@@ -62,16 +56,14 @@ def main():
 	data = pd.read_csv(ptcovar_path)
 	ancestry = pd.read_csv(ANCESTRY_PRED_PATH, sep="\t")
 	ancestry.rename({"research_id": "person_id"}, axis=1, inplace=True)
+	# TODO - make separate columns for PCs, get list of covars to pass gwas runners
 	print(ancestry.head())
 	sys.exit(1)
 
 
 	# Set up GWAS method
 	#if args.method == "hail":
-	#	runner = HailRunner(ptcovar_path, region=args.region, \
-	#		num_pcs=args.num_pcs, ptcovars=GetCovars(args.covars), \
-	#		no_sex=args.no_sex, \
-	#		out_path=GetOutPath(args.phenotype, args.method, args.region))
+	#	runner = HailRunner(data, region=args.region, covars=covars)
 	#else:
 	#	ERROR("GWAS method %s not implemented")
 
