@@ -34,10 +34,10 @@ def main():
     parser = argparse.ArgumentParser(__doc__)
     parser.add_argument("--phenotype", help="Phenotypes file path, or phenotype name", type=str, required=True)
     parser.add_argument("--method", help="GWAS method. Options: %s"",".join(GWAS_METHODS), type=str, default="hail")
-    parser.add_argument("--region", help="chr:start-end to restrict to", type=str)
+    parser.add_argument("--region", help="chr:start-end to restrict to. Default is genome-wide", type=str)
     parser.add_argument("--num-pcs", help="Number of PCs to use as covariates", type=int, default=10)
-    parser.add_argument("--covars", help="Comma-separated list of phenotype-specific covariates. Default: age", type=str, default="age")
-    parser.add_argument("--no-sex", help="Do not include sex as a covariate", action="store_true")
+    parser.add_argument("--ptcovars", help="Comma-separated list of phenotype-specific covariates. Default: age", type=str, default="age")
+    parser.add_argument("--sharedcovars", help="Comma-separated list of shared covariates (besides PCs). Default: sex", type=str, default="sex")
     args = parser.parse_args()
 
     # Set up paths

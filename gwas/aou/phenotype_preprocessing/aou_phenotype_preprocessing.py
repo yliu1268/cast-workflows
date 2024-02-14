@@ -130,13 +130,13 @@ def my_median(series):
     median: pandas.DataFrame
        
     """
-    my_list = series.tolist() 
-    my_list.sort()
-    if len(my_list)%2 == 1:
-        return np.median(my_list)
-    
-    else:
-        pass
+    return np.median(series.tolist())
+    #my_list = series.tolist() 
+    #my_list.sort()
+    #if len(my_list)%2 == 1:
+    #    return np.median(my_list)
+    #else:
+    #    pass # TODO finish implementation
 
 def main():
     parser = argparse.ArgumentParser(__doc__)
