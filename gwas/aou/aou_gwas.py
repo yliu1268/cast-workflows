@@ -6,10 +6,13 @@ Run GWAS on All of Us
 
 import argparse
 import os
+import pandas as pd
 import re
+import sys
 from utils import MSG, ERROR
 
 GWAS_METHODS = ["hail"]
+ANCESTRY_PRED_PATH = "gs://fc-aou-datasets-controlled/v7/wgs/short_read/snpindel/aux/ancestry/ancestry_preds.tsv"
 
 def GetPTCovarPath(phenotype):
 	return os.path.join(os.getenv('WORKSPACE_BUCKET'), \
@@ -31,6 +34,8 @@ def GetOutPath(phenotype, method, region):
 		outprefix += "_%s"%(region.replace(":", "_").replace("-","_"))
 	return outprefix += ".gwas.tab"
 
+# TODO - deal with which cohort to do
+# TODO - where to get sex covariate
 def main():
     parser = argparse.ArgumentParser(__doc__)
     parser.add_argument("--phenotype", help="Phenotypes file path, or phenotype name", type=str, required=True)
@@ -53,21 +58,25 @@ def main():
 	if not CheckRegion(args.region):
 		ERROR("Invalid region %s"%args.region)
 
-	# TODO - deal with which cohort to do
-	# e.g. all, EUR, AFR, etc.
-	# pass sample list to gwas below
+	# Set up data frame with phenotype and covars
+	data = pd.read_csv(ptcovar_path)
+	ancestry = pd.read_csv(ANCESTRY_PRED_PATH, sep="\t")
+	ancestry.rename({"research_id": "person_id"}, axis=1, inplace=True)
+	print(ancestry.head())
+	sys.exit(1)
+
 
 	# Set up GWAS method
-	if args.method == "hail":
-		runner = HailRunner(ptcovar_path, region=args.region, \
-			num_pcs=args.num_pcs, ptcovars=GetCovars(args.covars), \
-			no_sex=args.no_sex, \
-			out_path=GetOutPath(args.phenotype, args.method, args.region))
-	else:
-		ERROR("GWAS method %s not implemented")
+	#if args.method == "hail":
+	#	runner = HailRunner(ptcovar_path, region=args.region, \
+	#		num_pcs=args.num_pcs, ptcovars=GetCovars(args.covars), \
+	#		no_sex=args.no_sex, \
+	#		out_path=GetOutPath(args.phenotype, args.method, args.region))
+	#else:
+	#	ERROR("GWAS method %s not implemented")
 
 	# Run GWAS
-	runner.RunGWAS()
+	#runner.RunGWAS()
 
 	# Plot Manhattan and QQ - TODO
 
