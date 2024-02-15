@@ -94,10 +94,10 @@ def main():
 
     MSG("Debug: what does df look like:")
     print(data.head())
-    
+
     # Set up GWAS method
     if args.method == "hail":
-        runner = HailRunner(data, region=args.region, covars=[1.0+covars])
+        runner = HailRunner(data, region=args.region, covars=covars)
     else:
         ERROR("GWAS method %s not implemented")
 

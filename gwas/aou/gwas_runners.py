@@ -13,6 +13,7 @@ class HailRunner:
         self.setup()
 
     def setup(self):
+    	# Set up hail
         self.hl.init(default_reference = "GRCh38")
 
         # Load genotypes
@@ -21,7 +22,7 @@ class HailRunner:
             mt = hl.filter_intervals(mt, [hl.parse_locus_interval(region,)])
 
         # Load phenotype and covariates
-        ptcovar = self.hl.Table.from_pandas(self.ptcovar, key="persion_id")
+        ptcovar = self.hl.Table.from_pandas(self.ptcovar, key="person_id")
         data = mt.annotate_cols(ptcovar = ptcovar[mt.s])
 
         # Genotype QC
@@ -33,13 +34,16 @@ class HailRunner:
         self.data = data
 
     def RunGWAS(self):
+    	# TODO how to access covariates from ptcovar by name
         linear_r = self.hl.linear_regression_rows(
             y= data.ptcovar.phenotype,
             x= data.GT.n_alt_alleles(),
-            covariates = self.covars
+            covariates = [1.0 + data.ptcovar[item] \
+            	for item in self.covars]
         )
         summary = linear_r.flatten()
         summary.export(self.out_path)
+        # TODO - export to dataframe and save to the class
 
         # Convert to data frame with required columns
         #gwas = linear_r.annotate(p_value_str= hl.str(linear_r.p_value))
