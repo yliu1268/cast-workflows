@@ -8,6 +8,7 @@ Example:
 """
 
 import argparse
+from gwas_runners import HailRunner
 import os
 import pandas as pd
 import re
@@ -91,12 +92,11 @@ def main():
         if item not in data.columns:
             ERROR("Required column %s not found"%item)
 
-    print(data.head())
     # Set up GWAS method
-    #if args.method == "hail":
-    #    runner = HailRunner(data, region=args.region, covars=[1.0+covars])
-    #else:
-    #    ERROR("GWAS method %s not implemented")
+    if args.method == "hail":
+        runner = HailRunner(data, region=args.region, covars=[1.0+covars])
+    else:
+        ERROR("GWAS method %s not implemented")
 
     # Run GWAS
     #runner.RunGWAS()

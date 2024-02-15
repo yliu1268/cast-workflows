@@ -2,17 +2,11 @@
 Classes for performing GWAS
 """
 
+import hail as hl
+
 MT_WGS_PATH = 'gs://fc-aou-datasets-controlled/v7/wgs/short_read/snpindel/acaf_threshold/multiMT/hail.mt' 
 
-#change p=0 to smallest value reported
-def change_p (x):
-    if x == 0:
-        return 3.162020e-323
-    else:
-        return x
-
 class HailRunner:
-	import hail as hl
 	def __init__(self, ptcovar, region=None, covars=None):
 		self.ptcovar = ptcovar
 		self.region = region
@@ -40,26 +34,20 @@ class HailRunner:
     	self.data = data
 
 	def RunGWAS(self):
-		# TODO how to add sex
-		covariates = [1.0] + [self.data.ancestry_pred.pca_features[i] \
-			for i in range(self.num_pcs)]
-		for c in ptcovars:
-			covariates.append(self.data.pheno[c])
-
 		linear_r = hl.linear_regression_rows(
-        	y= data.pheno.phenotype,
+        	y= data.ptcovar.phenotype,
         	x= data.GT.n_alt_alleles(),
-        	covariates = covariates
+        	covariates = self.covars
     	)
     	summary = linear_r.flatten()
     	summary.export(self.out_path)
 
     	# Convert to data frame with required columns
-    	gwas = linear_r.annotate(p_value_str= hl.str(linear_r.p_value))
-    	gwas_pd = gwas.to_pandas()
-    	gwas_pd["chrom"] = gwas_pd["locus"].apply(lambda x: str(x).split(":")[0])
-    	gwas_pd["pos"] = gwas_pd["locus"].apply(lambda x: int(str(x).split(":")[1]))
-    	gwas_pd['p_value']= gwas_pd.apply(lambda x: change_p(float(x['p_value_str'])),axis=1)
-		gwas_pd['-log10pvalue'] = -np.log10(gwas_pd.p_value)
-    	self.gwas_results = gwas_pd
+    	#gwas = linear_r.annotate(p_value_str= hl.str(linear_r.p_value))
+    	#gwas_pd = gwas.to_pandas()
+    	#gwas_pd["chrom"] = gwas_pd["locus"].apply(lambda x: str(x).split(":")[0])
+    	#gwas_pd["pos"] = gwas_pd["locus"].apply(lambda x: int(str(x).split(":")[1]))
+    	#gwas_pd['p_value']= gwas_pd.apply(lambda x: change_p(float(x['p_value_str'])),axis=1)
+		#gwas_pd['-log10pvalue'] = -np.log10(gwas_pd.p_value)
+    	#self.gwas_results = gwas_pd
 
