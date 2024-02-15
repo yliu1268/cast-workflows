@@ -92,9 +92,6 @@ def main():
         if item not in data.columns:
             ERROR("Required column %s not found"%item)
 
-    MSG("Debug: what does df look like:")
-    print(data.head())
-
     # Set up GWAS method
     if args.method == "hail":
         runner = HailRunner(data, region=args.region, covars=covars)

@@ -33,6 +33,8 @@ class HailRunner:
          # Keep track of data
         self.data = data
 
+        print(self.data.describe()) # TODO remove
+
     def RunGWAS(self):
     	# TODO how to access covariates from ptcovar by name
         linear_r = self.hl.linear_regression_rows(
