@@ -2,6 +2,8 @@
 Classes for performing GWAS
 """
 
+import numpy as np
+
 MT_WGS_PATH = 'gs://fc-aou-datasets-controlled/v7/wgs/short_read/snpindel/acaf_threshold/multiMT/hail.mt' 
 SMALLNUM = 10e-400
 
