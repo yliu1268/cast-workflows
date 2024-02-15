@@ -40,7 +40,7 @@ class HailRunner:
             covariates = [1.0 + self.data.ptcovar[item] \
             	for item in self.covars]
         )
-        gwas = linear_r.annotate(p_value_str= hl.str(linear_r.p_value)).to_pandas()
+        gwas = linear_r.annotate(p_value_str= self.hl.str(linear_r.p_value)).to_pandas()
         print(gwas.head())
 
         # TODO - export to dataframe and save to the class
