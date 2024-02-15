@@ -100,7 +100,7 @@ def main():
         ERROR("GWAS method %s not implemented")
 
     # Run GWAS
-    #runner.RunGWAS()
+    runner.RunGWAS()
 
     # Plot Manhattan and QQ - TODO
 
