@@ -35,9 +35,9 @@ class HailRunner:
 
     def RunGWAS(self):
         linear_r = self.hl.linear_regression_rows(
-            y= data.ptcovar.phenotype,
-            x= data.GT.n_alt_alleles(),
-            covariates = [1.0 + data.ptcovar[item] \
+            y= self.data.ptcovar.phenotype,
+            x= self.data.GT.n_alt_alleles(),
+            covariates = [1.0 + self.data.ptcovar[item] \
             	for item in self.covars]
         )
         gwas = linear_r.annotate(p_value_str= hl.str(linear_r.p_value)).to_pandas()
