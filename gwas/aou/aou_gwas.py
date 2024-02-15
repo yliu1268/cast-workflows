@@ -29,9 +29,13 @@ def GetOutPath(phenotype, method, region):
     return outprefix + ".gwas.tab"
 
 def LoadAncestry():
-    os.system("gsutil -u ${GOOGLE_PROJECT} cp %s ."%(ANCESTRY_PRED_PATH))
+    if not os.path.isfile("ancestry_preds.tsv"):
+        os.system("gsutil -u ${GOOGLE_PROJECT} cp %s ."%(ANCESTRY_PRED_PATH))
     ancestry = pd.read_csv("ancestry_preds.tsv", sep="\t")
     ancestry.rename({"research_id": "person_id"}, axis=1, inplace=True)
+    num_pcs = len(ancestry["pca_features"].values[0].split(","))
+    pcols = ["PC_%s"%i for in range(num_pcs)]
+    ancestry[pcols] = ancestry["pca_features"].str.split(",", expand=True)
     return ancestry
 
 # TODO - deal with which cohort to do
