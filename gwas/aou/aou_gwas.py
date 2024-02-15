@@ -9,11 +9,9 @@ Example:
 
 import argparse
 from gwas_runners import HailRunner
-import numpy as np
+from gwas_plotters import PlotManhattan, PlotQQ
 import os
-import pandas as pd
 import re
-import seaborn as sns
 import sys
 from utils import MSG, ERROR
 
@@ -52,17 +50,6 @@ def LoadAncestry():
 
 def WriteGWAS(gwas, outpath):
     gwas[["chrom","pos","beta","standard_error","-log10pvalue"]].to_csv(outpath, sep="\t", index=False)
-
-def PlotManhattan(gwas, outpath):
-    gwas["ind"] = range(gwas.shape[0])
-    plot = sns.relplot(data=gwas, x="ind", y="-log10pvalue", \
-        s=6, aspect=4, linewidth=0, hue="chrom", palette="tab10", legend=None)
-    chrom_df = gwas.groupby("chrom")["ind"].median()
-    plot.ax.set_xlabel("Chromosome")
-    plot.ax.set_xticks(chrom_df)
-    plot.ax.set_xticklabels(chrom_df.index)
-    plot.ax.axhline(np.log10(5*10**-8), linestyle="--", linewidth=1)
-    plot.fig.savefig(outpath)
 
 # TODO - deal with which cohort to do
 # TODO - where to get sex covariate (update: Tara's file)
@@ -123,8 +110,8 @@ def main():
 
     # Plot Manhattan
     if args.plot:
-        PlotManhattan(runner.gwas, outpath+".manhattan.png")
-    # TODO - QQ
+        gwas_plotter.PlotManhattan(runner.gwas, outpath+".manhattan.png")
+        gwas_plotter.PlotQQ(runner.gwas, outpath+".manhattan.png")
 
 if __name__ == "__main__":
     main()
