@@ -28,6 +28,12 @@ def GetOutPath(phenotype, method, region):
         outprefix += "_%s"%(region.replace(":", "_").replace("-","_"))
     return outprefix + ".gwas.tab"
 
+def LoadAncestry():
+    os.system("gsutil -u ${GOOGLE_PROJECT} cp %s ."%(ANCESTRY_PRED_PATH))
+    ancestry = pd.read_csv("ancestry_preds.tsv", sep="\t")
+    ancestry.rename({"research_id": "person_id"}, axis=1, inplace=True)
+    return ancestry
+
 # TODO - deal with which cohort to do
 # TODO - where to get sex covariate (update: Tara's file)
 # TODO - manifest file with these options
@@ -55,8 +61,8 @@ def main():
 
     # Set up data frame with phenotype and covars
     data = pd.read_csv(ptcovar_path)
-    ancestry = pd.read_csv(ANCESTRY_PRED_PATH, sep="\t")
-    ancestry.rename({"research_id": "person_id"}, axis=1, inplace=True)
+    ancestry = LoadAncestry()
+
     # TODO - make separate columns for PCs, get list of covars to pass gwas runners
     print(ancestry.head())
     sys.exit(1)
