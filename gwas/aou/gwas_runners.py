@@ -9,7 +9,7 @@ class HailRunner:
     def __init__(self, ptcovar, region=None, covars=None):
         self.ptcovar = ptcovar
         self.region = region
-        self.gwas_results = None
+        self.covars = covars
         self.setup()
 
     def setup(self):
