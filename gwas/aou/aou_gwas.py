@@ -111,8 +111,8 @@ def main():
 
     # Plot Manhattan
     if args.plot:
-        gwas_plotter.PlotManhattan(runner.gwas, outpath+".manhattan.png")
-        gwas_plotter.PlotQQ(runner.gwas, outpath+".manhattan.png")
+        PlotManhattan(runner.gwas, outpath+".manhattan.png")
+        PlotQQ(runner.gwas, outpath+".manhattan.png")
 
 if __name__ == "__main__":
     main()
