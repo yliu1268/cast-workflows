@@ -19,7 +19,7 @@ class HailRunner:
         # Load genotypes
         mt = self.hl.read_matrix_table(MT_WGS_PATH)
         if self.region is not None:
-            mt = self.hl.filter_intervals(mt, [self.hl.parse_locus_interval(region,)])
+            mt = self.hl.filter_intervals(mt, [self.hl.parse_locus_interval(self.region,)])
 
         # Load phenotype and covariates
         ptcovar = self.hl.Table.from_pandas(self.ptcovar, key="person_id")
