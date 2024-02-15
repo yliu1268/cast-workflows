@@ -62,14 +62,26 @@ def main():
         ERROR("--method must be one of: %s"%",".join(GWAS_METHODS))
     if not CheckRegion(args.region):
         ERROR("Invalid region %s"%args.region)
+    if args.num_pcs > 10:
+        ERROR("Specify a maximum of 10 PCs")
+
+    # Get covarlist
+    pcols = ["PC_%s"%i for i in range(1, args.num_pcs+1)]
+    shared_covars = [item for item in args.sharedcovars.split(",") if item != ""]
+    pt_covars = [item for item in args.ptcovars.split(",") if item != ""]
+    covars = pcols + pt_covars + shared_covars
 
     # Set up data frame with phenotype and covars
     data = pd.read_csv(ptcovar_path)
     ancestry = LoadAncestry()
+    data = pd.merge(data, ancestry[["person_id"]+pcols], on=["person_id"])
+    print(data.head())
 
-    # TODO - make separate columns for PCs, get list of covars to pass gwas runners
-    print(ancestry.head())
-    sys.exit(1)
+    # Check we have all covars
+    req_cols = ["phenotype"] + covars
+    for item in req_cols:
+        if item not in data.columns:
+            ERROR("Required column %s not found"%item)
 
     # Set up GWAS method
     #if args.method == "hail":
