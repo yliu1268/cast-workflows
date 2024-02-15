@@ -2,6 +2,9 @@
 
 """
 Run GWAS on All of Us
+
+Example:
+./aou_gwas.py --phenotype ALT --num-pcs 3 --sharedcovars ""
 """
 
 import argparse
@@ -88,6 +91,7 @@ def main():
         if item not in data.columns:
             ERROR("Required column %s not found"%item)
 
+    print(data.head())
     # Set up GWAS method
     #if args.method == "hail":
     #    runner = HailRunner(data, region=args.region, covars=[1.0+covars])
