@@ -55,7 +55,7 @@ def WriteGWAS(gwas, outpath):
 
 def PlotManhattan(gwas, outpath):
     gwas["ind"] = range(gwas.shape[0])
-    plot = sns.replot(data=gwas, x="ind", y="-log10pvalue", \
+    plot = sns.relplot(data=gwas, x="ind", y="-log10pvalue", \
         s=6, aspect=4, linewidth=0, hue="chrom", palette="tab10", legend=None)
     chrom_df = gwas.groupby("chrom")["ind"].median()
     plot.ax.set_xlabel("Chromosome")
