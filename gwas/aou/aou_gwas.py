@@ -34,7 +34,7 @@ def LoadAncestry():
     ancestry = pd.read_csv("ancestry_preds.tsv", sep="\t")
     ancestry.rename({"research_id": "person_id"}, axis=1, inplace=True)
     num_pcs = len(ancestry["pca_features"].values[0].split(","))
-    pcols = ["PC_%s"%i for in range(num_pcs)]
+    pcols = ["PC_%s"%i for i in range(num_pcs)]
     ancestry[pcols] = ancestry["pca_features"].str.split(",", expand=True)
     return ancestry
 
@@ -85,7 +85,7 @@ def main():
 
     # Set up GWAS method
     #if args.method == "hail":
-    #    runner = HailRunner(data, region=args.region, covars=covars)
+    #    runner = HailRunner(data, region=args.region, covars=[1.0+covars])
     #else:
     #    ERROR("GWAS method %s not implemented")
 
