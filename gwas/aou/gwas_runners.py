@@ -33,23 +33,19 @@ class HailRunner:
          # Keep track of data
         self.data = data
 
-        print(self.data.describe()) # TODO remove
-
     def RunGWAS(self):
-    	# TODO how to access covariates from ptcovar by name
         linear_r = self.hl.linear_regression_rows(
             y= data.ptcovar.phenotype,
             x= data.GT.n_alt_alleles(),
             covariates = [1.0 + data.ptcovar[item] \
             	for item in self.covars]
         )
-        summary = linear_r.flatten()
-        summary.export(self.out_path)
+        gwas = linear_r.annotate(p_value_str= hl.str(linear_r.p_value)).to_pandas()
+        print(gwas.head())
+
         # TODO - export to dataframe and save to the class
 
         # Convert to data frame with required columns
-        #gwas = linear_r.annotate(p_value_str= hl.str(linear_r.p_value))
-        #gwas_pd = gwas.to_pandas()
         #gwas_pd["chrom"] = gwas_pd["locus"].apply(lambda x: str(x).split(":")[0])
         #gwas_pd["pos"] = gwas_pd["locus"].apply(lambda x: int(str(x).split(":")[1]))
         #gwas_pd['p_value']= gwas_pd.apply(lambda x: change_p(float(x['p_value_str'])),axis=1)
