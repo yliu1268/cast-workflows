@@ -9,9 +9,11 @@ Example:
 
 import argparse
 from gwas_runners import HailRunner
+import numpy as np
 import os
 import pandas as pd
 import re
+import seaborn as sns
 import sys
 from utils import MSG, ERROR
 
@@ -30,7 +32,7 @@ def GetOutPath(phenotype, method, region):
     outprefix = "%s_%s"%(phenotype, method)
     if region is not None:
         outprefix += "_%s"%(region.replace(":", "_").replace("-","_"))
-    return outprefix + ".gwas.tab"
+    return outprefix + ".gwas"
 
 def GetFloatFromPC(x):
     x = x.replace("[","").replace("]","")
@@ -49,8 +51,18 @@ def LoadAncestry():
     return ancestry
 
 def WriteGWAS(gwas, outpath):
-    print(gwas.columns)
-    gwas[["chrom","pos","-log10pvalue"]].to_csv(outpath, sep="\t", index=False)
+    gwas[["chrom","pos","beta","standard_error","-log10pvalue"]].to_csv(outpath, sep="\t", index=False)
+
+def PlotManhattan(gwas, outpath):
+    gwas["ind"] = range(gwas.shape[0])
+    plot = sns.replot(data=gwas, x="ind", y="-log10pvalue", \
+        s=6, aspect=4, linewidth=0, hue="chrom", palette="tab10", legend=None)
+    chrom_df = gwas.groupby("chrom")["ind"].median()
+    plot.ax.set_xlabel("Chromosome")
+    plot.ax.set_xticks(chrom_df)
+    plot.ax.set_xticklabels(chrom_df.index)
+    plot.ax.axhline(np.log10(5*10**-8), linestyle="--", linewidth=1)
+    plot.fig.savefig(outpath)
 
 # TODO - deal with which cohort to do
 # TODO - where to get sex covariate (update: Tara's file)
@@ -63,6 +75,7 @@ def main():
     parser.add_argument("--num-pcs", help="Number of PCs to use as covariates", type=int, default=10)
     parser.add_argument("--ptcovars", help="Comma-separated list of phenotype-specific covariates. Default: age", type=str, default="age")
     parser.add_argument("--sharedcovars", help="Comma-separated list of shared covariates (besides PCs). Default: sex", type=str, default="sex")
+    parser.add_argument("--plot", help="Make a Manhattan plot", action="store_true")
     args = parser.parse_args()
 
     # Set up paths
@@ -104,10 +117,14 @@ def main():
         ERROR("GWAS method %s not implemented")
 
     # Run GWAS
+    outpath = GetOutPath(args.phenotype, args.method, args.region)
     runner.RunGWAS()
-    WriteGWAS(runner.gwas, GetOutPath(args.phenotype, args.method, args.region))
+    WriteGWAS(runner.gwas, outpath+".tab")
 
-    # Plot Manhattan and QQ - TODO
+    # Plot Manhattan
+    if args.plot:
+        PlotManhattan(runner.gwas, outpath+".manhattan.png")
+    # TODO - QQ
 
 if __name__ == "__main__":
     main()
