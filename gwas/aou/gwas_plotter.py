@@ -5,6 +5,7 @@ https://github.com/satchellhong/qqman/
 """
 
 import matplotlib.pyplot as plt
+import numbers
 import numpy as np
 import pandas as pd
 import seaborn as sns
