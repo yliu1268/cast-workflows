@@ -59,10 +59,7 @@ def PlotQQ(gwas, outpath):
 	
 	ax.set_xlim([xlim_min, xlim_max])
 	ax.set_ylim([ylim_min, ylim_max])
-	ax.set_xlabel("Expected $-log_{10}(p)$",fontsize=label_size)
-	ax.set_ylabel("Observed $-log_{10}(p)$",fontsize=label_size)
-
-	ax.tick_params(axis='x', labelsize=xtick_size, labelrotation=xrotation)
-	ax.tick_params(axis='y', labelsize=ytick_size, labelrotation=yrotation)
+	ax.set_xlabel("Expected $-log_{10}(p)$")
+	ax.set_ylabel("Observed $-log_{10}(p)$")
 	
 	fig.savefig(outpath)
