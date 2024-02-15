@@ -5,7 +5,7 @@ Classes for performing GWAS
 MT_WGS_PATH = 'gs://fc-aou-datasets-controlled/v7/wgs/short_read/snpindel/acaf_threshold/multiMT/hail.mt' 
 
 class HailRunner:
-	import hail as hl # only want to import hail if we have to
+    import hail as hl # only want to import hail if we have to
     def __init__(self, ptcovar, region=None, covars=None):
         self.ptcovar = ptcovar
         self.region = region
