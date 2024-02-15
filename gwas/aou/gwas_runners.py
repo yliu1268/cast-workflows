@@ -18,7 +18,7 @@ class HailRunner:
 
         # Load genotypes
         mt = self.hl.read_matrix_table(MT_WGS_PATH)
-        if region is not None:
+        if args.region is not None:
             mt = hl.filter_intervals(mt, [hl.parse_locus_interval(region,)])
 
         # Load phenotype and covariates
