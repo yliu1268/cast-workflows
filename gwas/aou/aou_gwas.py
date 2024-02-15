@@ -4,7 +4,7 @@
 Run GWAS on All of Us
 
 Example:
-./aou_gwas.py --phenotype ALT --num-pcs 3 --sharedcovars ""
+./aou_gwas.py --phenotype ALT --num-pcs 3 --sharedcovars "" --region chr11:119206339-119308149
 """
 
 import argparse
@@ -24,7 +24,7 @@ def GetPTCovarPath(phenotype):
 
 def CheckRegion(region):
     if region is None: return True
-    return re.match(r"\w+:\d+-\d+", query_string) is not None
+    return re.match(r"\w+:\d+-\d+", region) is not None
 
 def GetOutPath(phenotype, method, region):
     outprefix = "%s_%s"%(phenotype, method)
