@@ -9,7 +9,7 @@ Example:
 
 import argparse
 from gwas_runners import HailRunner
-from gwas_plotters import PlotManhattan, PlotQQ
+from gwas_plotter import PlotManhattan, PlotQQ
 import os
 import re
 import sys
