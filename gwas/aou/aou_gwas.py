@@ -105,7 +105,7 @@ def main():
 
     # Run GWAS
     runner.RunGWAS()
-    WriteGWAS(runner.gwas, GetOutPath(phenotype, method, region))
+    WriteGWAS(runner.gwas, GetOutPath(args.phenotype, args.method, args.region))
 
     # Plot Manhattan and QQ - TODO
 
