@@ -37,7 +37,7 @@ def LoadAncestry():
     pcols = ["PC_%s"%i for i in range(num_pcs)]
     ancestry[pcols] = ancestry["pca_features"].str.split(",", expand=True)
     for p in pcols:
-        ancestry[p] = ancestry[p].apply(float)
+        ancestry[p] = ancestry[p].apply(lambda x: float(x.replace("[","").replace("]","")))
     return ancestry
 
 # TODO - deal with which cohort to do
@@ -77,7 +77,6 @@ def main():
     data = pd.read_csv(ptcovar_path)
     ancestry = LoadAncestry()
     data = pd.merge(data, ancestry[["person_id"]+pcols], on=["person_id"])
-    print(data.head())
 
     # Check we have all covars
     req_cols = ["phenotype"] + covars
