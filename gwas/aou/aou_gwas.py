@@ -85,6 +85,7 @@ def main():
     data = pd.read_csv(ptcovar_path)
     ancestry = LoadAncestry()
     data = pd.merge(data, ancestry[["person_id"]+pcols], on=["person_id"])
+    data["person_id"] = data["person_id"].apply(str)
 
     # Check we have all covars
     req_cols = ["phenotype"] + covars
