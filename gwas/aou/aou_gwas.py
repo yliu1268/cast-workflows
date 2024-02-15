@@ -112,7 +112,7 @@ def main():
     # Plot Manhattan
     if args.plot:
         PlotManhattan(runner.gwas, outpath+".manhattan.png")
-        PlotQQ(runner.gwas, outpath+".manhattan.png")
+        PlotQQ(runner.gwas, outpath+".qq.png")
 
 if __name__ == "__main__":
     main()
