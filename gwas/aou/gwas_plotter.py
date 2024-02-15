@@ -46,7 +46,7 @@ def PlotQQ(gwas, outpath):
 
 	fig, ax = plt.subplots(nrows=1, ncols=1, figsize = (12,12))
 
-	ax.scatter(expected,observed,c='k',**kwargs)
+	ax.scatter(expected,observed,c='k')
 	
 	xlim_min = np.nanmin(expected)-x_padding
 	xlim_max = np.nanmax(expected)+x_padding
