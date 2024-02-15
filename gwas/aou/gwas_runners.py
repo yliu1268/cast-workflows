@@ -5,7 +5,7 @@ Classes for performing GWAS
 MT_WGS_PATH = 'gs://fc-aou-datasets-controlled/v7/wgs/short_read/snpindel/acaf_threshold/multiMT/hail.mt' 
 
 class HailRunner:
-    import hail as hl # only want to import hail if we have to
+    import hail as hl # only import hail if we have to
     def __init__(self, ptcovar, region=None, covars=None):
         self.ptcovar = ptcovar
         self.region = region
@@ -13,19 +13,19 @@ class HailRunner:
         self.setup()
 
     def setup(self):
-        hl.init(default_reference = "GRCh38")
+        self.hl.init(default_reference = "GRCh38")
 
         # Load genotypes
-        mt = hl.read_matrix_table(MT_WGS_PATH)
+        mt = self.hl.read_matrix_table(MT_WGS_PATH)
         if region is not None:
-            mt = h.filter_intervals(mt, [hl.parse_locus_interval(region,)])
+            mt = hl.filter_intervals(mt, [hl.parse_locus_interval(region,)])
 
         # Load phenotype and covariates
-        ptcovar = hl.Table.from_pandas(self.ptcovar, key="persion_id")
+        ptcovar = self.hl.Table.from_pandas(self.ptcovar, key="persion_id")
         data = mt.annotate_cols(ptcovar = ptcovar[mt.s])
 
         # Genotype QC
-        data = data.annotate_entries(FT = hl.coalesce(data.FT,'PASS'))
+        data = data.annotate_entries(FT = self.hl.coalesce(data.FT,'PASS'))
         data = data.filter_entries(data.FT =='PASS')
         data = data.filter_entries(data.GQ >= 20)
 
@@ -33,7 +33,7 @@ class HailRunner:
         self.data = data
 
     def RunGWAS(self):
-        linear_r = hl.linear_regression_rows(
+        linear_r = self.hl.linear_regression_rows(
             y= data.ptcovar.phenotype,
             x= data.GT.n_alt_alleles(),
             covariates = self.covars
