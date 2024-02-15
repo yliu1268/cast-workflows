@@ -28,6 +28,10 @@ def GetOutPath(phenotype, method, region):
         outprefix += "_%s"%(region.replace(":", "_").replace("-","_"))
     return outprefix + ".gwas.tab"
 
+def GetFloatFromPC(x):
+    x = x.replace("[","").replace("]","")
+    return float(x)
+
 def LoadAncestry():
     if not os.path.isfile("ancestry_preds.tsv"):
         os.system("gsutil -u ${GOOGLE_PROJECT} cp %s ."%(ANCESTRY_PRED_PATH))
@@ -37,7 +41,7 @@ def LoadAncestry():
     pcols = ["PC_%s"%i for i in range(num_pcs)]
     ancestry[pcols] = ancestry["pca_features"].str.split(",", expand=True)
     for p in pcols:
-        ancestry[p] = ancestry[p].apply(lambda x: float(x.replace("[","").replace("]","")))
+        ancestry[p] = ancestry[p].apply(lambda x: GetFloatFromPC(x), 1)
     return ancestry
 
 # TODO - deal with which cohort to do
