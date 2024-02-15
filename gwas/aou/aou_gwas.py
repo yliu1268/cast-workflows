@@ -36,6 +36,8 @@ def LoadAncestry():
     num_pcs = len(ancestry["pca_features"].values[0].split(","))
     pcols = ["PC_%s"%i for i in range(num_pcs)]
     ancestry[pcols] = ancestry["pca_features"].str.split(",", expand=True)
+    for p in pcols:
+        ancestry[p] = ancestry[p].apply(float)
     return ancestry
 
 # TODO - deal with which cohort to do

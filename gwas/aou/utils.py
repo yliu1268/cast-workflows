@@ -1,3 +1,5 @@
+import sys
+
 def MSG(msg_str):
     """
     Write a helpful progress message to stderr
