@@ -3,6 +3,7 @@ Classes for performing GWAS
 """
 
 MT_WGS_PATH = 'gs://fc-aou-datasets-controlled/v7/wgs/short_read/snpindel/acaf_threshold/multiMT/hail.mt' 
+SMALLNUM = 10e-400
 
 class HailRunner:
     import hail as hl # only import hail if we have to
@@ -10,6 +11,7 @@ class HailRunner:
         self.ptcovar = ptcovar
         self.region = region
         self.covars = covars
+        self.gwas = None
         self.setup()
 
     def setup(self):
@@ -41,14 +43,8 @@ class HailRunner:
             	for item in self.covars]
         )
         gwas = linear_r.annotate(p_value_str= self.hl.str(linear_r.p_value)).to_pandas()
-        print(gwas.head())
-
-        # TODO - export to dataframe and save to the class
-
-        # Convert to data frame with required columns
-        #gwas_pd["chrom"] = gwas_pd["locus"].apply(lambda x: str(x).split(":")[0])
-        #gwas_pd["pos"] = gwas_pd["locus"].apply(lambda x: int(str(x).split(":")[1]))
-        #gwas_pd['p_value']= gwas_pd.apply(lambda x: change_p(float(x['p_value_str'])),axis=1)
-        #gwas_pd['-log10pvalue'] = -np.log10(gwas_pd.p_value)
-        #self.gwas_results = gwas_pd
-
+        gwas["chrom"] = gwas["locus"].apply(lambda x: str(x).split(":")[0])
+        gwas["pos"] = gwas["locus"].apply(lambda x: int(str(x).split(":")[1]))
+        gwas["p_value"] = gwas.apply(lambda x: float(x["p_value_str"])+SMALLNUM, 1)
+        gwas["-log10pvalue"] = -np.log10(gwas["p_value"])
+        self.gwas = gwas

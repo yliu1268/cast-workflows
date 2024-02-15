@@ -48,6 +48,10 @@ def LoadAncestry():
         ancestry[p] = ancestry[p].apply(lambda x: GetFloatFromPC(x), 1)
     return ancestry
 
+def WriteGWAS(gwas, outpath):
+    print(gwas.columns)
+    gwas[["chrom","pos","-log10pvalue"]].to_csv(outpath, sep="\t", index=False)
+
 # TODO - deal with which cohort to do
 # TODO - where to get sex covariate (update: Tara's file)
 # TODO - manifest file with these options
@@ -101,6 +105,7 @@ def main():
 
     # Run GWAS
     runner.RunGWAS()
+    WriteGWAS(runner.gwas, GetOutPath(phenotype, method, region))
 
     # Plot Manhattan and QQ - TODO
 
