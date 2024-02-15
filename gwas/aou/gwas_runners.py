@@ -13,14 +13,31 @@ def change_p (x):
 
 class HailRunner:
 	import hail as hl
-	def __init__(self, ptcovar_file, ptcovars=[], no_sex=False, num_pcs=10, region=None):
+	def __init__(self, ptcovar, region=None, covars=None):
+		self.ptcovar = ptcovar
 		self.region = region
-		self.ptcovar = ptcovar_file
-		self.num_pcs = num_pcs
-		self.no_sex = no_sex
-		self.out_path = out_path
 		self.gwas_results = None
-		self.setup(ptcovar, ptcovars=ptcovars, region=self.region)
+		self.setup()
+
+	def setup(self):
+		hl.init(default_reference = "GRCh38")
+
+		# Load genotypes
+    	mt = hl.read_matrix_table(MT_WGS_PATH)
+    	if region is not None:
+    		mt = h.filter_intervals(mt, [hl.parse_locus_interval(region,)])
+
+    	# Load phenotype and covariates
+    	ptcovar = hl.Table.from_pandas(self.ptcovar, key="persion_id")
+    	data = mt.annotate_cols(ptcovar = ptcovar[mt.s])
+
+		# Genotype QC
+		data = data.annotate_entries(FT = hl.coalesce(data.FT,'PASS'))
+    	data = data.filter_entries(data.FT =='PASS')
+    	data = data.filter_entries(data.GQ >= 20)
+
+ 		# Keep track of data
+    	self.data = data
 
 	def RunGWAS(self):
 		# TODO how to add sex
@@ -46,41 +63,3 @@ class HailRunner:
 		gwas_pd['-log10pvalue'] = -np.log10(gwas_pd.p_value)
     	self.gwas_results = gwas_pd
 
-	def setup(self, ptcovar_file, ptcovars=[], region=None):
-		hl.init(default_reference = "GRCh38")
-
-		# Load genotypes
-    	mt = hl.read_matrix_table(MT_WGS_PATH)
-    	if region is not None:
-    		mt = h.filter_intervals(mt, [hl.parse_locus_interval(region,)])
-
-    	# Add shared covars - PCs
-		ancestry_pred = hl.import_table(ANCESTRY_PRED_PATH,\
-                                key="research_id", 
-                                impute=True, 
-                                types={"research_id":"tstr","pca_features":hl.tarray(hl.tfloat)})
-    	mt = mt.annotate_cols(ancestry_pred = ancestry_pred[mt.s])
-    
-    	# Add shared covars - sex (TODO)
-
-    	# Add phenotype data and pt-specific covars
-    	dtypes = {'person_id':hl.tstr,'phenotype':hl.tfloat}
-    	for c in ptcovars: dtypes[c]=hl.tfloat
-    	ptcovar = (hl.import_table(ptcovar_file,
-                                types=dtypes,
-                                impute=True,
-                                key='person_id')
-                	)
-
-    	# Combine TODO I don't understand this...
-		data = mt.semi_join_cols(ptcovar)
-		data = data.annotate_cols(pheno = ptcovar[data.s])
-
-		# Genotype QC
-		data = data.annotate_entries(FT = hl.coalesce(data.FT,'PASS'))
-    	data = data.filter_entries(data.FT =='PASS')
-    	filter_20 = (data.GQ >= 20)
-    	data = data.filter_entries(filter_20)
-
- 		# Keep track of data
-    	self.data = data
