@@ -37,7 +37,7 @@ def ppoints(n, a=None):
 	return (np.arange(n) + 1 - a)/(n + 1 - 2*a)
 
 def PlotQQ(gwas, outpath):
-	p_vals = gwas["-log10pvalue"].dropna().apply(lambda x: 10**x)
+	p_vals = gwas["-log10pvalue"].dropna().apply(lambda x: 10**-x)
 	p_vals = p_vals[(0<p_vals)&(p_vals<1)]
 	observed = -np.log10(np.sort(np.array(p_vals)))
 	expected = -np.log10(ppoints(len(p_vals)))
