@@ -11,6 +11,7 @@ import argparse
 from gwas_runners import HailRunner
 from gwas_plotter import PlotManhattan, PlotQQ
 import os
+import pandas as pd
 import re
 import sys
 from utils import MSG, ERROR
