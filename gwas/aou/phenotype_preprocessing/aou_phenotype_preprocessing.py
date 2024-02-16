@@ -130,7 +130,12 @@ def my_median(series):
     median: pandas.DataFrame
        
     """
-    return np.median(series.tolist())
+    if len(series)%2==1:
+        return np.median(series)
+    else:
+        my_median = sorted(series)[int(len(series)/2)]
+        return my_median
+    #return np.median(series.tolist())
     #my_list = series.tolist() 
     #my_list.sort()
     #if len(my_list)%2 == 1:
