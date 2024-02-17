@@ -69,9 +69,6 @@ def OverlapDrugMeasurement(measurement_datetime, start, end):
     Currently: counts as no if phenotype measurement
     is before drug start
 
-    TODO (ask Tara): do we need to also set to no
-    if the drug ends before the phenotype taken?
-
     Arguments
     ---------
     measurement_datetime : datetime
@@ -135,13 +132,6 @@ def my_median(series):
     else:
         my_median = sorted(series)[int(len(series)/2)]
         return my_median
-    #return np.median(series.tolist())
-    #my_list = series.tolist() 
-    #my_list.sort()
-    #if len(my_list)%2 == 1:
-    #    return np.median(my_list)
-    #else:
-    #    pass # TODO finish implementation
 
 def main():
     parser = argparse.ArgumentParser(__doc__)
@@ -163,6 +153,7 @@ def main():
 
     # Restrict to samples we want to keep
     # TODO update once we get final format from Tara
+    # TODO make default sample list the one from Tara
     if args.samples is not None:
         use_samples = [int(item.strip()) for item in \
             open(args.samples, "r").readlines()]

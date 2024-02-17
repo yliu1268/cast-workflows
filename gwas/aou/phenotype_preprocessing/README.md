@@ -2,6 +2,9 @@
 
 This script takes as input a phenotype ID and runs preprocessing to create a file with phenotype values and phenotype-specific covariates ready to be used for GWAS or other applications. 
 
+
+## Usage
+
 **Note, this must be run on the AoU workbench.** You can use a minimal analysis environment (e.g. 4 CPU, 15GB RAM).
 
 Usage example:
@@ -28,3 +31,20 @@ Optional arguments:
 * `--drugexposure-covariate-concept-ids <STR>`: List of conceptid:conceptname to use as drug exposure covariates.
 
 The output file will is a csv file named `${phenotype}_phenocovar.csv` with columns: "person_id", "phenotype", "age", plus an additional column for each drug exposure named by the "conceptname" provided for that drug. e.g. the example above will have columns "person_id", "phenotype", "age", "statin".
+
+## Running on multiple phenotypes
+
+```
+./process_phenotypes.py quantitative_phenotypes.csv
+```
+
+The file `quantitative_phenotypes.csv` is a csv file with named columns:
+* `phenotype`
+* `concept_id`
+* `units`
+* `min`
+* `max`
+* `drugcovars`
+
+The script above will run phenotype preprocessing on each one, store results of each one at `${WORKSPACE_BUCKET}/phenotypes/${phenotype}_phenocovar.csv`, and output the file `quantitative_phenotypes.manifest.csv` which can be used to update the master manifest file in the above directory.
+
