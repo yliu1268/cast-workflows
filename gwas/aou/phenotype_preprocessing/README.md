@@ -50,6 +50,3 @@ The file `quantitative_phenotypes.csv` is a csv file with named columns:
 * `drugcovars`
 
 The script above will run phenotype preprocessing on each one, store results of each one at `${WORKSPACE_BUCKET}/phenotypes/${phenotype}_phenocovar.csv`, and output the file `quantitative_phenotypes.manifest.csv` which can be used to update the master manifest file in the above directory.
-
-=======
->>>>>>> bce51928d395adc947b00abe1fce00dbc135c325

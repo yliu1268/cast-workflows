@@ -4,7 +4,7 @@
 Run GWAS on All of Us
 
 Example:
-./aou_gwas.py --phenotype ALT --num-pcs 3 --sharedcovars "" --region chr11:119206339-119308149
+./aou_gwas.py --phenotype ALT --num-pcs 10 --region chr11:119206339-119308149
 """
 
 import argparse
@@ -18,6 +18,8 @@ from utils import MSG, ERROR
 
 GWAS_METHODS = ["hail"]
 ANCESTRY_PRED_PATH = "gs://fc-aou-datasets-controlled/v7/wgs/short_read/snpindel/aux/ancestry/ancestry_preds.tsv"
+SAMPLEFILE = os.path.join(os.environ["WORKSPACE_BUCKET"], "samples", \
+    "passing_samples_v7.csv")
 
 def GetPTCovarPath(phenotype):
     return os.path.join(os.getenv('WORKSPACE_BUCKET'), \
@@ -52,17 +54,16 @@ def LoadAncestry():
 def WriteGWAS(gwas, outpath):
     gwas[["chrom","pos","beta","standard_error","-log10pvalue"]].to_csv(outpath, sep="\t", index=False)
 
-# TODO - deal with which cohort to do
-# TODO - where to get sex covariate (update: Tara's file)
-# TODO - manifest file with these options
+# TODO - ability to input phenotype manifest and get these options automatically
 def main():
     parser = argparse.ArgumentParser(__doc__)
     parser.add_argument("--phenotype", help="Phenotypes file path, or phenotype name", type=str, required=True)
     parser.add_argument("--method", help="GWAS method. Options: %s"",".join(GWAS_METHODS), type=str, default="hail")
+    parser.add_argument("--samples", help="List of sample IDs, sex to keep", type=str, default=SAMPLEFILE)
     parser.add_argument("--region", help="chr:start-end to restrict to. Default is genome-wide", type=str)
     parser.add_argument("--num-pcs", help="Number of PCs to use as covariates", type=int, default=10)
     parser.add_argument("--ptcovars", help="Comma-separated list of phenotype-specific covariates. Default: age", type=str, default="age")
-    parser.add_argument("--sharedcovars", help="Comma-separated list of shared covariates (besides PCs). Default: sex", type=str, default="sex")
+    parser.add_argument("--sharedcovars", help="Comma-separated list of shared covariates (besides PCs). Default: sex", type=str, default="sex_at_birth_Male")
     parser.add_argument("--plot", help="Make a Manhattan plot", action="store_true")
     args = parser.parse_args()
 
@@ -91,6 +92,15 @@ def main():
     ancestry = LoadAncestry()
     data = pd.merge(data, ancestry[["person_id"]+pcols], on=["person_id"])
     data["person_id"] = data["person_id"].apply(str)
+
+    # Add shared covars
+    sampfile = args.samples
+    if sampfile.startswith("gs://"):
+        sampfile = sampfile.split("/")[-1]
+        if not os.path.isfile(sampfile):
+            os.system("gsutil -u ${GOOGLE_PROJECT} cp %s ."%(args.samples))
+    samples = pd.read_csv(sampfile)
+    data = pd.merge(data, samples)
 
     # Check we have all covars
     req_cols = ["phenotype"] + covars
