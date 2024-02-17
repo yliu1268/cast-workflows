@@ -7,13 +7,27 @@ import numpy as np
 MT_WGS_PATH = 'gs://fc-aou-datasets-controlled/v7/wgs/short_read/snpindel/acaf_threshold/multiMT/hail.mt' 
 SMALLNUM = 10e-400
 
-class HailRunner:
-    import hail as hl # only import hail if we have to
+class GWASRunner:
     def __init__(self, ptcovar, region=None, covars=None):
         self.ptcovar = ptcovar
         self.region = region
         self.covars = covars
         self.gwas = None
+        self.method = None
+        self.setup()
+
+    def setup(self):
+        pass # Child classes override
+
+class HailRunner(GWASRunner):
+    import hail as hl # only import hail if we have to
+    def __init__(self, ptcovar, region=None, covars=None):
+        super().__init__(ptcovar, region, covars)
+        self.ptcovar = ptcovar
+        self.region = region
+        self.covars = covars
+        self.gwas = None
+        self.method = "hail"
         self.setup()
 
     def setup(self):
