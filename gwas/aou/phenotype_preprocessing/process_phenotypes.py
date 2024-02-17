@@ -15,6 +15,7 @@ Phenotype list has columns:
 """
 
 import hashlib
+import os
 import pandas as pd
 import subprocess
 import sys
@@ -36,6 +37,9 @@ def RunCmd(cmd):
     res = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
     res.wait()
     retcode = res.returncode
+    if retcode != 0:
+    	sys.stderr.write("Command failed: %s"%cmd)
+    	sys.exit(1)
 
 def UploadGCS(outfile, gcsfile):
 	cmd = "gsutil cp {outfile} {gcsfile}".format(outfile=outfile, gcsfile=gcsfile)
@@ -59,6 +63,6 @@ for index, row in ptdata.iterrows():
     UploadGCS(outfile, gcsfile)
     manifest.write(",".join([row["phenotype"], row["concept_id"], \
     	row["units"], row["min"], row["max"], row["drugcovars"], \
-    	gcsfile, md5(outfile)]+"\n")
-    
+    	gcsfile, md5(outfile)])+"\n")
+
 manifest.close()

@@ -16,7 +16,7 @@ Usage example:
    --units blood \
    --range 0,250 \
    [--drugexposure-covariate-concept-ids 21601855:statin] \
-   [--sample samplefile.txt]
+   [--samples samplefile.txt]
 ```
 
 Required arguments: 

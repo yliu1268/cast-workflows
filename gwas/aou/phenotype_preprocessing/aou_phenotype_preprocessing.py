@@ -16,6 +16,9 @@ import numpy as np
 import pandas as pd
 import sys
 
+SAMPLEFILE = os.path.join(os.environ["WORKSPACE_BUCKET"], "samples", \
+    "passing_samples_v7.csv")
+
 def MSG(msg_str):
     """
     Write a helpful progress message to stderr
@@ -136,7 +139,7 @@ def my_median(series):
 def main():
     parser = argparse.ArgumentParser(__doc__)
     parser.add_argument("--phenotype", help="Phenotype ID", type=str, required=True)
-    parser.add_argument("--samples", help="List of sample IDs to keep", type=str)
+    parser.add_argument("--samples", help="List of sample IDs,sex to keep", type=str, default=SAMPLEFILE)
     parser.add_argument("--concept-id", help="Concept ID for phenotype", type=str, required=True)
     parser.add_argument("--drugexposure-covariate-concept-ids", help="Comma-separated list of conceptid:conceptname to use as drug exposure covariates", type=str)
     parser.add_argument("--units", help="Comma-separated list of acceptable units. Accepted shorthands: blood", type=str, required=True)
@@ -152,12 +155,13 @@ def main():
     MSG("After merge, have %s data points"%data.shape[0])
 
     # Restrict to samples we want to keep
-    # TODO update once we get final format from Tara
-    # TODO make default sample list the one from Tara
-    if args.samples is not None:
-        use_samples = [int(item.strip()) for item in \
-            open(args.samples, "r").readlines()]
-        data = data[data["person_id"].isin(use_samples)]
+    sampfile = args.samples
+    if sampfile.startswith("gs://"):
+        sampfile = sampfile.split("/")[-1]
+        if not os.path.isfile(sampfile):
+            os.system("gsutil -u ${GOOGLE_PROJECT} cp %s ."%(args.samples))
+    samples = pd.read_csv(sampfile)
+    data = pd.merge(data, samples)
     MSG("After filter samples, have %s data points"%data.shape[0])
 
     # Filtering
