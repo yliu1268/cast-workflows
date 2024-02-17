@@ -40,8 +40,8 @@ Optional arguments:
 
 * Samples passing QC: `${WORKSPACE_BUCKET}/samples/passing_samples_v7.csv`
 * Preprocessed phenotypes+covariates: `${WORKSPACE_BUCKET}/phenotypes/${phenotype}_phenocovar.csv`
+* GWAS results: `${WORKSPACE_BUCKET}/gwas/${phenotype}_hail.gwas.tab`
 * Manifest of existing preprocessed phenotypes: `phenotypes_manifest.csv` (this repo)
-* Manifest of existing GWAS results: `gwas_manifest.csv` (this repo)
 
 ## Setup
 

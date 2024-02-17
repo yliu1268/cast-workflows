@@ -52,9 +52,13 @@ def LoadAncestry():
     return ancestry
 
 def WriteGWAS(gwas, outpath):
-    gwas[["chrom","pos","beta","standard_error","-log10pvalue"]].to_csv(outpath, sep="\t", index=False)
+    # Ouptut header with command used
+    f = open(outpath, "w")
+    f.write("#" + " ".join(sys.argv) + "\n")
+    f.close()
+    # Append gwas results
+    gwas[["chrom","pos","beta","standard_error","-log10pvalue"]].to_csv(outpath, sep="\t", mode="a", index=False)
 
-# TODO - ability to input phenotype manifest and get these options automatically
 def main():
     parser = argparse.ArgumentParser(__doc__)
     parser.add_argument("--phenotype", help="Phenotypes file path, or phenotype name", type=str, required=True)
