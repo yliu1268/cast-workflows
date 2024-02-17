@@ -51,10 +51,11 @@ def LoadAncestry():
         ancestry[p] = ancestry[p].apply(lambda x: GetFloatFromPC(x), 1)
     return ancestry
 
-def WriteGWAS(gwas, outpath):
+def WriteGWAS(gwas, outpath, covars):
     # Ouptut header with command used
     f = open(outpath, "w")
     f.write("#" + " ".join(sys.argv) + "\n")
+    f.write("# covars: %s\n"%",".join(covars))
     f.close()
     # Append gwas results
     gwas[["chrom","pos","beta","standard_error","-log10pvalue"]].to_csv(outpath, sep="\t", mode="a", index=False)
@@ -122,7 +123,7 @@ def main():
     # Run GWAS
     outpath = GetOutPath(args.phenotype, args.method, args.region)
     runner.RunGWAS()
-    WriteGWAS(runner.gwas, outpath+".tab")
+    WriteGWAS(runner.gwas, outpath+".tab", covars)
 
     # Plot Manhattan
     if args.plot:
