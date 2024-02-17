@@ -4,6 +4,38 @@
 
 **Note: all of this needs to be run on the AoU workbench.**
 
+## Quickstart
+
+Assuming the phenotype you are analyzing has already been preprocessed (see below), you can run GWAS (by default using Hail):
+
+1. Example test on a small region (can be run on default Hail environment)
+```
+./aou_gwas.py --phenotype ALT --num-pcs 10 --region chr11:119206339-119308149
+```
+will output `ALT_hail_chr11_119206339_119308149.gwas.tab` 
+
+2. Example full GWAS. (run on Hail environment with XXXX)
+```
+./aou_gwas.py --phenotype ALT --num-pcs 10
+```
+will output `ALT_hail.gwas.tab`
+
+## Detailed usage
+
+Required arguments:
+
+* `--phenotype <STR>`: phenotype ID to use to name the output file
+
+Optional arguments:
+
+* `--method <STR>`: Which GWAS method to use. Default: hail
+* `--samples <FILE>`: csv file with list of samples to restrict to. Needs columns "person_id" and "sex_at_birth_Male". Typically this would a list of samples that passed upstream sample-level QC info. Defaults to `${WORKSPACE_BUCKET}/samples/passing_samples_v7.csv`.
+* `--region <STR>`: Region to restrict to (chrom:start-endd)
+* `--num-pcs <INT>`: Number of population PCs to include as covariates. Default: 10
+* `--ptcovars <STR>`: Comma-separated list of phenotype-specific covariates. Default: age
+* `--sharedcovars <STR>`: Comma-separated list of shared covariates (besides PCs). Default: sex_at_birth_Male
+* `--plot`: Output Manhattan and QQ plots
+
 ## Important file locations:
 
 * Samples passing QC: `${WORKSPACE_BUCKET}/samples/passing_samples_v7.csv`
@@ -30,12 +62,3 @@ We will store phenotypes+shared covariates at:
 ${WORKSPACE_BUCKET}/phenotypes/${phenotype}_phenocovar.csv
 ```
 
-## Running a SNP-based GWAS using Hail
-
-TODO - what kind of environment do we have to run this in if using hail?
-
-```
-./aou_gwas.py \
-  --phenotypes ${phenotype} \
-  --method hail
-```

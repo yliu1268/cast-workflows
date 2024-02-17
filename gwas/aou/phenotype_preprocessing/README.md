@@ -28,7 +28,7 @@ Required arguments:
 * `--range <INT,INT>`: Minimum and maximum accepted values for the phenotype
 
 Optional arguments:
-* `--sample <FILE>`: file with list of samples to restrict to (one ID per line). Typically this would a list of samples that passed upstream sample-level QC info.
+* `--samples <FILE>`: csv file with list of samples to restrict to. Needs columns "person_id" and "sex_at_birth_Male". Typically this would a list of samples that passed upstream sample-level QC info. Defaults to `${WORKSPACE_BUCKET}/samples/passing_samples_v7.csv`.
 * `--drugexposure-covariate-concept-ids <STR>`: List of conceptid:conceptname to use as drug exposure covariates.
 * `--ppi`: Indicate if the phenotype concept id is from the PPI or LOINC (default) tables. PPI are general physical measurements (e.g. hight) and include very limited concept ids.
 
