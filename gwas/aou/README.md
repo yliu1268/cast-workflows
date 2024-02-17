@@ -14,7 +14,7 @@ Assuming the phenotype you are analyzing has already been preprocessed (see belo
 ```
 will output `ALT_hail_chr11_119206339_119308149.gwas.tab` 
 
-2. Example full GWAS. (run on Hail environment with XXXX)
+2. Example full GWAS. (run on Hail environment with TODO-Hail settings)
 ```
 ./aou_gwas.py --phenotype ALT --num-pcs 10
 ```
