@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """
-Run phenotype preprocessing on a list of phenotypes
+Run phenotype preprocessing on a list of phenotypes.
+Upload results to ${WORKSPACE_BUCKET}/phenotypes/
+Output manifest file
 
 Usage:
 ./process_phenotypes.py <phenotype_list.csv>
@@ -48,6 +50,7 @@ def UploadGCS(outfile, gcsfile):
 manifest = open(ptfile.replace(".csv",".manifest.csv"), "w")
 ptdata = pd.read_csv(ptfile)
 for index, row in ptdata.iterrows():
+	sys.stderr.write("Processing {phenotype}\n".format(phenotype=row["phenotype"]))
     cmd = """./aou_phenotype_preprocessing.py \
            --phenotype {phenotype} \
            --concept-id {concept} \

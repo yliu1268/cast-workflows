@@ -7,6 +7,7 @@ for the specified phenotype
 
 Requires these environment variables to be set:
 WORKSPACE_CDR
+WORKSPACE_BUCKET
 """
 
 import argparse
