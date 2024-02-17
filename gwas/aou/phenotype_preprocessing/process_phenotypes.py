@@ -50,7 +50,7 @@ def UploadGCS(outfile, gcsfile):
 manifest = open(ptfile.replace(".csv",".manifest.csv"), "w")
 ptdata = pd.read_csv(ptfile)
 for index, row in ptdata.iterrows():
-	sys.stderr.write("Processing {phenotype}\n".format(phenotype=row["phenotype"]))
+    sys.stderr.write("Processing {phenotype}\n".format(phenotype=row["phenotype"]))
     cmd = """./aou_phenotype_preprocessing.py \
            --phenotype {phenotype} \
            --concept-id {concept} \
