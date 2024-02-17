@@ -1,0 +1,2 @@
+phenotype,concept_id,units,min,max,drugcovars,phenotype_file,md5sum
+ALT,37047736,blood,0,250,nan,gs://fc-secure-f6524c24-64d9-446e-8643-415440f52b46/phenotypes/ALT_phenocovar.csv,7cf56892d0c1757470cff2cd6eba7c41
