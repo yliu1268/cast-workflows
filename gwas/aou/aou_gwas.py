@@ -112,7 +112,7 @@ def main():
     for item in req_cols:
         if item not in data.columns:
             ERROR("Required column %s not found"%item)
-    print(data.head())
+
     # Set up GWAS method
     if args.method == "hail":
         runner = HailRunner(data, region=args.region, covars=covars)
