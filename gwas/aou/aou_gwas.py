@@ -15,6 +15,9 @@ import pandas as pd
 import re
 import sys
 from utils import MSG, ERROR
+import numpy as np
+import scipy.stats as stats
+import warnings
 
 GWAS_METHODS = ["hail"]
 ANCESTRY_PRED_PATH = "gs://fc-aou-datasets-controlled/v7/wgs/short_read/snpindel/aux/ancestry/ancestry_preds.tsv"
@@ -51,6 +54,15 @@ def LoadAncestry():
         ancestry[p] = ancestry[p].apply(lambda x: GetFloatFromPC(x), 1)
     return ancestry
 
+#add normalization
+def Inverse_Quantile_Normalization(M):
+    #After quantile normalization of samples, standardize expression of each gene
+    
+    R = stats.mstats.rankdata(M,axis=1)  # ties are averaged
+    Q = stats.norm.ppf(R/(M.shape[1]+1))
+    return Q
+
+
 def WriteGWAS(gwas, outpath, covars):
     # Ouptut header with command used
     f = open(outpath, "w")
@@ -70,6 +82,7 @@ def main():
     parser.add_argument("--ptcovars", help="Comma-separated list of phenotype-specific covariates. Default: age", type=str, default="age")
     parser.add_argument("--sharedcovars", help="Comma-separated list of shared covariates (besides PCs). Default: sex_at_birth_Male", type=str, default="sex_at_birth_Male")
     parser.add_argument("--plot", help="Make a Manhattan plot", action="store_true")
+    parser.add_argument("--normalization", help="normalize phenotype either quantile or z-score",type=str,default="quantile")
     args = parser.parse_args()
 
     # Set up paths
