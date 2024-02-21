@@ -35,6 +35,15 @@ class HailRunner:
         data = data.filter_entries(data.FT =='PASS')
         data = data.filter_entries(data.GQ >= 20)
 
+        # Locus and Sample QC
+        data = hl.variant_qc(data)
+        data = hl.sample_qc(data)
+        data = data.filter_cols(data.sample_qc.call_rate >= .90, keep = True)
+        data = data.filter_rows(data.variant_qc.call_rate >= .90, keep = True)
+        data = data.filter_rows(hl.min(data.variant_qc.AF) > 0.01, keep = True)
+        data = data.filter_rows(data.variant_qc.p_value_hwe > 1e-15, keep = True)
+
+
          # Keep track of data
         self.data = data
 
