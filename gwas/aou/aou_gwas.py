@@ -117,7 +117,7 @@ def main():
         data["phenotype"] = data["normalized_value"].apply(lambda x: ','.join(map(str, x)))
         data["phenotype"] = data["phenotype"].astype(float)
 
-    print(data["phenotype"].head())
+
     #add normalization z score
 
   
