@@ -114,7 +114,6 @@ def GetDrugData(concept_id):
     return drugdata
 
 
-#nichole add my_median(), wait for Melissa add even number part
 def my_median(series):
     """
     compute median of median 

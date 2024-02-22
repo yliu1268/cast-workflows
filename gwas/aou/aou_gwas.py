@@ -55,9 +55,7 @@ def LoadAncestry():
     return ancestry
 
 #add normalization
-def Inverse_Quantile_Normalization(M):
-    #After quantile normalization of samples, standardize expression of each gene
-    
+def Inverse_Quantile_Normalization(M):   
     R = stats.mstats.rankdata(M,axis=1)  # ties are averaged
     Q = stats.norm.ppf(R/(M.shape[1]+1))
     return Q
@@ -111,6 +109,20 @@ def main():
     data = pd.merge(data, ancestry[["person_id"]+pcols], on=["person_id"])
     data["person_id"] = data["person_id"].apply(str)
 
+    # Add normalization quantile
+    normalization = args.normalization
+    if normalization == "quantile":
+        normalize = Inverse_Quantile_Normalization(data[["phenotype"]].transpose()).transpose()
+        data["normalized_value"] = normalize.tolist()
+        data["phenotype"] = data["normalized_value"].apply(lambda x: ','.join(map(str, x)))
+        data["phenotype"] = data["normalized_value"].astype(float)
+
+    print(data["phenotype"].head())
+    #add normalization z score
+
+  
+
+
     # Add shared covars
     sampfile = args.samples
     if sampfile.startswith("gs://"):
@@ -126,6 +138,7 @@ def main():
     for item in req_cols:
         if item not in data.columns:
             ERROR("Required column %s not found"%item)
+
 
     # Set up GWAS method
     if args.method == "hail":
