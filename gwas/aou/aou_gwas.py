@@ -115,7 +115,7 @@ def main():
         normalize = Inverse_Quantile_Normalization(data[["phenotype"]].transpose()).transpose()
         data["normalized_value"] = normalize.tolist()
         data["phenotype"] = data["normalized_value"].apply(lambda x: ','.join(map(str, x)))
-        data["phenotype"] = data["normalized_value"].astype(float)
+        data["phenotype"] = data["phenotype"].astype(float)
 
     print(data["phenotype"].head())
     #add normalization z score
