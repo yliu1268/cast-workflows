@@ -35,6 +35,7 @@ Optional arguments:
 * `--ptcovars <STR>`: Comma-separated list of phenotype-specific covariates. Default: age
 * `--sharedcovars <STR>`: Comma-separated list of shared covariates (besides PCs). Default: sex_at_birth_Male
 * `--plot`: Output Manhattan and QQ plots
+* `--normalization`: Quantile or Z score normalize phenotype, default: quantile
 
 ## Important file locations:
 
