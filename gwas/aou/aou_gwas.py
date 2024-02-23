@@ -70,6 +70,19 @@ def WriteGWAS(gwas, outpath, covars):
     # Append gwas results
     gwas[["chrom","pos","beta","standard_error","-log10pvalue"]].to_csv(outpath, sep="\t", mode="a", index=False)
 
+def NormalizeData(data, normalization):
+    # Add normalization quantile
+    if normalization == "quantile":
+        normalize = Inverse_Quantile_Normalization(data[["phenotype"]].transpose()).transpose()
+        data["normalized_value"] = normalize.tolist()
+        data["phenotype"] = data["normalized_value"].apply(lambda x: ','.join(map(str, x)))
+        data["phenotype"] = data["phenotype"].astype(float)
+        data.drop(columns=["normalized_value"], inplace=True)
+
+    # Add z-score normalization
+    elif norm == "zscore":
+        data["phenotype"]  = stats.zscore(data[["phenotype"]])
+
 def main():
     parser = argparse.ArgumentParser(__doc__)
     parser.add_argument("--phenotype", help="Phenotypes file path, or phenotype name", type=str, required=True)
@@ -80,7 +93,10 @@ def main():
     parser.add_argument("--ptcovars", help="Comma-separated list of phenotype-specific covariates. Default: age", type=str, default="age")
     parser.add_argument("--sharedcovars", help="Comma-separated list of shared covariates (besides PCs). Default: sex_at_birth_Male", type=str, default="sex_at_birth_Male")
     parser.add_argument("--plot", help="Make a Manhattan plot", action="store_true")
-    parser.add_argument("--norm", help="normalize phenotype either quantile or zscore",type=str,default="quantile")
+    parser.add_argument("--normalization", help="normalize phenotype either quantile or zscore",type=str,default="quantile")
+    parser.add_argument("--sex-based-normalization",
+                        help="Apply the normalization for each sex separately. Default: False",
+                        action="store_true")
     args = parser.parse_args()
 
     # Set up paths
@@ -109,16 +125,30 @@ def main():
     data = pd.merge(data, ancestry[["person_id"]+pcols], on=["person_id"])
     data["person_id"] = data["person_id"].apply(str)
 
-    # Add normalization quantile and zscore
-    norm = args.norm
-    if norm == "quantile":
-        normalize = Inverse_Quantile_Normalization(data[["phenotype"]].transpose()).transpose()
-        data["normalized_value"] = normalize.tolist()
-        data["phenotype"] = data["normalized_value"].apply(lambda x: ','.join(map(str, x)))
-        data["phenotype"] = data["phenotype"].astype(float)
+    # Add normalization. If indicated, normalize for each sex separately.
+    if args.sex_based_normalization:
+        # Add an additional column to preserve the current order (index) of the rows
+        # after normalization and concatenation
+        data["index"] = data.index
 
-    elif norm == "zscore":
-        data["phenotype"]  = stats.zscore(data[["phenotype"]])
+        # Separate the data into two smaller dataframes based on sex at birth.
+        female_data = data[data['sex_at_birth_Male'] == 0].copy()
+        male_data = data[data['sex_at_birth_Male'] == 1].copy()
+
+        # Apply normalization on female and male dataframes separately.
+        NormalizeData(data=female_data, normalization=args.normalization)
+        NormalizeData(data=male_data, normalization=args.normalization)
+
+        # Concatenate the female and male dataframes back into one.
+        data = pd.concat([female_data, male_data], ignore_index=True)
+
+        # Reorder the rows to the original order after concatenation
+        # with the helper "index" column and remove the column later.
+        data = data.sort_values(by="index", axis=0).reset_index(drop=True)
+        data = data.drop(columns=["index"])
+    else:
+        # Apply normalization on the entire data.
+        NormalizeData(data=data, normalization=args.normalization)
 
     # Add shared covars
     sampfile = args.samples
@@ -141,7 +171,7 @@ def main():
     if args.method == "hail":
         runner = HailRunner(data, region=args.region, covars=covars)
     else:
-        ERROR("GWAS method %s not implemented")
+        ERROR("GWAS method %s not implemented" % args.method)
 
     # Run GWAS
     outpath = GetOutPath(args.phenotype, args.method, args.region)
