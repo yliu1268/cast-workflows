@@ -23,8 +23,7 @@ will output `ALT_hail.gwas.tab`
 3. Example associaTR run (requires installing TRTools with `pip3 install trtools`)
 
 ```
-./aou_gwas.py --phenotype ALT --num-pcs 10 --method associaTR \
-  --tr-vcf test.vcf.gz
+./aou_gwas.py --phenotype ALT --num-pcs 10 --method associaTR --tr-vcf test.vcf.gz
 ```
 
 ## Detailed usage

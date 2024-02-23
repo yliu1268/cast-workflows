@@ -124,7 +124,7 @@ def main():
         from gwas_runners import HailRunner
         runner = HailRunner(data, region=args.region, covars=covars)
     elif args.method == "associaTR":
-        from gwas_runners import AssociaTRRunner
+        from associatr_runner import AssociaTRRunner
         runner = AssociaTRRunner(data, args.tr_vcf, region=args.region, covars=covar)
     else:
         ERROR("GWAS method %s not implemented")
