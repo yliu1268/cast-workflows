@@ -32,7 +32,7 @@ class AssociaTRRunner:
 
         # Fetch genotypes file if remote
         if self.trvcf.startswith("gs://"):
-            trvcf = sampfile.split("/")[-1]
+            trvcf = self.trvcf.split("/")[-1]
             if not os.path.isfile(trvcf):
                 os.system("gsutil -u ${GOOGLE_PROJECT} cp %s ."%self.trvcf)
             self.trvcf = trvcf
