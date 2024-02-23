@@ -61,7 +61,7 @@ class AssociaTRRunner:
             self.region,
             non_major_cutoff,
             beagle_dosages,
-            plotting_phenotypes,
+            plotting_phenotype,
             paired_genotype_plot,
             plot_genotype_residuals,
             plotting_ci_alphas,
