@@ -149,6 +149,8 @@ def main():
                                       "as opposed to LOINC. Only physical measurements (e.g. height) " + \
                                       "are in PPI.",
                                       action="store_true", default=False)
+    parser.add_argument("--outlier-sd", help="filter samples with phenotype values exceeding this number of SDs",
+                                        type=int, required=False)
 
     args = parser.parse_args()
     MSG("Processing %s"%args.phenotype)
@@ -193,6 +195,16 @@ def main():
     # De-duplicate to keep one entry per person
     filtered = filtered.sort_values("measurement_datetime").drop_duplicates(subset=["person_id"], keep="last")
     MSG("After dedup, have %s data points"%filtered.shape[0])
+
+    # Filter outlier values based on number of SDs
+    num_sds = getattr(args, "outlier_sd", None)
+    if num_sds is not  None:
+        avg = filtered["value_as_number"].mean()
+        sd = filtered["value_as_number"].std()
+        minval = avg - num_sds * sd
+        maxval = avg + num_sds * sd
+        filtered = filtered[(filtered["value_as_number"] >= minval) & (filtered["value_as_number"] <= maxval)]
+        MSG("After outlier filtering, have %s data points"%filtered.shape[0])
 
     # Record age info
     filtered["age"] = filtered['measurement_datetime'].dt.year - \
