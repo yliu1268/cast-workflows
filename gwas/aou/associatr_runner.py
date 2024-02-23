@@ -7,9 +7,9 @@ import os
 import pandas as pd
 import subprocess
 import tempfile
+import trtools.associaTR
 
 class AssociaTRRunner:
-    import trtools.associaTR # only require if we are running TRTools
     def __init__(self, ptcovar, trvcf, region=None, covars=[]):
         self.ptcovar = ptcovar
         self.pt_npy = None
