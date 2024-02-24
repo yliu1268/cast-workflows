@@ -13,6 +13,7 @@ WORKSPACE_BUCKET
 import argparse
 import aou_queries
 import os
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import sys
@@ -195,6 +196,10 @@ def main():
     # De-duplicate to keep one entry per person
     filtered = filtered.sort_values("measurement_datetime").drop_duplicates(subset=["person_id"], keep="last")
     MSG("After dedup, have %s data points"%filtered.shape[0])
+
+    # Output histogram of phenotype values
+    plt.hist(filtered["value_as_number"])
+    plt.savefig(args.phenotype+"_histogram.png", dpi=300)
 
     # Filter outlier values based on number of SDs
     num_sds = getattr(args, "outlier_sd", None)
