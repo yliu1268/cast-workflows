@@ -11,8 +11,7 @@ Phenotype list has columns:
 * `phenotype`
 * `concept_id`
 * `units`
-* `min`
-* `max`
+* `outlier_sd`
 * `drugcovars`
 """
 
@@ -54,10 +53,10 @@ for index, row in ptdata.iterrows():
     cmd = """./aou_phenotype_preprocessing.py \
            --phenotype {phenotype} \
            --concept-id {concept} \
-           --units {units} \
-           --range {minval},{maxval}""".format(phenotype=row["phenotype"], \
+           --units \"{units}\" \
+           --outlier-sd {outlier_sd}""".format(phenotype=row["phenotype"], \
            	concept=row["concept_id"], units=row["units"], \
-           	minval=row["min"], maxval=row["max"])
+           	outlier_sd=row["outlier_sd"])
     if str(row["drugcovars"]) != "nan":
         cmd += " --drugexposure-covariate-concept-ids {drug}".format(drug=row["drugcovars"])
     outfile = row["phenotype"]+"_phenocovar.csv"

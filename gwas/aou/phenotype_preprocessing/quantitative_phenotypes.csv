@@ -1,2 +1,3 @@
-phenotype,concept_id,units,min,max,drugcovars
-ALT,37047736,blood,0,250,
+phenotype,concept_id,units,outlier_sd,drugcovars
+ALT,37047736,blood,5,
+platelet_count,3024929,"thousand per microliter,thousand per cubic millimeter,billion per liter,no value",5
