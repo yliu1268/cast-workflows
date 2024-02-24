@@ -145,7 +145,7 @@ def main():
     parser.add_argument("--concept-id", help="Concept ID for phenotype", type=str, required=True)
     parser.add_argument("--drugexposure-covariate-concept-ids", help="Comma-separated list of conceptid:conceptname to use as drug exposure covariates", type=str)
     parser.add_argument("--units", help="Comma-separated list of acceptable units. Accepted shorthands: blood", type=str, required=True)
-    parser.add_argument("--range", help="min, max acceptable phenotype values", type=str, required=True)
+    parser.add_argument("--range", help="min, max acceptable phenotype values", type=str)
     parser.add_argument("--ppi", help="Whether or not the phenotype is from the PPI measurements " + \
                                       "as opposed to LOINC. Only physical measurements (e.g. height) " + \
                                       "are in PPI.",
@@ -177,11 +177,10 @@ def main():
     MSG("After filter NA, have %s data points"%data.shape[0])
     data = data[data["unit_concept_name"].isin(aou_queries.GetUnits(args.units))]
     MSG("After filter units, have %s data points"%data.shape[0])
-    minval, maxval = aou_queries.GetPhenotypeRange(args.range)
-    if minval is None or maxval is None:
-        ERROR("No minval or maxval specified")
-    data = data[(data["value_as_number"]>minval) & (data["value_as_number"]<maxval)]
-    MSG("After filter range, have %s data points"%data.shape[0])
+    if args.range is not None:
+        minval, maxval = aou_queries.GetPhenotypeRange(args.range)
+        data = data[(data["value_as_number"]>minval) & (data["value_as_number"]<maxval)]
+        MSG("After filter range, have %s data points"%data.shape[0])
 
     # Determine a single representative value per person
     data['Year'] = data['measurement_datetime'].dt.year
