@@ -29,7 +29,7 @@ RUN make -j && make install
 # Install HipSTR GCS version
 RUN git clone https://github.com/gymrek-lab/HipSTR.git 
 WORKDIR HipSTR/
-RUN git checkout 2c83bed
+RUN git checkout 7c95c13 #2c83bed
 RUN make version
 RUN make -j
 RUN cp HipSTR /usr/local/bin/
