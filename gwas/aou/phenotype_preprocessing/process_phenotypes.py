@@ -12,6 +12,8 @@ Phenotype list has columns:
 * `concept_id`
 * `units`
 * `outlier_sd`
+* `min`
+* `max`
 * `drugcovars`
 """
 
@@ -54,8 +56,10 @@ for index, row in ptdata.iterrows():
            --phenotype {phenotype} \
            --concept-id {concept} \
            --units \"{units}\" \
+           --range {minval},{maxval}
            --outlier-sd {outlier_sd}""".format(phenotype=row["phenotype"], \
            	concept=row["concept_id"], units=row["units"], \
+            minval=row["min"], maxval=row["max"], \
            	outlier_sd=row["outlier_sd"])
     if str(row["drugcovars"]) != "nan":
         cmd += " --drugexposure-covariate-concept-ids {drug}".format(drug=row["drugcovars"])
