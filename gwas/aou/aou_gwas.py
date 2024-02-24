@@ -109,7 +109,7 @@ def main():
     data = pd.merge(data, ancestry[["person_id"]+pcols], on=["person_id"])
     data["person_id"] = data["person_id"].apply(str)
 
-    # Add normalization quantile
+    # Add normalization quantile and zscore
     norm = args.norm
     if norm == "quantile":
         normalize = Inverse_Quantile_Normalization(data[["phenotype"]].transpose()).transpose()
@@ -119,9 +119,6 @@ def main():
 
     elif norm == "zscore":
         data["phenotype"]  = stats.zscore(data[["phenotype"]])
-    print(data["phenotype"].head())
-
-
 
     # Add shared covars
     sampfile = args.samples
