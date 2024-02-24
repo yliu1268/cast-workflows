@@ -80,7 +80,7 @@ def main():
     parser.add_argument("--ptcovars", help="Comma-separated list of phenotype-specific covariates. Default: age", type=str, default="age")
     parser.add_argument("--sharedcovars", help="Comma-separated list of shared covariates (besides PCs). Default: sex_at_birth_Male", type=str, default="sex_at_birth_Male")
     parser.add_argument("--plot", help="Make a Manhattan plot", action="store_true")
-    parser.add_argument("--normalization", help="normalize phenotype either quantile or z-score",type=str,default="quantile")
+    parser.add_argument("--norm", help="normalize phenotype either quantile or zscore",type=str,default="quantile")
     args = parser.parse_args()
 
     # Set up paths
@@ -110,17 +110,21 @@ def main():
     data["person_id"] = data["person_id"].apply(str)
 
     # Add normalization quantile
-    normalization = args.normalization
-    if normalization == "quantile":
+    norm = args.norm
+    if norm == "quantile":
         normalize = Inverse_Quantile_Normalization(data[["phenotype"]].transpose()).transpose()
         data["normalized_value"] = normalize.tolist()
         data["phenotype"] = data["normalized_value"].apply(lambda x: ','.join(map(str, x)))
         data["phenotype"] = data["phenotype"].astype(float)
 
+    elif norm == "zscore":
+        normalize = stats.zscore(data[["phenotype"]].transpose()).transpose()
+        data["normalized_value"] = normalize.tolist()
+        data["phenotype"] = data["normalized_value"].apply(lambda x: ','.join(map(str, x)))
+        data["phenotype"] = data["phenotype"].astype(float)
 
-    #add normalization z score
+    print(data["phenotype"].head())
 
-  
 
 
     # Add shared covars
