@@ -47,7 +47,7 @@ class AssociaTRRunner:
         plotting_phenotype = None
         paired_genotype_plot = False
         plot_genotype_residuals = False
-        plotting_ci_alphas = False
+        plotting_ci_alphas = []
         imputed_ukb_strs_paper_period_check = False
         outfile = tempfile.NamedTemporaryFile(suffix='.tsv')
         trtools.associaTR.perform_gwas(
