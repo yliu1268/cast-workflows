@@ -118,7 +118,7 @@ def main():
         data["phenotype"] = data["phenotype"].astype(float)
 
     elif norm == "zscore":
-        normalize = stats.zscore(data[["phenotype"]].transpose()).transpose()
+        normalize = stats.zscore(data[["phenotype"]].transpose())
         data["normalized_value"] = normalize.tolist()
         data["phenotype"] = data["normalized_value"].apply(lambda x: ','.join(map(str, x)))
         data["phenotype"] = data["phenotype"].astype(float)
