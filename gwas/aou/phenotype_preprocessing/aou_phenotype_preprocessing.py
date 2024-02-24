@@ -196,10 +196,6 @@ def main():
     filtered = filtered.sort_values("measurement_datetime").drop_duplicates(subset=["person_id"], keep="last")
     MSG("After dedup, have %s data points"%filtered.shape[0])
 
-    # Output histogram of phenotype values
-    plt.hist(filtered["value_as_number"])
-    plt.savefig(args.phenotype+"_histogram.png", dpi=300)
-
     # Filter outlier values based on number of SDs
     num_sds = getattr(args, "outlier_sd", None)
     if num_sds is not  None:
@@ -209,6 +205,10 @@ def main():
         maxval = avg + num_sds * sd
         filtered = filtered[(filtered["value_as_number"] >= minval) & (filtered["value_as_number"] <= maxval)]
         MSG("After outlier filtering, have %s data points"%filtered.shape[0])
+
+    # Output histogram of phenotype values
+    plt.hist(filtered["value_as_number"])
+    plt.savefig(args.phenotype+"_histogram.png", dpi=300)
 
     # Record age info
     filtered["age"] = filtered['measurement_datetime'].dt.year - \

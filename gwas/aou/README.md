@@ -23,9 +23,9 @@ will output `ALT_hail.gwas.tab`
 3. Small example associaTR run (requires installing TRTools - see setup note below)
 
 ```
-./aou_gwas.py --phenotype ALT --num-pcs 10 --method associaTR --tr-vcf ${WORKSPACE_BUCKET}/cromwell-execution/targetTR/4519d903-dde6-4c8e-b1ee-bcc2d7cd6dd7/call-sort_index/CBL_test.filtered.sorted.vcf.gz
+./aou_gwas.py --phenotype platelet_count --num-pcs 10 --method associaTR --tr-vcf ${WORKSPACE_BUCKET}/cromwell-execution/targetTR/4519d903-dde6-4c8e-b1ee-bcc2d7cd6dd7/call-sort_index/CBL_test.filtered.sorted.vcf.gz
 ```
-will output `ALT_associaTR.gwas.tab`
+will output `platelet_count_associaTR.gwas.tab`
 
 Note: currently need to install TRTools from branch `associatr-updates` due to conflict with newer numpy version.
 
