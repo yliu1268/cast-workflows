@@ -68,6 +68,7 @@ class AssociaTRRunner:
             imputed_ukb_strs_paper_period_check
         )
         gwas = pd.read_csv(outfile.name, sep="\t")
-        gwas.rename({"p_phenotype": "p_value"}, inplace=True, axis=1)
+        gwas.rename({"p_phenotype": "p_value", "coeff_phenotype": "beta", \
+        	"se_phenotype": "standard_error"}, inplace=True, axis=1)
         gwas["-log10pvalue"] = -np.log10(gwas["p_value"])
         self.gwas = gwas
