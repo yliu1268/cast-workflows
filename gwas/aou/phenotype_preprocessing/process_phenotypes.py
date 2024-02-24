@@ -64,7 +64,7 @@ for index, row in ptdata.iterrows():
     RunCmd(cmd)
     UploadGCS(outfile, gcsfile)
     outitems = [row["phenotype"], row["concept_id"], \
-    	row["units"], row["min"], row["max"], row["drugcovars"], \
+    	row["units"], row["outlier_sd"], row["drugcovars"], \
     	outfile, md5(outfile)]
     manifest.write(",".join([str(item) for item in outitems])+"\n")
 
