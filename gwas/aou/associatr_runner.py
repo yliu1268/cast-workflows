@@ -26,9 +26,9 @@ class AssociaTRRunner:
         self.pt_npy = tempfile.NamedTemporaryFile(suffix='.npy')
         self.covar_npy = tempfile.NamedTemporaryFile(suffix='.npy')
         np.save(self.pt_npy.name, \
-            self.ptcovar[["person_id", "phenotype"]].to_numpy())
+            self.ptcovar[["person_id", "phenotype"]].to_numpy(dtype=float))
         np.save(self.covar_npy.name, \
-            self.ptcovar[["person_id"]+self.covars].to_numpy())
+            self.ptcovar[["person_id"]+self.covars].to_numpy(dtype=float))
 
         # Fetch genotypes file if remote
         if self.trvcf.startswith("gs://"):

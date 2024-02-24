@@ -23,8 +23,7 @@ will output `ALT_hail.gwas.tab`
 3. Small example associaTR run (requires installing TRTools)
 
 ```
-TRVCF=${WORKSPACE_BUCKET}/cromwell-execution/targetTR/031367d7-36d5-4da7-950f-0b42ae50c91e/call-sort_index/test_10.filtered.sorted.vcf.gz
-./aou_gwas.py --phenotype ALT --num-pcs 10 --method associaTR --tr-vcf $TRVCF
+./aou_gwas.py --phenotype ALT --num-pcs 10 --method associaTR --tr-vcf ${WORKSPACE_BUCKET}/cromwell-execution/targetTR/4519d903-dde6-4c8e-b1ee-bcc2d7cd6dd7/call-sort_index/CBL_test.filtered.sorted.vcf.gz
 ```
 
 ## Detailed usage
