@@ -5,7 +5,6 @@ associaTR class for running GWAS
 import numpy as np
 import os
 import pandas as pd
-import subprocess
 import tempfile
 import trtools.associaTR
 

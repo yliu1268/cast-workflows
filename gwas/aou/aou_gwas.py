@@ -121,7 +121,7 @@ def main():
 
     # Set up GWAS method
     if args.method == "hail":
-        from gwas_runners import HailRunner
+        from hail_runner import HailRunner
         runner = HailRunner(data, region=args.region, covars=covars)
     elif args.method == "associaTR":
         from associatr_runner import AssociaTRRunner
