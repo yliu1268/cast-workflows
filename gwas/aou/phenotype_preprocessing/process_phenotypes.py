@@ -56,7 +56,7 @@ for index, row in ptdata.iterrows():
            --phenotype {phenotype} \
            --concept-id {concept} \
            --units \"{units}\" \
-           --range {minval},{maxval}
+           --range {minval},{maxval} \
            --outlier-sd {outlier_sd}""".format(phenotype=row["phenotype"], \
            	concept=row["concept_id"], units=row["units"], \
             minval=row["min"], maxval=row["max"], \
