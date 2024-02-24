@@ -25,6 +25,7 @@ will output `ALT_hail.gwas.tab`
 ```
 ./aou_gwas.py --phenotype ALT --num-pcs 10 --method associaTR --tr-vcf ${WORKSPACE_BUCKET}/cromwell-execution/targetTR/4519d903-dde6-4c8e-b1ee-bcc2d7cd6dd7/call-sort_index/CBL_test.filtered.sorted.vcf.gz
 ```
+will output `ALT_associaTR.gwas.tab`
 
 ## Detailed usage
 

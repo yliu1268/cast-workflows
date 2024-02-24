@@ -112,7 +112,6 @@ def main():
     samples = pd.read_csv(sampfile)
     samples["person_id"] = samples["person_id"].apply(str)
     data = pd.merge(data, samples)
-    print(data.head())
 
     # Check we have all covars
     req_cols = ["phenotype"] + covars
