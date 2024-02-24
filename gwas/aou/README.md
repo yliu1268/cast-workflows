@@ -14,11 +14,17 @@ Assuming the phenotype you are analyzing has already been preprocessed (see belo
 ```
 will output `ALT_hail_chr11_119206339_119308149.gwas.tab` 
 
-2. Example full GWAS. (run on Hail environment with TODO-Hail settings)
+2. Example full GWAS. (TODO: which Hail compute resources)
 ```
 ./aou_gwas.py --phenotype ALT --num-pcs 10
 ```
 will output `ALT_hail.gwas.tab`
+
+3. Example associaTR run (requires installing TRTools with `pip3 install trtools`)
+
+```
+./aou_gwas.py --phenotype ALT --num-pcs 10 --method associaTR --tr-vcf ${WORKSPACE_BUCKET}/cromwell-execution/targetTR/4519d903-dde6-4c8e-b1ee-bcc2d7cd6dd7/call-sort_index/CBL_test.filtered.sorted.vcf.gz
+```
 
 ## Detailed usage
 
@@ -30,6 +36,7 @@ Optional arguments:
 
 * `--method <STR>`: Which GWAS method to use. Default: hail
 * `--samples <FILE>`: csv file with list of samples to restrict to. Needs columns "person_id" and "sex_at_birth_Male". Typically this would a list of samples that passed upstream sample-level QC info. Defaults to `${WORKSPACE_BUCKET}/samples/passing_samples_v7.csv`.
+* `--ancestry-pred-path <FILE>`: Path to file with PC info. Defaults to the AoU v7 ancestry predictions.
 * `--region <STR>`: Region to restrict to (chrom:start-endd)
 * `--num-pcs <INT>`: Number of population PCs to include as covariates. Default: 10
 * `--ptcovars <STR>`: Comma-separated list of phenotype-specific covariates. Default: age

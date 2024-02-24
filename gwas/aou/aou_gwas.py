@@ -8,7 +8,6 @@ Example:
 """
 
 import argparse
-from gwas_runners import HailRunner
 from gwas_plotter import PlotManhattan, PlotQQ
 import os
 import pandas as pd
@@ -16,7 +15,7 @@ import re
 import sys
 from utils import MSG, ERROR
 
-GWAS_METHODS = ["hail"]
+GWAS_METHODS = ["hail", "associaTR"]
 ANCESTRY_PRED_PATH = "gs://fc-aou-datasets-controlled/v7/wgs/short_read/snpindel/aux/ancestry/ancestry_preds.tsv"
 SAMPLEFILE = os.path.join(os.environ["WORKSPACE_BUCKET"], "samples", \
     "passing_samples_v7.csv")
@@ -39,10 +38,12 @@ def GetFloatFromPC(x):
     x = x.replace("[","").replace("]","")
     return float(x)
 
-def LoadAncestry():
-    if not os.path.isfile("ancestry_preds.tsv"):
-        os.system("gsutil -u ${GOOGLE_PROJECT} cp %s ."%(ANCESTRY_PRED_PATH))
-    ancestry = pd.read_csv("ancestry_preds.tsv", sep="\t")
+def LoadAncestry(ancestry_pred_path):
+    if ancestry_pred_path.startswith("gs://"):
+        if not os.path.isfile("ancestry_preds.tsv"):
+            os.system("gsutil -u ${GOOGLE_PROJECT} cp %s ."%(ancestry_pred_path))
+        ancestry_pred_path = "ancestry_preds.tsv"
+    ancestry = pd.read_csv(ancestry_pred_path, sep="\t")
     ancestry.rename({"research_id": "person_id"}, axis=1, inplace=True)
     num_pcs = len(ancestry["pca_features"].values[0].split(","))
     pcols = ["PC_%s"%i for i in range(num_pcs)]
@@ -65,10 +66,12 @@ def main():
     parser.add_argument("--phenotype", help="Phenotypes file path, or phenotype name", type=str, required=True)
     parser.add_argument("--method", help="GWAS method. Options: %s"",".join(GWAS_METHODS), type=str, default="hail")
     parser.add_argument("--samples", help="List of sample IDs, sex to keep", type=str, default=SAMPLEFILE)
+    parser.add_argument("--ancestry-pred-path", help="Path to ancestry predictions", default=ANCESTRY_PRED_PATH)
     parser.add_argument("--region", help="chr:start-end to restrict to. Default is genome-wide", type=str)
     parser.add_argument("--num-pcs", help="Number of PCs to use as covariates", type=int, default=10)
     parser.add_argument("--ptcovars", help="Comma-separated list of phenotype-specific covariates. Default: age", type=str, default="age")
     parser.add_argument("--sharedcovars", help="Comma-separated list of shared covariates (besides PCs). Default: sex_at_birth_Male", type=str, default="sex_at_birth_Male")
+    parser.add_argument("--tr-vcf", help="VCF file with TR genotypes. Required if running associaTR", type=str)
     parser.add_argument("--plot", help="Make a Manhattan plot", action="store_true")
     args = parser.parse_args()
 
@@ -85,6 +88,8 @@ def main():
         ERROR("Invalid region %s"%args.region)
     if args.num_pcs > 10:
         ERROR("Specify a maximum of 10 PCs")
+    if args.method == "associaTR" and args.tr_vcf is None:
+        ERROR("Must specify --tr-vcf for associTR")
 
     # Get covarlist
     pcols = ["PC_%s"%i for i in range(1, args.num_pcs+1)]
@@ -94,7 +99,7 @@ def main():
 
     # Set up data frame with phenotype and covars
     data = pd.read_csv(ptcovar_path)
-    ancestry = LoadAncestry()
+    ancestry = LoadAncestry(args.ancestry_pred_path)
     data = pd.merge(data, ancestry[["person_id"]+pcols], on=["person_id"])
     data["person_id"] = data["person_id"].apply(str)
 
@@ -116,7 +121,11 @@ def main():
 
     # Set up GWAS method
     if args.method == "hail":
+        from gwas_runners import HailRunner
         runner = HailRunner(data, region=args.region, covars=covars)
+    elif args.method == "associaTR":
+        from associatr_runner import AssociaTRRunner
+        runner = AssociaTRRunner(data, args.tr_vcf, region=args.region, covars=covars)
     else:
         ERROR("GWAS method %s not implemented")
 
