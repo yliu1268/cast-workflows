@@ -70,18 +70,20 @@ def WriteGWAS(gwas, outpath, covars):
     # Append gwas results
     gwas[["chrom","pos","beta","standard_error","-log10pvalue"]].to_csv(outpath, sep="\t", mode="a", index=False)
 
-def NormalizeData(data, normalization):
+def NormalizeData(data, norm):
     # Add normalization quantile
-    if normalization == "quantile":
+    if norm == "quantile":
         normalize = Inverse_Quantile_Normalization(data[["phenotype"]].transpose()).transpose()
         data["normalized_value"] = normalize.tolist()
         data["phenotype"] = data["normalized_value"].apply(lambda x: ','.join(map(str, x)))
         data["phenotype"] = data["phenotype"].astype(float)
-        data.drop(columns=["normalized_value"], inplace=True)
+        data = data.drop(columns=["normalized_value"])
+        return data
 
     # Add z-score normalization
     elif norm == "zscore":
         data["phenotype"]  = stats.zscore(data[["phenotype"]])
+        return data
 
 def main():
     parser = argparse.ArgumentParser(__doc__)
@@ -93,8 +95,8 @@ def main():
     parser.add_argument("--ptcovars", help="Comma-separated list of phenotype-specific covariates. Default: age", type=str, default="age")
     parser.add_argument("--sharedcovars", help="Comma-separated list of shared covariates (besides PCs). Default: sex_at_birth_Male", type=str, default="sex_at_birth_Male")
     parser.add_argument("--plot", help="Make a Manhattan plot", action="store_true")
-    parser.add_argument("--normalization", help="normalize phenotype either quantile or zscore",type=str,default="quantile")
-    parser.add_argument("--sex-based-normalization",
+    parser.add_argument("--norm", help="normalize phenotype either quantile or zscore",type=str,default="quantile")
+    parser.add_argument("--norm-by-sex",
                         help="Apply the normalization for each sex separately. Default: False",
                         action="store_true")
     args = parser.parse_args()
@@ -126,29 +128,23 @@ def main():
     data["person_id"] = data["person_id"].apply(str)
 
     # Add normalization. If indicated, normalize for each sex separately.
-    if args.sex_based_normalization:
-        # Add an additional column to preserve the current order (index) of the rows
-        # after normalization and concatenation
-        data["index"] = data.index
+    if args.norm_by_sex:
 
         # Separate the data into two smaller dataframes based on sex at birth.
         female_data = data[data['sex_at_birth_Male'] == 0].copy()
         male_data = data[data['sex_at_birth_Male'] == 1].copy()
 
         # Apply normalization on female and male dataframes separately.
-        NormalizeData(data=female_data, normalization=args.normalization)
-        NormalizeData(data=male_data, normalization=args.normalization)
+        female_data =NormalizeData(data=female_data, norm=args.norm)
+        male_data = NormalizeData(data=male_data, norm=args.norm)
 
-        # Concatenate the female and male dataframes back into one.
-        data = pd.concat([female_data, male_data], ignore_index=True)
-
-        # Reorder the rows to the original order after concatenation
-        # with the helper "index" column and remove the column later.
-        data = data.sort_values(by="index", axis=0).reset_index(drop=True)
-        data = data.drop(columns=["index"])
+        # Concatenate the female and male dataframes back into one
+        # and sort the dataframe by original order.
+        data = pd.concat([female_data, male_data])
+        data = data.sort_index()
     else:
         # Apply normalization on the entire data.
-        NormalizeData(data=data, normalization=args.normalization)
+        data = NormalizeData(data=data, norm=args.norm)
 
     # Add shared covars
     sampfile = args.samples
