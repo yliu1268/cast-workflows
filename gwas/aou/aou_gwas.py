@@ -70,6 +70,21 @@ def WriteGWAS(gwas, outpath, covars):
     # Append gwas results
     gwas[["chrom","pos","beta","standard_error","-log10pvalue"]].to_csv(outpath, sep="\t", mode="a", index=False)
 
+def NormalizeData(data, norm):
+    # Add normalization quantile
+    if norm == "quantile":
+        normalize = Inverse_Quantile_Normalization(data[["phenotype"]].transpose()).transpose()
+        data["normalized_value"] = normalize.tolist()
+        data["phenotype"] = data["normalized_value"].apply(lambda x: ','.join(map(str, x)))
+        data["phenotype"] = data["phenotype"].astype(float)
+        data = data.drop(columns=["normalized_value"])
+        return data
+
+    # Add z-score normalization
+    elif norm == "zscore":
+        data["phenotype"]  = stats.zscore(data[["phenotype"]])
+        return data
+
 def main():
     parser = argparse.ArgumentParser(__doc__)
     parser.add_argument("--phenotype", help="Phenotypes file path, or phenotype name", type=str, required=True)
@@ -81,6 +96,9 @@ def main():
     parser.add_argument("--sharedcovars", help="Comma-separated list of shared covariates (besides PCs). Default: sex_at_birth_Male", type=str, default="sex_at_birth_Male")
     parser.add_argument("--plot", help="Make a Manhattan plot", action="store_true")
     parser.add_argument("--norm", help="normalize phenotype either quantile or zscore",type=str,default="quantile")
+    parser.add_argument("--norm-by-sex",
+                        help="Apply the normalization for each sex separately. Default: False",
+                        action="store_true")
     args = parser.parse_args()
 
     # Set up paths
@@ -109,16 +127,24 @@ def main():
     data = pd.merge(data, ancestry[["person_id"]+pcols], on=["person_id"])
     data["person_id"] = data["person_id"].apply(str)
 
-    # Add normalization quantile and zscore
-    norm = args.norm
-    if norm == "quantile":
-        normalize = Inverse_Quantile_Normalization(data[["phenotype"]].transpose()).transpose()
-        data["normalized_value"] = normalize.tolist()
-        data["phenotype"] = data["normalized_value"].apply(lambda x: ','.join(map(str, x)))
-        data["phenotype"] = data["phenotype"].astype(float)
+    # Add normalization. If indicated, normalize for each sex separately.
+    if args.norm_by_sex:
 
-    elif norm == "zscore":
-        data["phenotype"]  = stats.zscore(data[["phenotype"]])
+        # Separate the data into two smaller dataframes based on sex at birth.
+        female_data = data[data['sex_at_birth_Male'] == 0].copy()
+        male_data = data[data['sex_at_birth_Male'] == 1].copy()
+
+        # Apply normalization on female and male dataframes separately.
+        female_data =NormalizeData(data=female_data, norm=args.norm)
+        male_data = NormalizeData(data=male_data, norm=args.norm)
+
+        # Concatenate the female and male dataframes back into one
+        # and sort the dataframe by original order.
+        data = pd.concat([female_data, male_data])
+        data = data.sort_index()
+    else:
+        # Apply normalization on the entire data.
+        data = NormalizeData(data=data, norm=args.norm)
 
     # Add shared covars
     sampfile = args.samples
@@ -141,7 +167,7 @@ def main():
     if args.method == "hail":
         runner = HailRunner(data, region=args.region, covars=covars)
     else:
-        ERROR("GWAS method %s not implemented")
+        ERROR("GWAS method %s not implemented" % args.method)
 
     # Run GWAS
     outpath = GetOutPath(args.phenotype, args.method, args.region)
