@@ -17,6 +17,7 @@ import sys
 from utils import MSG, ERROR
 import numpy as np
 import scipy.stats as stats
+import sklearn.preprocessing
 import warnings
 
 GWAS_METHODS = ["hail"]
@@ -54,13 +55,6 @@ def LoadAncestry():
         ancestry[p] = ancestry[p].apply(lambda x: GetFloatFromPC(x), 1)
     return ancestry
 
-#add normalization
-def Inverse_Quantile_Normalization(M):   
-    R = stats.mstats.rankdata(M,axis=1)  # ties are averaged
-    Q = stats.norm.ppf(R/(M.shape[1]+1))
-    return Q
-
-
 def WriteGWAS(gwas, outpath, covars):
     # Ouptut header with command used
     f = open(outpath, "w")
@@ -73,11 +67,7 @@ def WriteGWAS(gwas, outpath, covars):
 def NormalizeData(data, norm):
     # Add normalization quantile
     if norm == "quantile":
-        normalize = Inverse_Quantile_Normalization(data[["phenotype"]].transpose()).transpose()
-        data["normalized_value"] = normalize.tolist()
-        data["phenotype"] = data["normalized_value"].apply(lambda x: ','.join(map(str, x)))
-        data["phenotype"] = data["phenotype"].astype(float)
-        data = data.drop(columns=["normalized_value"])
+        data["phenotype"] = sklearn.preprocessing.quantile_transform(data[["phenotype"]],output_distribution="normal")
         return data
 
     # Add z-score normalization
@@ -95,7 +85,7 @@ def main():
     parser.add_argument("--ptcovars", help="Comma-separated list of phenotype-specific covariates. Default: age", type=str, default="age")
     parser.add_argument("--sharedcovars", help="Comma-separated list of shared covariates (besides PCs). Default: sex_at_birth_Male", type=str, default="sex_at_birth_Male")
     parser.add_argument("--plot", help="Make a Manhattan plot", action="store_true")
-    parser.add_argument("--norm", help="normalize phenotype either quantile or zscore",type=str,default="quantile")
+    parser.add_argument("--norm", help="normalize phenotype either quantile or zscore",type=str)
     parser.add_argument("--norm-by-sex",
                         help="Apply the normalization for each sex separately. Default: False",
                         action="store_true")
