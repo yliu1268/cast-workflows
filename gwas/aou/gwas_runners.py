@@ -11,13 +11,13 @@ class HailRunner:
     import hail as hl # only import hail if we have to
     def __init__(self, ptcovar, sample_call_rate, variant_call_rate, MAF, HWE, GQ,region=None, covars=None):
         self.ptcovar = ptcovar
-        self.region = region
-        self.covars = covars
         self.sample_call_rate = sample_call_rate
         self.variant_call_rate = variant_call_rate
         self.MAF = MAF
         self.HWE = HWE
         self.GQ = GQ
+        self.region = region
+        self.covars = covars  
         self.gwas = None
         self.method = "hail"
         self.setup()
