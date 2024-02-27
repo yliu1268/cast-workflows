@@ -43,11 +43,15 @@ class HailRunner:
         # Locus and Sample QC
         data = self.hl.variant_qc(data)
         data = self.hl.sample_qc(data)
+        print(data.count())
         data = data.filter_cols(data.sample_qc.call_rate >= self.sample_call_rate, keep = True) #0.9
-        print(self.hl.min(data.sample_qc.call_rate))
+        print(data.count())
         data = data.filter_rows(data.variant_qc.call_rate >= self.variant_call_rate, keep = True) #0.9
+        print(data.count())
         data = data.filter_rows(self.hl.min(data.variant_qc.AF) > self.MAF, keep = True) #0.01
+        print(data.count())
         data = data.filter_rows(data.variant_qc.p_value_hwe > self.HWE, keep = True) # 1e-15
+        print(data.count())
 
 
          # Keep track of data
