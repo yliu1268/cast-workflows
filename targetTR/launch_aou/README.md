@@ -16,7 +16,6 @@ In all cases you'll have to run the following steps in the AoU workbench before 
 ```
 git clone https://github.com/cast-genomics/cast-workflows/
 cd cast-workflows/targetTR/launch_aou
-git checkout main
 ./configure-cromshell.py
 ```
 
