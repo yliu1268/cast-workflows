@@ -68,11 +68,15 @@ def NormalizeData(data, norm):
     # Add normalization quantile
     if norm == "quantile":
         data["phenotype"] = sklearn.preprocessing.quantile_transform(data[["phenotype"]],output_distribution="normal")
+        print(data["phenotype"].head())
+        print(data["phenotype"].describe())
         return data
 
     # Add z-score normalization
     elif norm == "zscore":
         data["phenotype"]  = stats.zscore(data[["phenotype"]])
+        print(data["phenotype"].head())
+        print(data["phenotype"].describe())
         return data
 
 def main():
@@ -135,6 +139,7 @@ def main():
     else:
         # Apply normalization on the entire data.
         data = NormalizeData(data=data, norm=args.norm)
+        
 
     # Add shared covars
     sampfile = args.samples
