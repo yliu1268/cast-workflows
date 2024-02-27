@@ -44,6 +44,7 @@ class HailRunner:
         data = self.hl.variant_qc(data)
         data = self.hl.sample_qc(data)
         data = data.filter_cols(data.sample_qc.call_rate >= self.sample_call_rate, keep = True) #0.9
+        print(self.hl.min(data.sample_qc.call_rate))
         data = data.filter_rows(data.variant_qc.call_rate >= self.variant_call_rate, keep = True) #0.9
         data = data.filter_rows(self.hl.min(data.variant_qc.AF) > self.MAF, keep = True) #0.01
         data = data.filter_rows(data.variant_qc.p_value_hwe > self.HWE, keep = True) # 1e-15
