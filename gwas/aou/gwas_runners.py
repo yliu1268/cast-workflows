@@ -9,10 +9,15 @@ SMALLNUM = 10e-400
 
 class HailRunner:
     import hail as hl # only import hail if we have to
-    def __init__(self, ptcovar, region=None, covars=None):
+    def __init__(self, ptcovar, region=None, covars=None, sample_call_rate, variant_call_rate, MAF, HWE, GQ):
         self.ptcovar = ptcovar
         self.region = region
         self.covars = covars
+        self.sample_call_rate = sample_call_rate
+        self.variant_call_rate = variant_call_rate
+        self.MAF = MAF
+        self.HWE = HWE
+        self.GQ = GQ
         self.gwas = None
         self.method = "hail"
         self.setup()
@@ -33,15 +38,15 @@ class HailRunner:
         # Genotype QC
         data = data.annotate_entries(FT = self.hl.coalesce(data.FT,'PASS'))
         data = data.filter_entries(data.FT =='PASS')
-        data = data.filter_entries(data.GQ >= 20)
+        data = data.filter_entries(data.GQ >= self.GQ)  #20
 
         # Locus and Sample QC
         data = self.hl.variant_qc(data)
         data = self.hl.sample_qc(data)
-        data = data.filter_cols(data.sample_qc.call_rate >= .90, keep = True)
-        data = data.filter_rows(data.variant_qc.call_rate >= .90, keep = True)
-        data = data.filter_rows(self.hl.min(data.variant_qc.AF) > 0.01, keep = True)
-        data = data.filter_rows(data.variant_qc.p_value_hwe > 1e-15, keep = True)
+        data = data.filter_cols(data.sample_qc.call_rate >= self.sample_call_rate, keep = True) #0.9
+        data = data.filter_rows(data.variant_qc.call_rate >= self.variant_call_rate, keep = True) #0.9
+        data = data.filter_rows(self.hl.min(data.variant_qc.AF) > self.MAF, keep = True) #0.01
+        data = data.filter_rows(data.variant_qc.p_value_hwe > self.HWE, keep = True) # 1e-15
 
 
          # Keep track of data
