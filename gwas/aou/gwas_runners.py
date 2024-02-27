@@ -9,7 +9,7 @@ SMALLNUM = 10e-400
 
 class HailRunner:
     import hail as hl # only import hail if we have to
-    def __init__(self, ptcovar, region=None, covars=None, sample_call_rate, variant_call_rate, MAF, HWE, GQ):
+    def __init__(self, ptcovar, sample_call_rate, variant_call_rate, MAF, HWE, GQ,region=None, covars=None):
         self.ptcovar = ptcovar
         self.region = region
         self.covars = covars
