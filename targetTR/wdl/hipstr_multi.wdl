@@ -14,6 +14,8 @@ workflow run_hipstr {
         String GOOGLE_PROJECT = ""
         String GCS_OAUTH_TOKEN = ""
         Int? sleep_seconds = 0
+        String? extra_hipstr_args = "--min-reads 10"
+	Int? hipstr_mem = 16
     }
 
     call hipstr {
@@ -29,7 +31,9 @@ workflow run_hipstr {
           bams_file=bams_file,
           GOOGLE_PROJECT=GOOGLE_PROJECT,
           GCS_OAUTH_TOKEN=GCS_OAUTH_TOKEN,
-          sleep_seconds=sleep_seconds
+          sleep_seconds=sleep_seconds,
+          hipstr_mem=hipstr_mem,
+          extra_hipstr_args=extra_hipstr_args
     }
 
     call sort_index_hipstr {
@@ -61,6 +65,8 @@ task hipstr {
         String GOOGLE_PROJECT = ""
         String GCS_OAUTH_TOKEN = ""
         Int? sleep_seconds = 0
+	Int? hipstr_mem = 16
+        String? extra_hipstr_args = "--min-reads 10"
     } 
 
     command <<<
@@ -91,14 +97,14 @@ task hipstr {
           --fasta ~{genome} \
           --regions ~{str_ref} \
           --str-vcf ~{out_prefix}.vcf.gz \
-          --min-reads 10 \
-          ${samps_flags}
+          ${samps_flags} \
+          ~{extra_hipstr_args} 
+          #default --min-reads 10
     >>>
     
     runtime {
         docker: "gcr.io/ucsd-medicine-cast/hipstr-gymreklab-gcs"
-        memory: "16 GB"
-        memoryMin: "16 GB"
+        memory: hipstr_mem + "GB"
         cpu: 2
       	maxRetries: 3
         preemptible: 3

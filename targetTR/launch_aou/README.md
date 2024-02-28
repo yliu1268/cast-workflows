@@ -87,6 +87,9 @@ Additional input files:
 Additional run options:
 * `--batch-size <INT>`: Number of samples to process in each batch. Default: 300.
 * `--batch-num <INT>`: Number of batches to process. Default: -1 (process all batches). This is helpful to set during debugging to consider a small number of batches.
+* `--hipstr-mem <INT>`: Number of memory to run hipstr. Default : 16 GB (process all batches). Reduce num when run small portion of samples to save cost.
+* `--merge-mem <INT>`: Number of memory to merge hipstr. Default : 4 GB (process all batches). Reduce num when run small portion of samples to save cost.
+* `--extra-hipstr-args <STRING>`: Add more hipstr command. Default: --min-reads 10. Example for adding multilple arguments: `--min-reads 20 --def-stutter-model`.
 * `--dryrun`: Don't actually submit the cromshell job, just print the command that would have been run.
 
 ## Modifying the batch size
@@ -123,13 +126,15 @@ To check metadata and logs, you can run:
 cromshell -t 20 metadata $JOBID (increase -t timeout for large batches)
 cromshell slim-metadata $JOBID
 cromshell logs -s ALL $JOBID
+
+cromshell logs -s ALL -des $JOBID (use -des for descriptive log info)
+cromshell logs -s Failed -des $JOBID
 ```
 
 To list all output files produced by a workflow:
 ```
 cromshell list-outputs $JOBID
 ```
-
 To get the summarized status of all jobs in the workflow:
 ```
 cromshell count $JOBID

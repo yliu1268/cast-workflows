@@ -5,13 +5,15 @@ workflow merge_hipstr {
         Array[File] vcfs
         Array[File] vcf_indexes
         String out_prefix
+	Int? merge_mem = 4
     }
 
     call mergestr {
         input : 
           vcfs=vcfs,
           vcf_indexes=vcf_indexes,
-          out_prefix=out_prefix+".merged"
+          out_prefix=out_prefix+".merged",
+	  merge_mem=merge_mem
     }
 
     output {
@@ -29,6 +31,7 @@ task mergestr {
     Array[File] vcf_indexes
     String out_prefix
     Int total = length(vcfs)
+    Int? merge_mem = 4
   }
 
   command <<<
@@ -43,7 +46,7 @@ task mergestr {
     
   runtime {
       docker: "gcr.io/ucsd-medicine-cast/trtools-mergestr-files:latest"
-      memory: "4 GB"
+      memory: merge_mem +"GB"
   }
 
   output {
