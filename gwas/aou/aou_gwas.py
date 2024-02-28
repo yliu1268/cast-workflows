@@ -67,7 +67,7 @@ def WriteGWAS(gwas, outpath, covars):
 def NormalizeData(data, norm):
     # Add normalization quantile
     if norm == "quantile":
-        data["phenotype"] = sklearn.preprocessing.quantile_transform(data[["phenotype"]],n_quantiles= n_samples,output_distribution="normal")
+        data["phenotype"] = sklearn.preprocessing.quantile_transform(data[["phenotype"]],output_distribution="normal")
         return data
 
     # Add z-score normalization
