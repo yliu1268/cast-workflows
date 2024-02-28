@@ -9,15 +9,15 @@ SMALLNUM = 10e-400
 
 class HailRunner:
     import hail as hl # only import hail if we have to
-    def __init__(self, ptcovar, sample_call_rate = None, variant_call_rate = None, MAF = None, HWE = None, GQ = None, region=None, covars=None):
+    def __init__(self,ptcovar, region=None, covars=None, sample_call_rate = None, variant_call_rate = None, MAF = None, HWE = None, GQ = None):
         self.ptcovar = ptcovar
+        self.region = region
+        self.covars = covars 
         self.sample_call_rate = sample_call_rate
         self.variant_call_rate = variant_call_rate
         self.MAF = MAF
         self.HWE = HWE
-        self.GQ = GQ
-        self.region = region
-        self.covars = covars  
+        self.GQ = GQ  
         self.gwas = None
         self.method = "hail"
         self.setup()
@@ -43,15 +43,11 @@ class HailRunner:
         # Locus and Sample QC
         data = self.hl.variant_qc(data)
         data = self.hl.sample_qc(data)
-        print(data.count())
         data = data.filter_cols(data.sample_qc.call_rate >= self.sample_call_rate, keep = True) #0.9
-        print(data.count())
         data = data.filter_rows(data.variant_qc.call_rate >= self.variant_call_rate, keep = True) #0.9
-        print(data.count())
         data = data.filter_rows(self.hl.min(data.variant_qc.AF) > self.MAF, keep = True) #0.01
-        print(data.count())
         data = data.filter_rows(data.variant_qc.p_value_hwe > self.HWE, keep = True) # 1e-15
-        print(data.count())
+
 
 
          # Keep track of data
