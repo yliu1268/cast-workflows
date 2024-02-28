@@ -9,7 +9,7 @@ tag = ${version}--${git_commit}
 # Steps
 build:
 	# do the docker build
-	docker build -t ${name}:${tag} .
+	docker build --platform="linux/amd64" -t ${name}:${tag} .
 	docker tag ${name}:${tag} ${name}:latest
 
 push:
