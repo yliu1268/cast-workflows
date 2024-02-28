@@ -12,20 +12,20 @@ Assuming the phenotype you are analyzing has already been preprocessed (see belo
 ```
 ./aou_gwas.py --phenotype ALT --num-pcs 10 --region chr11:119206339-119308149
 ```
-will output `ALT_hail_chr11_119206339_119308149.gwas.tab` 
+will output `ALT_hail_ALL_chr11_119206339_119308149.gwas.tab` 
 
 2. Example full GWAS. (TODO: which Hail compute resources)
 ```
 ./aou_gwas.py --phenotype ALT --num-pcs 10
 ```
-will output `ALT_hail.gwas.tab`
+will output `ALT_hail_ALL.gwas.tab`
 
 3. Small example associaTR run (requires installing TRTools - see setup note below)
 
 ```
 ./aou_gwas.py --phenotype platelet_count --num-pcs 10 --method associaTR --tr-vcf ${WORKSPACE_BUCKET}/cromwell-execution/targetTR/4519d903-dde6-4c8e-b1ee-bcc2d7cd6dd7/call-sort_index/CBL_test.filtered.sorted.vcf.gz
 ```
-will output `platelet_count_associaTR.gwas.tab`
+will output `platelet_count_associaTR_ALL.gwas.tab`
 
 Note: currently need to install TRTools from branch `associatr-updates` due to conflict with newer numpy version.
 
@@ -50,7 +50,7 @@ Optional arguments:
 
 * Samples passing QC: `${WORKSPACE_BUCKET}/samples/passing_samples_v7.csv`
 * Preprocessed phenotypes+covariates: `${WORKSPACE_BUCKET}/phenotypes/${phenotype}_phenocovar.csv`
-* GWAS results: `${WORKSPACE_BUCKET}/gwas/${phenotype}_hail.gwas.tab`
+* GWAS results: `${WORKSPACE_BUCKET}/gwas/${phenotype}_hail_${cohort}.gwas.tab` where `cohort` is parsed from the `--samples` argument. If using the default for `--samples`, `cohort` will be `ALL`.
 * Manifest of existing preprocessed phenotypes: `phenotypes_manifest.csv` (this repo)
 
 ## Setup
