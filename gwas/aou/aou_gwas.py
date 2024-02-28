@@ -85,15 +85,15 @@ def main():
     parser.add_argument("--ptcovars", help="Comma-separated list of phenotype-specific covariates. Default: age", type=str, default="age")
     parser.add_argument("--sharedcovars", help="Comma-separated list of shared covariates (besides PCs). Default: sex_at_birth_Male", type=str, default="sex_at_birth_Male")
     parser.add_argument("--plot", help="Make a Manhattan plot", action="store_true")
-    parser.add_argument("--norm", help="normalize phenotype either quantile or zscore",type=str)
+    parser.add_argument("--norm", help="Normalize phenotype either quantile or zscore",type=str)
     parser.add_argument("--norm-by-sex",
                         help="Apply the normalization for each sex separately. Default: False",
                         action="store_true")
-    parser.add_argument("--sample-call-rate", help="Add minimum sample call rate QC", type=float, default=0.90)
-    parser.add_argument("--variant-call-rate", help="Add minimum variant call rate QC", type=float, default=0.90)
-    parser.add_argument("--MAF", help="Add minor allele frequency QC", type=float, default=0.01)
-    parser.add_argument("--HWE", help="Add HWE p-value cutoff QC", type=float, default=1e-15)
-    parser.add_argument("--GQ", help="Add minimun genotype score QC", type=int, default=20)
+    parser.add_argument("--sample-call-rate", help="Apply minimum sample call rate QC", type=float, default=0.90)
+    parser.add_argument("--variant-call-rate", help="Apply minimum variant call rate QC", type=float, default=0.90)
+    parser.add_argument("--MAF", help="Apply minor allele frequency QC", type=float, default=0.01)
+    parser.add_argument("--HWE", help="Apply HWE p-value cutoff QC", type=float, default=1e-15)
+    parser.add_argument("--GQ", help="Apply minimun genotype score QC", type=int, default=20)
     args = parser.parse_args()
 
     # Set up paths
