@@ -89,11 +89,11 @@ def main():
     parser.add_argument("--norm-by-sex",
                         help="Apply the normalization for each sex separately. Default: False",
                         action="store_true")
-    parser.add_argument("--sample-call-rate", help="Set minimum sample call rate", type=float, default=0.90)
-    parser.add_argument("--variant-call-rate", help="Set minimum variant call rate", type=float, default=0.90)
-    parser.add_argument("--MAF", help="Set minimum minor allele frequency", type=float, default=0.01)
-    parser.add_argument("--HWE", help="Set HWE p-value cutoff", type=float, default=1e-15)
-    parser.add_argument("--GQ", help="Set minimun genotype score", type=int, default=20)
+    parser.add_argument("--sample-call-rate", help="Add minimum sample call rate QC", type=float, default=0.90)
+    parser.add_argument("--variant-call-rate", help="Add minimum variant call rate QC", type=float, default=0.90)
+    parser.add_argument("--MAF", help="Add minor allele frequency QC", type=float, default=0.01)
+    parser.add_argument("--HWE", help="Add HWE p-value cutoff QC", type=float, default=1e-15)
+    parser.add_argument("--GQ", help="Add minimun genotype score QC", type=int, default=20)
     args = parser.parse_args()
 
     # Set up paths
