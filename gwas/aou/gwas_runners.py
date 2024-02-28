@@ -38,7 +38,7 @@ class HailRunner:
         # Genotype QC
         data = data.annotate_entries(FT = self.hl.coalesce(data.FT,'PASS'))
         data = data.filter_entries(data.FT =='PASS')
-        data = data.filter_entries(data.GQ >= self.GQ)  #20
+        data = data.filter_entries(data.GQ >= self.GQ) #20
 
         # Locus and Sample QC
         data = self.hl.variant_qc(data)
@@ -46,7 +46,9 @@ class HailRunner:
         data = data.filter_cols(data.sample_qc.call_rate >= self.sample_call_rate, keep = True) #0.9
         data = data.filter_rows(data.variant_qc.call_rate >= self.variant_call_rate, keep = True) #0.9
         data = data.filter_rows(self.hl.min(data.variant_qc.AF) > self.MAF, keep = True) #0.01
-        data = data.filter_rows(data.variant_qc.p_value_hwe > self.HWE, keep = True) # 1e-15
+        print(data.count())
+        data = data.filter_rows(data.variant_qc.p_value_hwe > self.HWE, keep = True) # 1e-00
+        print(data.count())
 
 
 

@@ -67,7 +67,7 @@ def WriteGWAS(gwas, outpath, covars):
 def NormalizeData(data, norm):
     # Add normalization quantile
     if norm == "quantile":
-        data["phenotype"] = sklearn.preprocessing.quantile_transform(data[["phenotype"]],output_distribution="normal")
+        data["phenotype"] = sklearn.preprocessing.quantile_transform(data[["phenotype"]],n_quantiles=data.shape[0],output_distribution="normal")
         return data
 
     # Add z-score normalization
@@ -92,7 +92,7 @@ def main():
     parser.add_argument("--sample-call-rate", help="Apply minimum sample call rate QC", type=float, default=0.90)
     parser.add_argument("--variant-call-rate", help="Apply minimum variant call rate QC", type=float, default=0.90)
     parser.add_argument("--MAF", help="Apply minor allele frequency QC", type=float, default=0.01)
-    parser.add_argument("--HWE", help="Apply HWE p-value cutoff QC", type=float, default=1e-15)
+    parser.add_argument("--HWE", help="Apply HWE p-value cutoff QC", type=float, default=1e-100)
     parser.add_argument("--GQ", help="Apply minimun genotype score QC", type=int, default=20)
     args = parser.parse_args()
 
