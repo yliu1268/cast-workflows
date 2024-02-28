@@ -63,7 +63,7 @@ def WriteGWAS(gwas, outpath, covars):
     f.write("# covars: %s\n"%",".join(covars))
     f.close()
     # Append gwas results
-    gwas[["chrom","pos","beta","standard_error","-log10pvalue"]].to_csv(outpath, sep="\t", mode="a", index=False)
+    gwas[["chrom","pos","beta","standard_error","p_value","-log10pvalue"]].to_csv(outpath, sep="\t", mode="a", index=False)
 
 def main():
     parser = argparse.ArgumentParser(__doc__)
