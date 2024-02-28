@@ -182,6 +182,16 @@ def main():
         data = data[(data["value_as_number"]>minval) & (data["value_as_number"]<maxval)]
         MSG("After filter range, have %s data points"%data.shape[0])
 
+    # Filter outlier values based on number of SDs
+    num_sds = getattr(args, "outlier_sd", None)
+    if num_sds is not  None:
+        avg = filtered["value_as_number"].mean()
+        sd = filtered["value_as_number"].std()
+        minval = avg - num_sds * sd
+        maxval = avg + num_sds * sd
+        filtered = filtered[(filtered["value_as_number"] >= minval) & (filtered["value_as_number"] <= maxval)]
+        MSG("After outlier filtering, have %s data points"%filtered.shape[0])
+
     # Determine a single representative value per person
     data['Year'] = data['measurement_datetime'].dt.year
     median_per_year = data.groupby(['person_id','Year']).agg(median_year=('value_as_number', my_median)).reset_index()
@@ -195,16 +205,6 @@ def main():
     # De-duplicate to keep one entry per person
     filtered = filtered.sort_values("measurement_datetime").drop_duplicates(subset=["person_id"], keep="last")
     MSG("After dedup, have %s data points"%filtered.shape[0])
-
-    # Filter outlier values based on number of SDs
-    num_sds = getattr(args, "outlier_sd", None)
-    if num_sds is not  None:
-        avg = filtered["value_as_number"].mean()
-        sd = filtered["value_as_number"].std()
-        minval = avg - num_sds * sd
-        maxval = avg + num_sds * sd
-        filtered = filtered[(filtered["value_as_number"] >= minval) & (filtered["value_as_number"] <= maxval)]
-        MSG("After outlier filtering, have %s data points"%filtered.shape[0])
 
     # Output histogram of phenotype values
     plt.hist(filtered["value_as_number"])
