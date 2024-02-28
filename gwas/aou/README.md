@@ -53,6 +53,10 @@ Optional arguments:
 * GWAS results: `${WORKSPACE_BUCKET}/gwas/${phenotype}_hail_${cohort}.gwas.tab` where `cohort` is parsed from the `--samples` argument. If using the default for `--samples`, `cohort` will be `ALL`.
 * Manifest of existing preprocessed phenotypes: `phenotypes_manifest.csv` (this repo)
 
+Available cohort options:
+* `${WORKSPACE_BUCKET}/samples/EUR_WHITE.csv` (119184 samples) (self-reported race matches `ANCESTRY_PRED`)
+* `${WORKSPACE_BUCKET}/samples/AFR_BLACK.csv` (44386 samples) (self-reported race matches `ANCESTRY_PRED`)
+
 ## Setup
 
 The GWAS instructions below assume you have:
