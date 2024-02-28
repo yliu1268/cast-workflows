@@ -19,6 +19,7 @@ GWAS_METHODS = ["hail", "associaTR"]
 ANCESTRY_PRED_PATH = "gs://fc-aou-datasets-controlled/v7/wgs/short_read/snpindel/aux/ancestry/ancestry_preds.tsv"
 SAMPLEFILE = os.path.join(os.environ["WORKSPACE_BUCKET"], "samples", \
     "passing_samples_v7.csv")
+DEFAULTSAMPLECSV = "passing_samples_v7.csv"
 
 def GetPTCovarPath(phenotype):
     return os.path.join(os.getenv('WORKSPACE_BUCKET'), \
@@ -28,8 +29,11 @@ def CheckRegion(region):
     if region is None: return True
     return re.match(r"\w+:\d+-\d+", region) is not None
 
-def GetOutPath(phenotype, method, region):
-    outprefix = "%s_%s"%(phenotype, method)
+def GetOutPath(phenotype, method, region, samplefile):
+    cohort = "ALL" #if samplefile == DEFAULTSAMPLECSV
+    if samplefile != DEFAULTSAMPLECSV:
+        cohort = samplefile[:-4] #chop off .csv at the end
+    outprefix = "%s_%s_%s"%(phenotype, method, cohort)
     if region is not None:
         outprefix += "_%s"%(region.replace(":", "_").replace("-","_"))
     return outprefix + ".gwas"
@@ -130,7 +134,7 @@ def main():
         ERROR("GWAS method %s not implemented")
 
     # Run GWAS
-    outpath = GetOutPath(args.phenotype, args.method, args.region)
+    outpath = GetOutPath(args.phenotype, args.method, args.region, sampfile)
     runner.RunGWAS()
     WriteGWAS(runner.gwas, outpath+".tab", covars)
 
