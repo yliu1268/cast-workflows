@@ -140,6 +140,10 @@ def main():
     else:
         # Apply normalization on the entire data.
         data = NormalizeData(data=data, norm=args.norm)
+
+        #add histogram to plot
+        data.hist(("phenotype"),bins=np.arange(-6,6, 0.1))
+        print(data["phenotype"].describe())
         
 
     # Add shared covars
