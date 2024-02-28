@@ -37,6 +37,12 @@ Optional arguments:
 * `--plot`: Output Manhattan and QQ plots
 * `--norm`: Quantile or zscore normalize phenotype, type=str
 * `--norm-by-sex`: Apply normalization by sex
+* `--sample-call-rate`: Set min sample call rate filter. Default: 0.9
+* `--variant-call-rate`: Set min sample call rate filter. Default: 0.9 
+* `--MAF`: Set minimum minor allele frequency. Default=0.01
+* `--HWE`: Set HWE p-value cutoff.Default=1e-15
+* `--GQ`: Set minimun genotype score. Default=20
+
 
 ## Important file locations:
 
