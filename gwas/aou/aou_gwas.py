@@ -161,7 +161,7 @@ def main():
 
     # Set up GWAS method
     if args.method == "hail":
-        runner = HailRunner(data, region=args.region, covars=covars)
+        runner = HailRunner(data, region=args.region, covars=covars, sample_call_rate = args.sample_call_rate, variant_call_rate = args.variant_call_rate, MAF = args.MAF, HWE = args.HWE, GQ = args.GQ)
     else:
         ERROR("GWAS method %s not implemented" % args.method)
 
