@@ -12,5 +12,5 @@ glycated_haemoglobin,3004410,"percent",5,0,50,
 haematocrit,3023314,"percent",5,0,100,
 hemoglobin,3000963,"gram per deciliter,gram per deciliter calculated,no value",5,0,50,
 hdl_cholesterol,3007070,"milligram per deciliter",5,0,200,
-ldl_cholesterol,3028288,"milligram per deciliter",5,0,500,21601855:statin,
+ldl_cholesterol,3028288,"milligram per deciliter",5,0,500,21601855:statin
 lymphocyte_percent,3037511,"percent,no value",5,0,100,
