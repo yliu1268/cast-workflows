@@ -175,6 +175,8 @@ def main():
     # Filtering
     data.dropna(axis=0, subset=['value_as_number'],inplace=True)
     MSG("After filter NA, have %s data points"%data.shape[0])
+    MSG("  Allowable units: %s"%str(aou_queries.GetUnits(args.units)))
+    MSG("  Unique units observed: %s"%(str(set(data["unit_concept_name"]))))
     data = data[data["unit_concept_name"].isin(aou_queries.GetUnits(args.units))]
     MSG("After filter units, have %s data points"%data.shape[0])
     if args.range is not None:
