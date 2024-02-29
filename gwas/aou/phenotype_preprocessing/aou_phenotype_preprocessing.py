@@ -185,11 +185,11 @@ def main():
     # Filter outlier values based on number of SDs
     num_sds = getattr(args, "outlier_sd", None)
     if num_sds is not  None:
-        avg = filtered["value_as_number"].mean()
-        sd = filtered["value_as_number"].std()
+        avg = data["value_as_number"].mean()
+        sd = data["value_as_number"].std()
         minval = avg - num_sds * sd
         maxval = avg + num_sds * sd
-        filtered = filtered[(filtered["value_as_number"] >= minval) & (filtered["value_as_number"] <= maxval)]
+        data = data[(data["value_as_number"] >= minval) & (filtered["value_as_number"] <= maxval)]
         MSG("After outlier filtering, have %s data points"%filtered.shape[0])
 
     # Determine a single representative value per person
