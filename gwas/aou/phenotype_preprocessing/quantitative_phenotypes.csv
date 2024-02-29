@@ -13,3 +13,8 @@ phenotype,concept_id,units,outlier_sd,min,max,drugcovars
 #hdl_cholesterol,3007070,"milligram per deciliter",5,0,200,
 #ldl_cholesterol,3028288,"milligram per deciliter",5,0,500,21601855:statin
 #lymphocyte_percent,3037511,"percent,no value",5,0,100,
+egfr,46236952,"milliliter per minute per 1.73 square meter,milliliter per minute",5,0,200,
+mean_platelet_volume,3043111,"femtoliter",5,0,50,
+neutrophil_count,3013650,"thousand per microliter",5,0,50,
+neutrophil_percent,3008342,"percent,no value",5,0,150,
+phostphate,3011904,"milligram per deciliter",5,0,10,
