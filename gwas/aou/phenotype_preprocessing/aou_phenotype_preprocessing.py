@@ -189,8 +189,8 @@ def main():
         sd = data["value_as_number"].std()
         minval = avg - num_sds * sd
         maxval = avg + num_sds * sd
-        data = data[(data["value_as_number"] >= minval) & (filtered["value_as_number"] <= maxval)]
-        MSG("After outlier filtering, have %s data points"%filtered.shape[0])
+        data = data[(data["value_as_number"] >= minval) & (data["value_as_number"] <= maxval)]
+        MSG("After outlier filtering, have %s data points"%data.shape[0])
 
     # Determine a single representative value per person
     data['Year'] = data['measurement_datetime'].dt.year
