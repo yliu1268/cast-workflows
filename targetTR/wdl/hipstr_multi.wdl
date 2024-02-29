@@ -109,6 +109,8 @@ task hipstr {
         while IFS= read -r line
         do
           echo "$line" > str_${counter}.bed
+          # Test update token (debugging)
+          echo $(gcloud auth application-default print-access-token)
           HipSTR \
             --bams ${bams_input} \
             --fasta ~{genome} \
