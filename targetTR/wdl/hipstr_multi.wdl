@@ -80,7 +80,7 @@ task hipstr {
         bams_input=$(paste -sd, ~{bams_file})
         export GCS_REQUESTER_PAYS_PROJECT=~{GOOGLE_PROJECT}
         export GCS_OAUTH_TOKEN=~{GCS_OAUTH_TOKEN}
-        sleep ${sleep_seconds}
+        sleep ~{sleep_seconds}
       fi
 
       # AoU crams are e.g. wgs_XXXXX.cram
@@ -117,6 +117,7 @@ task hipstr {
             ${samps_flags} \
             ~{extra_hipstr_args} 
           counter=$((counter+1))
+          sleep ~{sleep_seconds}
         done < ~{str_ref}
         # Concatenate the VCF files
         echo "##fileformat=VCFv4.1" > ~{out_prefix}.vcf
