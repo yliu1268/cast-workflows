@@ -181,6 +181,7 @@ def main():
 	parser.add_argument("--hipstr-mem", help="Hipstr run memory, modify if run smaller sample size, default=16G", required=False, type=int, default=16)
 	parser.add_argument("--merge-mem", help="Merge hipstr run memory, modify if run smaller sample size, default=4G", required=False, type=int, default=4)
 	parser.add_argument("--extra-hipstr-args", help="Add more hipstr command", required=False, type=str, default="--min-reads 10")
+	parser.add_argument("--separate-hipstr-runs", help="Run a separate HipSTR call per STR", action="store_true")
 	args = parser.parse_args()
 
 	# Check if action is valid
@@ -230,6 +231,7 @@ def main():
 	json_dict["targetTR.merge_mem"] = args.merge_mem
 	json_dict["targetTR.extra_hipstr_args"] = args.extra_hipstr_args
 	json_dict["targetTR.infer_samps_from_file"] = True
+	json_dict["targetTR.separate_hipstr_runs"] = args.separate_hipstr_runs
 	json_dict["targetTR.GOOGLE_PROJECT"] = project
 	json_dict["targetTR.GCS_OAUTH_TOKEN"] = token
 	json_dict["targetTR.cram_file_batches_str"] = cram_batches_paths

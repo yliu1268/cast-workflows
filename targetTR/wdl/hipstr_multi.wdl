@@ -15,7 +15,8 @@ workflow run_hipstr {
         String GCS_OAUTH_TOKEN = ""
         Int? sleep_seconds = 0
         String? extra_hipstr_args = "--min-reads 10"
-	Int? hipstr_mem = 16
+        Boolean separate_hipstr_runs = false
+	      Int? hipstr_mem = 16
     }
 
     call hipstr {
@@ -33,7 +34,8 @@ workflow run_hipstr {
           GCS_OAUTH_TOKEN=GCS_OAUTH_TOKEN,
           sleep_seconds=sleep_seconds,
           hipstr_mem=hipstr_mem,
-          extra_hipstr_args=extra_hipstr_args
+          extra_hipstr_args=extra_hipstr_args,
+          separate_hipstr_runs=separate_hipstr_runs
     }
 
     call sort_index_hipstr {
@@ -65,7 +67,8 @@ task hipstr {
         String GOOGLE_PROJECT = ""
         String GCS_OAUTH_TOKEN = ""
         Int? sleep_seconds = 0
-	Int? hipstr_mem = 16
+        Boolean separate_hipstr_runs = false
+	      Int? hipstr_mem = 16
         String? extra_hipstr_args = "--min-reads 10"
     } 
 
@@ -92,6 +95,7 @@ task hipstr {
         samps_flags="--bam-samps ${samps} --bam-libs ${samps}"
       fi
 
+      if [[ "~{separate_hipstr_runs}" == false ]] ; then
       HipSTR \
           --bams ${bams_input} \
           --fasta ~{genome} \
@@ -99,7 +103,35 @@ task hipstr {
           --str-vcf ~{out_prefix}.vcf.gz \
           ${samps_flags} \
           ~{extra_hipstr_args} 
-          #default --min-reads 10
+      else
+        # Run HipSTR separately on each STR
+        counter=0
+        while IFS= read -r line
+        do
+          echo "$line" > str_${counter}.bed
+          HipSTR \
+            --bams ${bams_input} \
+            --fasta ~{genome} \
+            --regions str_${counter}.bed \
+            --str-vcf ~{out_prefix}_${counter}.vcf.gz \
+            ${samps_flags} \
+            ~{extra_hipstr_args} 
+          counter=$((counter+1))
+        done < ~{str_ref}
+        # Concatenate the VCF files
+        echo "##fileformat=VCFv4.1" > ~{out_prefix}.vcf
+        for counter in $(seq 0 $((counter-1)))
+        do
+           zcat ~{out_prefix}_${counter}.vcf.gz | grep "^##command" >> ~{out_prefix}.vcf
+        done
+        zcat ~{out_prefix}_0.vcf.gz | grep "^#" | \
+          grep -v fileformat | grep -v command >> ~{out_prefix}.vcf
+        for counter in $(seq 0 $((counter-1)))
+        do
+           zcat ~{out_prefix}_${counter}.vcf.gz | grep -v "^#" >> ~{out_prefix}.vcf
+        done
+        bgzip ~{out_prefix}.vcf
+      fi
     >>>
     
     runtime {

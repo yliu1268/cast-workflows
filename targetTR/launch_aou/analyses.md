@@ -8,5 +8,6 @@ Run HipSTR genotyping on all TRs of interest from [Margoliash et al.](https://ww
 ./targetTR_launcher_aou.py \
   --tr-bed ../strsets/ukb_all_hg38.bed \
   --name UKB_ALL \
+  --batch-num 2 \
   --action run-batches 
 ```
