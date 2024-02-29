@@ -17,7 +17,6 @@ import sys
 from utils import MSG, ERROR
 import numpy as np
 import scipy.stats as stats
-import sklearn.preprocessing
 import warnings
 
 GWAS_METHODS = ["hail"]
@@ -64,10 +63,21 @@ def WriteGWAS(gwas, outpath, covars):
     # Append gwas results
     gwas[["chrom","pos","beta","standard_error","-log10pvalue"]].to_csv(outpath, sep="\t", mode="a", index=False)
 
+
+def Inverse_Quantile_Normalization(M):
+    
+    #After quantile normalization of samples, standardize expression of each gene
+    M = M.transpose()
+    R = stats.mstats.rankdata(M,axis=1)  # ties are averaged
+    Q = stats.norm.ppf(R/(M.shape[1]+1))
+    Q = Q.transpose()
+    
+    return Q
+
 def NormalizeData(data, norm):
     # Add normalization quantile
     if norm == "quantile":
-        data["phenotype"] = sklearn.preprocessing.quantile_transform(data[["phenotype"]],output_distribution="normal")
+        data["phenotype"] = Inverse_Quantile_Normalization(data[["phenotype"]])
         return data
 
     # Add z-score normalization
