@@ -120,15 +120,15 @@ task hipstr {
         done < ~{str_ref}
         # Concatenate the VCF files
         echo "##fileformat=VCFv4.1" > ~{out_prefix}.vcf
-        for counter in $(seq 0 $((counter-1)))
+        for num in $(seq 0 $((counter-1)))
         do
-           zcat ~{out_prefix}_${counter}.vcf.gz | grep "^##command" >> ~{out_prefix}.vcf
+           zcat ~{out_prefix}_${num}.vcf.gz | grep "^##command" >> ~{out_prefix}.vcf
         done
         zcat ~{out_prefix}_0.vcf.gz | grep "^#" | \
           grep -v fileformat | grep -v command >> ~{out_prefix}.vcf
-        for counter in $(seq 0 $((counter-1)))
+        for num in $(seq 0 $((counter-1)))
         do
-           zcat ~{out_prefix}_${counter}.vcf.gz | grep -v "^#" >> ~{out_prefix}.vcf
+           zcat ~{out_prefix}_${num}.vcf.gz | grep -v "^#" >> ~{out_prefix}.vcf
         done
         bgzip ~{out_prefix}.vcf
       fi

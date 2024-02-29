@@ -20,30 +20,18 @@ RUN mkdir -p /usr/local/gcloud \
 ENV PATH $PATH:/usr/local/gcloud/google-cloud-sdk/bin
 
 # Download HTSLIB
-#RUN wget https://github.com/samtools/htslib/releases/download/1.19/htslib-1.19.tar.bz2
-#RUN tar -xvf htslib-1.19.tar.bz2
-#WORKDIR htslib-1.19
-#RUN ./configure --enable-gcs --enable-s3 --enable-libcurl
-#RUN make -j && make install
+RUN wget https://github.com/samtools/htslib/releases/download/1.19/htslib-1.19.tar.bz2
+RUN tar -xvf htslib-1.19.tar.bz2
+WORKDIR htslib-1.19
+RUN ./configure --enable-gcs --enable-s3 --enable-libcurl
+RUN make -j && make install
 
 # Install HipSTR GCS htslib update version
-#RUN git clone https://github.com/gymrek-lab/HipSTR.git 
-#WORKDIR HipSTR/
-# RUN git checkout gcs #7c95c13 (attempted to change setregion) #2c83bed (working version on 1 TR)
-#RUN make version
-#RUN make -j
-#RUN cp HipSTR /usr/local/bin/
-#WORKDIR ..
-#RUN ldconfig
-
-# Install HipSTR (gcs, old htslib version)
-RUN git clone -b gcs https://github.com/gymrek-lab/HipSTR.git 
+RUN git clone https://github.com/gymrek-lab/HipSTR.git 
 WORKDIR HipSTR/
+RUN git checkout 2c83bed 
 RUN make version
-WORKDIR lib/htslib
-RUN autoreconf
-RUN ./configure --enable-gcs --enable-s3 --enable-libcurl --without-libdeflate
-WORKDIR ../../
-RUN make
+RUN make -j
 RUN cp HipSTR /usr/local/bin/
-WORKDIR ..  
+WORKDIR ..
+RUN ldconfig
