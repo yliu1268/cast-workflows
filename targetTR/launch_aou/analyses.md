@@ -11,7 +11,6 @@ Run HipSTR genotyping on all TRs of interest from [Margoliash et al.](https://ww
   --tr-bed ../strsets/test_10.bed \
   --name UKB_test \
   --batch-num 2 \
-  --batch-size 2 \
   --separate-hipstr-runs \
   --action run-batches 
 ```

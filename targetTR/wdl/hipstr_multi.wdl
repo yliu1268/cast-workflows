@@ -13,7 +13,7 @@ workflow run_hipstr {
         File? bams_file
         String GOOGLE_PROJECT = ""
         String GCS_OAUTH_TOKEN = ""
-        Int? sleep_seconds = 0
+        Int sleep_seconds = 0
         String? extra_hipstr_args = "--min-reads 10"
         Boolean separate_hipstr_runs = false
 	      Int? hipstr_mem = 16
@@ -66,7 +66,7 @@ task hipstr {
         File? bams_file
         String GOOGLE_PROJECT = ""
         String GCS_OAUTH_TOKEN = ""
-        Int? sleep_seconds = 0
+        Int sleep_seconds = 0
         Boolean separate_hipstr_runs = false
 	      Int? hipstr_mem = 16
         String? extra_hipstr_args = "--min-reads 10"
