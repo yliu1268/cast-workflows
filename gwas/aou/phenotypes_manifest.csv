@@ -10,7 +10,6 @@ eosinophil_percent,3010457,"percent,no value",5,0,100,nan,eosinophil_percent_phe
 glucose,3004501,"milligram per deciliter",5,0,500,nan,glucose_phenocovar.csv,128355,5e7d9e6528da33f0dfa70d1dc65275ff
 glycated_haemoglobin,3004410,"percent",5,0,50,nan,glycated_haemoglobin_phenocovar.csv,57982,e9b84e34da7046f21582b72f3bde0da4
 haematocrit,3023314,"percent",5,0,100,nan,haematocrit_phenocovar.csv,116543,7b99c8759f8a67d777b8a048bef65457
-hemoglobin,3000963,"gram per deciliter,gram per deciliter calculated,no value",5,0,50,nan,hemoglobin_phenocovar.csv,2300,7f387e9bdc046f61e3c28700bbdcad12
 hdl_cholesterol,3007070,"milligram per deciliter",5,0,200,nan,hdl_cholesterol_phenocovar.csv,90890,7f361148f35cfd53625c357c500870af
 ldl_cholesterol,3028288,"milligram per deciliter",5,0,500,21601855:statin,ldl_cholesterol_phenocovar.csv,64435,811a6ac25dc182b3e80f9f2b3e27d473
 lymphocyte_percent,3037511,"percent,no value",5,0,100,nan,lymphocyte_percent_phenocovar.csv,96593,c648bb1160c575cb650b9d74be9e255c
