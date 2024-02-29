@@ -67,9 +67,10 @@ for index, row in ptdata.iterrows():
     gcsfile = os.path.join(os.environ["WORKSPACE_BUCKET"], "phenotypes", outfile)
     RunCmd(cmd)
     UploadGCS(outfile, gcsfile)
+    numsamples = len(open(outfile, "r").readlines())-1
     outitems = [row["phenotype"], row["concept_id"], \
-    	row["units"], row["outlier_sd"], row["drugcovars"], \
-    	outfile, md5(outfile)]
+    	row["units"], row["outlier_sd"], row["min"], row["max"], row["drugcovars"], \
+    	outfile, numsamples, md5(outfile)]
     manifest.write(",".join([str(item) for item in outitems])+"\n")
 
 manifest.close()
