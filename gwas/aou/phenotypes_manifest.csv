@@ -13,3 +13,8 @@ haematocrit,3023314,"percent",5,0,100,nan,haematocrit_phenocovar.csv,116543,7b99
 hdl_cholesterol,3007070,"milligram per deciliter",5,0,200,nan,hdl_cholesterol_phenocovar.csv,90890,7f361148f35cfd53625c357c500870af
 ldl_cholesterol,3028288,"milligram per deciliter",5,0,500,21601855:statin,ldl_cholesterol_phenocovar.csv,64435,811a6ac25dc182b3e80f9f2b3e27d473
 lymphocyte_percent,3037511,"percent,no value",5,0,100,nan,lymphocyte_percent_phenocovar.csv,96593,c648bb1160c575cb650b9d74be9e255c
+egfr,46236952,"milliliter per minute per 1.73 square meter,milliliter per minute",5,0,200,nan,egfr_phenocovar.csv,34290,95bb0ec077b5c473361473121204eb59
+mean_platelet_volume,3043111,"femtoliter",5,0,50,nan,mean_platelet_volume_phenocovar.csv,83636,f5581afa7e7abd21b5f7903ecfeaba6a
+neutrophil_count,3013650,"thousand per microliter",5,0,50,nan,neutrophil_count_phenocovar.csv,49455,9ab39fc582be6a1193228505349c7a25
+neutrophil_percent,3008342,"percent,no value",5,0,150,nan,neutrophil_percent_phenocovar.csv,77788,17eeb5fd31b2e10722e8b34696a9377e
+phostphate,3011904,"milligram per deciliter",5,0,10,nan,phostphate_phenocovar.csv,50151,a7e07b418004f169c98af8a8b4e4285c
