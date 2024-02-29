@@ -9,12 +9,19 @@ Run HipSTR genotyping on all TRs of interest from [Margoliash et al.](https://ww
 # Testing can remove when done
 ./targetTR_launcher_aou.py \
   --tr-bed ../strsets/test_10.bed \
-  --name UKB_test \
-  --batch-num 2 \
+  --name UKB_test_allsamples_10TRs \
   --separate-hipstr-runs \
   --action run-batches 
+
+./targetTR_launcher_aou.py \
+  --tr-bed ../strsets/ukb_all_hg38.bed \
+  --name UKB_test_2batches_allTRs \
+  --separate-hipstr-runs \
+  --batch-num 2 \
+  --action run-batches
 ```
 
+# TODO edit below
 ```
 ./targetTR_launcher_aou.py \
   --tr-bed ../strsets/ukb_all_hg38.bed \
