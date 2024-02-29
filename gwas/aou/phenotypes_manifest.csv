@@ -13,4 +13,4 @@ haematocrit,3023314,"percent",5,0,100,nan,haematocrit_phenocovar.csv,116543,7b99
 hemoglobin,3000963,"gram per deciliter,gram per deciliter calculated,no value",5,0,50,nan,hemoglobin_phenocovar.csv,2300,7f387e9bdc046f61e3c28700bbdcad12
 hdl_cholesterol,3007070,"milligram per deciliter",5,0,200,nan,hdl_cholesterol_phenocovar.csv,90890,7f361148f35cfd53625c357c500870af
 ldl_cholesterol,3028288,"milligram per deciliter",5,0,500,21601855:statin,ldl_cholesterol_phenocovar.csv,64435,811a6ac25dc182b3e80f9f2b3e27d473
-lymphocyte_percent,3037511,percent,no value,5,0,100,nan,lymphocyte_percent_phenocovar.csv,96593,c648bb1160c575cb650b9d74be9e255c
+lymphocyte_percent,3037511,"percent,no value",5,0,100,nan,lymphocyte_percent_phenocovar.csv,96593,c648bb1160c575cb650b9d74be9e255c
