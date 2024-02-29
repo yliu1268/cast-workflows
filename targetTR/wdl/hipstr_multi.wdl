@@ -108,9 +108,9 @@ task hipstr {
         counter=0
         while IFS= read -r line
         do
+          # Update token. expires every hour
+          export GCS_OAUTH_TOKEN=$(gcloud auth application-default print-access-token)
           echo "$line" > str_${counter}.bed
-          # Test update token (debugging)
-          echo $(gcloud auth application-default print-access-token)
           HipSTR \
             --bams ${bams_input} \
             --fasta ~{genome} \
