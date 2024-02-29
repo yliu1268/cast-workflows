@@ -117,6 +117,8 @@ task hipstr {
             ${samps_flags} \
             ~{extra_hipstr_args} 
           counter=$((counter+1))
+          export GCS_REQUESTER_PAYS_PROJECT=~{GOOGLE_PROJECT}
+          export GCS_OAUTH_TOKEN=~{GCS_OAUTH_TOKEN}
           sleep ~{sleep_seconds}
         done < ~{str_ref}
         # Concatenate the VCF files
