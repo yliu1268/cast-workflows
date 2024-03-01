@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# TODO - add running on all 3 cohorts
+# TODO - add ability to do outprefix 
 VCF=${WORKSPACE_BUCKET}/cromwell-execution/targetTR/4519d903-dde6-4c8e-b1ee-bcc2d7cd6dd7/call-sort_index/CBL_test.filtered.sorted.vcf.gz
 
 while IFS= read -r line
