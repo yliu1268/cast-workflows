@@ -66,7 +66,7 @@ def WriteGWAS(gwas, outpath, covars):
     f.write("# covars: %s\n"%",".join(covars))
     f.close()
     # Append gwas results
-    gwas[["chrom","pos","beta","standard_error","p_value","-log10pvalue"]].to_csv(outpath, sep="\t", mode="a", index=False)
+    gwas.to_csv(outpath, sep="\t", mode="a", index=False)
 
 def Inverse_Quantile_Normalization(M):
     M = M.transpose()

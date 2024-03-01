@@ -70,5 +70,4 @@ class AssociaTRRunner:
         gwas.rename({"p_phenotype": "p_value", "coeff_phenotype": "beta", \
         	"se_phenotype": "standard_error"}, inplace=True, axis=1)
         gwas["-log10pvalue"] = -np.log10(gwas["p_value"])
-        print(gwas.columns)
         self.gwas = gwas
