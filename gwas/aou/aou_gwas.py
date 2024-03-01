@@ -168,6 +168,8 @@ def main():
             os.system("gsutil -u ${GOOGLE_PROJECT} cp %s ."%(args.samples))
     samples = pd.read_csv(sampfile)
     samples["person_id"] = samples["person_id"].apply(str)
+    print(data.head())
+    print(samples.head())
     data = pd.merge(data, samples)
 
     # Check we have all covars
