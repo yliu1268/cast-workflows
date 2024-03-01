@@ -9,7 +9,7 @@ import tempfile
 import trtools.associaTR
 
 class AssociaTRRunner:
-    def __init__(self, ptcovar, trvcf, region=None, covars=[], sample_call_rate=None, variant_call_rate=None, MAF=None, HWE=None, GQ=None):
+    def __init__(self, ptcovar, trvcf, region=None, covars=[]):
         self.ptcovar = ptcovar
         self.pt_npy = None
         self.covar_npy = None
