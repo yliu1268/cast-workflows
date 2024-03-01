@@ -22,3 +22,8 @@ red_blood_cell_count,3020416,"million per microliter,Meter per microliter,millio
 mean_corpuscular_hemoglobin,3012030,"picogram,picogram per cell,no value",5,0,100,nan,mean_corpuscular_hemoglobin_phenocovar.csv,123855,2c1dc12f4c483ef76e66dc5944b95355
 mean_corpuscular_volume,3023599,"femtoliter,u/m3,no value",5,0,200,nan,mean_corpuscular_volume_phenocovar.csv,122185,5b0d2e63a7db2f5e6a9a5b39e774bf8f
 red_blood_cell_distribution_width,3019897,"percent,no value",5,0,100,nan,red_blood_cell_distribution_width_phenocovar.csv,119064,c5c927c95dc4401f259f9da65d34f762
+protein,3020630,gram per deciliter,gram per deciliter calculated,no value,5,0,20,nan,protein_phenocovar.csv,124114,997e92c53ffb409136ca94c238753c0e
+triglycerides,3022192,milligram per deciliter,5,0,500,nan,triglycerides_phenocovar.csv,93104,ae1b7795aa8d58476817163de402cd87
+white_blood_cell_count,3000905,thousand per microliter,thousand per cubic millimeter,5,0,100,nan,white_blood_cell_count_phenocovar.csv,89590,46217bc1c98be0b6046c82944a735c74
+total_bilirubin,3024128,milligram per deciliter,5,0,3,nan,total_bilirubin_phenocovar.csv,116377,e018cf20b36aa09ae3a9b847f62ddb89
+urea,3013682,milligram per deciliter,5,0,100,nan,urea_phenocovar.csv,129100,0bc00cbc6e906bd45f802938b3263f1b
