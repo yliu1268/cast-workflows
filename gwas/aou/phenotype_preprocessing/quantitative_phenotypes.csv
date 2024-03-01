@@ -26,4 +26,4 @@ total_bilirubin,3024128,"milligram per deciliter",5,-1,3,
 protein,3020630,"gram per deciliter,gram per deciliter calculated,no value",5,0,20,
 triglycerides,3022192,"milligram per deciliter",5,0,500,
 urea,3013682,"milligram per deciliter",5,-20,100,
-white_blood_cell_count,3000905,"thousand per microliter,thousand per cubic millimeter",5,0,100
+white_blood_cell_count,3000905,"thousand per microliter,thousand per cubic millimeter",5,0,100,
