@@ -52,6 +52,7 @@ The file `quantitative_phenotypes.csv` is a csv file with named columns:
 * `phenotype`
 * `concept_id`
 * `units`
+* `sdoutlier`
 * `min`
 * `max`
 * `drugcovars`

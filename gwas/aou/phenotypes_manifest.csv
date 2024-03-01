@@ -18,3 +18,7 @@ mean_platelet_volume,3043111,"femtoliter",5,0,50,nan,mean_platelet_volume_phenoc
 neutrophil_count,3013650,"thousand per microliter",5,0,50,nan,neutrophil_count_phenocovar.csv,49455,9ab39fc582be6a1193228505349c7a25
 neutrophil_percent,3008342,"percent,no value",5,0,150,nan,neutrophil_percent_phenocovar.csv,77788,17eeb5fd31b2e10722e8b34696a9377e
 phosphate,3011904,"milligram per deciliter",5,0,10,nan,phostphate_phenocovar.csv,50151,a7e07b418004f169c98af8a8b4e4285c
+red_blood_cell_count,3020416,"million per microliter,Meter per microliter,million per cubic millimeter,trillion per liter,Meter per cubic millimeter,thousand per cubic millimeter",5,0,20,nan,red_blood_cell_count_phenocovar.csv,95407,b3c6144f427e5789d917b852e8350ee3
+mean_corpuscular_hemoglobin,3012030,"picogram,picogram per cell,no value",5,0,100,nan,mean_corpuscular_hemoglobin_phenocovar.csv,123855,2c1dc12f4c483ef76e66dc5944b95355
+mean_corpuscular_volume,3023599,"femtoliter,u/m3,no value",5,0,200,nan,mean_corpuscular_volume_phenocovar.csv,122185,5b0d2e63a7db2f5e6a9a5b39e774bf8f
+red_blood_cell_distribution_width,3019897,"percent,no value",5,0,100,nan,red_blood_cell_distribution_width_phenocovar.csv,119064,c5c927c95dc4401f259f9da65d34f762
