@@ -135,6 +135,7 @@ To list all output files produced by a workflow:
 ```
 cromshell list-outputs $JOBID
 ```
+
 To get the summarized status of all jobs in the workflow:
 ```
 cromshell count $JOBID
