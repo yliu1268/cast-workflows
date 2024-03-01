@@ -17,4 +17,4 @@ egfr,46236952,"milliliter per minute per 1.73 square meter,milliliter per minute
 mean_platelet_volume,3043111,"femtoliter",5,0,50,nan,mean_platelet_volume_phenocovar.csv,83636,f5581afa7e7abd21b5f7903ecfeaba6a
 neutrophil_count,3013650,"thousand per microliter",5,0,50,nan,neutrophil_count_phenocovar.csv,49455,9ab39fc582be6a1193228505349c7a25
 neutrophil_percent,3008342,"percent,no value",5,0,150,nan,neutrophil_percent_phenocovar.csv,77788,17eeb5fd31b2e10722e8b34696a9377e
-phostphate,3011904,"milligram per deciliter",5,0,10,nan,phostphate_phenocovar.csv,50151,a7e07b418004f169c98af8a8b4e4285c
+phosphate,3011904,"milligram per deciliter",5,0,10,nan,phostphate_phenocovar.csv,50151,a7e07b418004f169c98af8a8b4e4285c
