@@ -6,33 +6,18 @@ Run HipSTR genotyping on all TRs of interest from [Margoliash et al.](https://ww
 
 ```
 # Run on one batch
+batch=1 # 1..10
 ./targetTR_launcher_aou.py \
-  --tr-bed ../strsets/ukb_finemapped_hg38/ukb_finemapped_hg38_batch10.bed \
-  --name UKB_finemapped-batch10 \
+  --tr-bed ../strsets/ukb_finemapped_hg38/ukb_finemapped_hg38_batch${batch}.bed \
+  --name UKB_finemapped-batch${batch} \
   --separate-hipstr-runs \
   --action run-batches 
 ```
 
-### Test runs
+# Outputs
+
+Outputs of each job are being copied to:
+
 ```
-# Testing can remove when done
-./targetTR_launcher_aou.py \
-  --tr-bed ../strsets/test_10.bed \
-  --name UKB_test_allsamples_10TRs \
-  --separate-hipstr-runs \
-  --action run-batches 
-
-./targetTR_launcher_aou.py \
-  --tr-bed ../strsets/ukb_all_hg38.bed \
-  --name UKB_test_2batches_allTRs \
-  --separate-hipstr-runs \
-  --batch-num 2 \
-  --action run-batches
-
-./targetTR_launcher_aou.py \
-  --tr-bed test.bed \
-  --name UKB_test_2batches_1TR \
-  --separate-hipstr-runs \
-  --batch-num 2 \
-  --action run-batches
+${WORKSPACE_BUCKET}/ukb_finemapped_hg38/
 ```
