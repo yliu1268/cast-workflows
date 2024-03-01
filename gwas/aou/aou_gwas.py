@@ -14,6 +14,9 @@ import pandas as pd
 import re
 import sys
 from utils import MSG, ERROR
+import numpy as np
+import scipy.stats as stats
+import warnings
 
 GWAS_METHODS = ["hail", "associaTR"]
 ANCESTRY_PRED_PATH = "gs://fc-aou-datasets-controlled/v7/wgs/short_read/snpindel/aux/ancestry/ancestry_preds.tsv"
@@ -65,6 +68,28 @@ def WriteGWAS(gwas, outpath, covars):
     # Append gwas results
     gwas[["chrom","pos","beta","standard_error","p_value","-log10pvalue"]].to_csv(outpath, sep="\t", mode="a", index=False)
 
+
+def Inverse_Quantile_Normalization(M):
+    
+    #After quantile normalization of samples, standardize expression of each gene
+    M = M.transpose()
+    R = stats.mstats.rankdata(M,axis=1)  # ties are averaged
+    Q = stats.norm.ppf(R/(M.shape[1]+1))
+    Q = Q.transpose()
+    
+    return Q
+
+def NormalizeData(data, norm):
+    # Add normalization quantile
+    if norm == "quantile":
+        data["phenotype"] = Inverse_Quantile_Normalization(data[["phenotype"]])
+        return data
+
+    # Add z-score normalization
+    elif norm == "zscore":
+        data["phenotype"]  = stats.zscore(data[["phenotype"]])
+        return data
+
 def main():
     parser = argparse.ArgumentParser(__doc__)
     parser.add_argument("--phenotype", help="Phenotypes file path, or phenotype name", type=str, required=True)
@@ -77,6 +102,15 @@ def main():
     parser.add_argument("--sharedcovars", help="Comma-separated list of shared covariates (besides PCs). Default: sex_at_birth_Male", type=str, default="sex_at_birth_Male")
     parser.add_argument("--tr-vcf", help="VCF file with TR genotypes. Required if running associaTR", type=str)
     parser.add_argument("--plot", help="Make a Manhattan plot", action="store_true")
+    parser.add_argument("--norm", help="Normalize phenotype either quantile or zscore",type=str)
+    parser.add_argument("--norm-by-sex",
+                        help="Apply the normalization for each sex separately. Default: False",
+                        action="store_true")
+    parser.add_argument("--sample-call-rate", help="Apply minimum sample call rate QC", type=float, default=0.90)
+    parser.add_argument("--variant-call-rate", help="Apply minimum variant call rate QC", type=float, default=0.90)
+    parser.add_argument("--MAF", help="Apply minor allele frequency QC", type=float, default=0.01)
+    parser.add_argument("--HWE", help="Apply HWE p-value cutoff QC", type=float, default=1e-100)
+    parser.add_argument("--GQ", help="Apply minimun genotype score QC", type=int, default=20)
     args = parser.parse_args()
 
     # Set up paths
@@ -107,6 +141,25 @@ def main():
     data = pd.merge(data, ancestry[["person_id"]+pcols], on=["person_id"])
     data["person_id"] = data["person_id"].apply(str)
 
+    # Add normalization. If indicated, normalize for each sex separately.
+    if args.norm_by_sex:
+
+        # Separate the data into two smaller dataframes based on sex at birth.
+        female_data = data[data['sex_at_birth_Male'] == 0].copy()
+        male_data = data[data['sex_at_birth_Male'] == 1].copy()
+
+        # Apply normalization on female and male dataframes separately.
+        female_data =NormalizeData(data=female_data, norm=args.norm)
+        male_data = NormalizeData(data=male_data, norm=args.norm)
+
+        # Concatenate the female and male dataframes back into one
+        # and sort the dataframe by original order.
+        data = pd.concat([female_data, male_data])
+        data = data.sort_index()
+    else:
+        # Apply normalization on the entire data.
+        data = NormalizeData(data=data, norm=args.norm)
+        
     # Add shared covars
     sampfile = args.samples
     if sampfile.startswith("gs://"):
@@ -123,15 +176,16 @@ def main():
         if item not in data.columns:
             ERROR("Required column %s not found"%item)
 
+
     # Set up GWAS method
     if args.method == "hail":
         from hail_runner import HailRunner
-        runner = HailRunner(data, region=args.region, covars=covars)
+        runner = HailRunner(data, region=args.region, covars=covars, sample_call_rate = args.sample_call_rate, variant_call_rate = args.variant_call_rate, MAF = args.MAF, HWE = args.HWE, GQ = args.GQ)
     elif args.method == "associaTR":
         from associatr_runner import AssociaTRRunner
         runner = AssociaTRRunner(data, args.tr_vcf, region=args.region, covars=covars)
     else:
-        ERROR("GWAS method %s not implemented")
+        ERROR("GWAS method %s not implemented" % args.method)
 
     # Run GWAS
     outpath = GetOutPath(args.phenotype, args.method, args.region, sampfile)

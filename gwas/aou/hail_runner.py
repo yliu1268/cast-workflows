@@ -10,10 +10,16 @@ MT_WGS_PATH = 'gs://fc-aou-datasets-controlled/v7/wgs/short_read/snpindel/acaf_t
 SMALLNUM = 10e-400
 
 class HailRunner:
-    def __init__(self, ptcovar, region=None, covars=[]):
+    def __init__(self, ptcovar, region=None, covars=[], sample_call_rate = None, variant_call_rate = None, MAF = None, HWE = None, GQ = None):
+
         self.ptcovar = ptcovar
         self.region = region
-        self.covars = covars
+        self.covars = covars 
+        self.sample_call_rate = sample_call_rate
+        self.variant_call_rate = variant_call_rate
+        self.MAF = MAF
+        self.HWE = HWE
+        self.GQ = GQ  
         self.gwas = None
         self.data = None
         self.method = "hail"
@@ -35,7 +41,15 @@ class HailRunner:
         # Genotype QC
         data = data.annotate_entries(FT = hl.coalesce(data.FT,'PASS'))
         data = data.filter_entries(data.FT =='PASS')
-        data = data.filter_entries(data.GQ >= 20)
+        data = data.filter_entries(data.GQ >= self.GQ) #20
+
+        # Locus and Sample QC
+        data = self.hl.variant_qc(data)
+        data = self.hl.sample_qc(data)
+        data = data.filter_cols(data.sample_qc.call_rate >= self.sample_call_rate, keep = True) #0.9
+        data = data.filter_rows(data.variant_qc.call_rate >= self.variant_call_rate, keep = True) #0.9
+        data = data.filter_rows(self.hl.min(data.variant_qc.AF) > self.MAF, keep = True) #0.01
+        data = data.filter_rows(data.variant_qc.p_value_hwe > self.HWE, keep = True) # 1e-100
 
          # Keep track of data
         self.data = data
