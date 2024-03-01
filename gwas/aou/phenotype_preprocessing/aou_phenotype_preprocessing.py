@@ -13,6 +13,7 @@ WORKSPACE_BUCKET
 import argparse
 import aou_queries
 import os
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import sys
@@ -143,11 +144,13 @@ def main():
     parser.add_argument("--concept-id", help="Concept ID for phenotype", type=str, required=True)
     parser.add_argument("--drugexposure-covariate-concept-ids", help="Comma-separated list of conceptid:conceptname to use as drug exposure covariates", type=str)
     parser.add_argument("--units", help="Comma-separated list of acceptable units. Accepted shorthands: blood", type=str, required=True)
-    parser.add_argument("--range", help="min, max acceptable phenotype values", type=str, required=True)
+    parser.add_argument("--range", help="min, max acceptable phenotype values", type=str)
     parser.add_argument("--ppi", help="Whether or not the phenotype is from the PPI measurements " + \
                                       "as opposed to LOINC. Only physical measurements (e.g. height) " + \
                                       "are in PPI.",
                                       action="store_true", default=False)
+    parser.add_argument("--outlier-sd", help="filter samples with phenotype values exceeding this number of SDs",
+                                        type=int, required=False)
 
     args = parser.parse_args()
     MSG("Processing %s"%args.phenotype)
@@ -171,13 +174,24 @@ def main():
     # Filtering
     data.dropna(axis=0, subset=['value_as_number'],inplace=True)
     MSG("After filter NA, have %s data points"%data.shape[0])
+    MSG("  Allowable units: %s"%str(aou_queries.GetUnits(args.units)))
+    MSG("  Unique units observed: %s"%(str(set(data["unit_concept_name"]))))
     data = data[data["unit_concept_name"].isin(aou_queries.GetUnits(args.units))]
     MSG("After filter units, have %s data points"%data.shape[0])
-    minval, maxval = aou_queries.GetPhenotypeRange(args.range)
-    if minval is None or maxval is None:
-        ERROR("No minval or maxval specified")
-    data = data[(data["value_as_number"]>minval) & (data["value_as_number"]<maxval)]
-    MSG("After filter range, have %s data points"%data.shape[0])
+    if args.range is not None:
+        minval, maxval = aou_queries.GetPhenotypeRange(args.range)
+        data = data[(data["value_as_number"]>minval) & (data["value_as_number"]<maxval)]
+        MSG("After filter range, have %s data points"%data.shape[0])
+
+    # Filter outlier values based on number of SDs
+    num_sds = getattr(args, "outlier_sd", None)
+    if num_sds is not  None:
+        avg = data["value_as_number"].mean()
+        sd = data["value_as_number"].std()
+        minval = avg - num_sds * sd
+        maxval = avg + num_sds * sd
+        data = data[(data["value_as_number"] >= minval) & (data["value_as_number"] <= maxval)]
+        MSG("After outlier filtering, have %s data points"%data.shape[0])
 
     # Determine a single representative value per person
     data['Year'] = data['measurement_datetime'].dt.year
@@ -192,6 +206,10 @@ def main():
     # De-duplicate to keep one entry per person
     filtered = filtered.sort_values("measurement_datetime").drop_duplicates(subset=["person_id"], keep="last")
     MSG("After dedup, have %s data points"%filtered.shape[0])
+
+    # Output histogram of phenotype values
+    plt.hist(filtered["value_as_number"])
+    plt.savefig(args.phenotype+"_histogram.png", dpi=300)
 
     # Record age info
     filtered["age"] = filtered['measurement_datetime'].dt.year - \

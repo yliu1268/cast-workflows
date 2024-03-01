@@ -11,6 +11,7 @@ Phenotype list has columns:
 * `phenotype`
 * `concept_id`
 * `units`
+* `outlier_sd`
 * `min`
 * `max`
 * `drugcovars`
@@ -50,23 +51,27 @@ def UploadGCS(outfile, gcsfile):
 manifest = open(ptfile.replace(".csv",".manifest.csv"), "w")
 ptdata = pd.read_csv(ptfile)
 for index, row in ptdata.iterrows():
+    if row["phenotype"].startswith("#"): continue
     sys.stderr.write("Processing {phenotype}\n".format(phenotype=row["phenotype"]))
     cmd = """./aou_phenotype_preprocessing.py \
            --phenotype {phenotype} \
            --concept-id {concept} \
-           --units {units} \
-           --range {minval},{maxval}""".format(phenotype=row["phenotype"], \
+           --units \"{units}\" \
+           --range {minval},{maxval} \
+           --outlier-sd {outlier_sd}""".format(phenotype=row["phenotype"], \
            	concept=row["concept_id"], units=row["units"], \
-           	minval=row["min"], maxval=row["max"])
+            minval=row["min"], maxval=row["max"], \
+           	outlier_sd=row["outlier_sd"])
     if str(row["drugcovars"]) != "nan":
         cmd += " --drugexposure-covariate-concept-ids {drug}".format(drug=row["drugcovars"])
     outfile = row["phenotype"]+"_phenocovar.csv"
     gcsfile = os.path.join(os.environ["WORKSPACE_BUCKET"], "phenotypes", outfile)
     RunCmd(cmd)
     UploadGCS(outfile, gcsfile)
+    numsamples = len(open(outfile, "r").readlines())-1
     outitems = [row["phenotype"], row["concept_id"], \
-    	row["units"], row["min"], row["max"], row["drugcovars"], \
-    	outfile, md5(outfile)]
+    	row["units"], row["outlier_sd"], row["min"], row["max"], row["drugcovars"], \
+    	outfile, numsamples, md5(outfile)]
     manifest.write(",".join([str(item) for item in outitems])+"\n")
 
 manifest.close()

@@ -18,7 +18,7 @@ def PlotManhattan(gwas, outpath):
     plot.ax.set_xlabel("Chromosome")
     plot.ax.set_xticks(chrom_df)
     plot.ax.set_xticklabels(chrom_df.index)
-    plot.ax.axhline(np.log10(5*10**-8), linestyle="--", linewidth=1)
+    plot.ax.axhline(-np.log10(5*10**-8), linestyle="--", linewidth=1)
     plot.fig.savefig(outpath)
 
 def ppoints(n, a=None):

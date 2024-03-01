@@ -12,13 +12,22 @@ Assuming the phenotype you are analyzing has already been preprocessed (see belo
 ```
 ./aou_gwas.py --phenotype ALT --num-pcs 10 --region chr11:119206339-119308149
 ```
-will output `ALT_hail_chr11_119206339_119308149.gwas.tab` 
+will output `ALT_hail_ALL_chr11_119206339_119308149.gwas.tab` 
 
-2. Example full GWAS. (run on Hail environment with TODO-Hail settings)
+2. Example full GWAS. (TODO: which Hail compute resources)
 ```
 ./aou_gwas.py --phenotype ALT --num-pcs 10
 ```
-will output `ALT_hail.gwas.tab`
+will output `ALT_hail_ALL.gwas.tab`
+
+3. Small example associaTR run (requires installing TRTools - see setup note below)
+
+```
+./aou_gwas.py --phenotype platelet_count --num-pcs 10 --method associaTR --tr-vcf ${WORKSPACE_BUCKET}/cromwell-execution/targetTR/4519d903-dde6-4c8e-b1ee-bcc2d7cd6dd7/call-sort_index/CBL_test.filtered.sorted.vcf.gz
+```
+will output `platelet_count_associaTR_ALL.gwas.tab`
+
+Note: currently need to install TRTools from branch `associatr-updates` due to conflict with newer numpy version.
 
 ## Detailed usage
 
@@ -30,6 +39,7 @@ Optional arguments:
 
 * `--method <STR>`: Which GWAS method to use. Default: hail
 * `--samples <FILE>`: csv file with list of samples to restrict to. Needs columns "person_id" and "sex_at_birth_Male". Typically this would a list of samples that passed upstream sample-level QC info. Defaults to `${WORKSPACE_BUCKET}/samples/passing_samples_v7.csv`.
+* `--ancestry-pred-path <FILE>`: Path to file with PC info. Defaults to the AoU v7 ancestry predictions.
 * `--region <STR>`: Region to restrict to (chrom:start-endd)
 * `--num-pcs <INT>`: Number of population PCs to include as covariates. Default: 10
 * `--ptcovars <STR>`: Comma-separated list of phenotype-specific covariates. Default: age
@@ -48,8 +58,12 @@ Optional arguments:
 
 * Samples passing QC: `${WORKSPACE_BUCKET}/samples/passing_samples_v7.csv`
 * Preprocessed phenotypes+covariates: `${WORKSPACE_BUCKET}/phenotypes/${phenotype}_phenocovar.csv`
-* GWAS results: `${WORKSPACE_BUCKET}/gwas/${phenotype}_hail.gwas.tab`
+* GWAS results: `${WORKSPACE_BUCKET}/gwas/${phenotype}_hail_${cohort}.gwas.tab` where `cohort` is parsed from the `--samples` argument. If using the default for `--samples`, `cohort` will be `ALL`.
 * Manifest of existing preprocessed phenotypes: `phenotypes_manifest.csv` (this repo)
+
+Available cohort options:
+* `${WORKSPACE_BUCKET}/samples/EUR_WHITE.csv` (119184 samples) (self-reported race matches `ANCESTRY_PRED`)
+* `${WORKSPACE_BUCKET}/samples/AFR_BLACK.csv` (44386 samples) (self-reported race matches `ANCESTRY_PRED`)
 
 ## Setup
 
@@ -70,3 +84,21 @@ We will store phenotypes+shared covariates at:
 ${WORKSPACE_BUCKET}/phenotypes/${phenotype}_phenocovar.csv
 ```
 
+3. Code setup
+
+To get this repository:
+```
+git clone https://github.com/cast-genomics/cast-workflows
+cd cast-workflows
+git checkout gwas-aou
+```
+
+For running associaTR, you need to install a special TRTools branch for now:
+
+```
+cd
+git clone https://github.com/gymrek-lab/TRTools
+cd TRTools
+git checkout associatr-updates
+pip install -e .
+```

@@ -8,7 +8,6 @@ Example:
 """
 
 import argparse
-from gwas_runners import HailRunner
 from gwas_plotter import PlotManhattan, PlotQQ
 import os
 import pandas as pd
@@ -19,10 +18,11 @@ import numpy as np
 import scipy.stats as stats
 import warnings
 
-GWAS_METHODS = ["hail"]
+GWAS_METHODS = ["hail", "associaTR"]
 ANCESTRY_PRED_PATH = "gs://fc-aou-datasets-controlled/v7/wgs/short_read/snpindel/aux/ancestry/ancestry_preds.tsv"
 SAMPLEFILE = os.path.join(os.environ["WORKSPACE_BUCKET"], "samples", \
     "passing_samples_v7.csv")
+DEFAULTSAMPLECSV = "passing_samples_v7.csv"
 
 def GetPTCovarPath(phenotype):
     return os.path.join(os.getenv('WORKSPACE_BUCKET'), \
@@ -32,8 +32,11 @@ def CheckRegion(region):
     if region is None: return True
     return re.match(r"\w+:\d+-\d+", region) is not None
 
-def GetOutPath(phenotype, method, region):
-    outprefix = "%s_%s"%(phenotype, method)
+def GetOutPath(phenotype, method, region, samplefile):
+    cohort = "ALL" #if samplefile == DEFAULTSAMPLECSV
+    if samplefile != DEFAULTSAMPLECSV:
+        cohort = samplefile[:-4] #chop off .csv at the end
+    outprefix = "%s_%s_%s"%(phenotype, method, cohort)
     if region is not None:
         outprefix += "_%s"%(region.replace(":", "_").replace("-","_"))
     return outprefix + ".gwas"
@@ -42,10 +45,12 @@ def GetFloatFromPC(x):
     x = x.replace("[","").replace("]","")
     return float(x)
 
-def LoadAncestry():
-    if not os.path.isfile("ancestry_preds.tsv"):
-        os.system("gsutil -u ${GOOGLE_PROJECT} cp %s ."%(ANCESTRY_PRED_PATH))
-    ancestry = pd.read_csv("ancestry_preds.tsv", sep="\t")
+def LoadAncestry(ancestry_pred_path):
+    if ancestry_pred_path.startswith("gs://"):
+        if not os.path.isfile("ancestry_preds.tsv"):
+            os.system("gsutil -u ${GOOGLE_PROJECT} cp %s ."%(ancestry_pred_path))
+        ancestry_pred_path = "ancestry_preds.tsv"
+    ancestry = pd.read_csv(ancestry_pred_path, sep="\t")
     ancestry.rename({"research_id": "person_id"}, axis=1, inplace=True)
     num_pcs = len(ancestry["pca_features"].values[0].split(","))
     pcols = ["PC_%s"%i for i in range(num_pcs)]
@@ -61,7 +66,7 @@ def WriteGWAS(gwas, outpath, covars):
     f.write("# covars: %s\n"%",".join(covars))
     f.close()
     # Append gwas results
-    gwas[["chrom","pos","beta","standard_error","-log10pvalue"]].to_csv(outpath, sep="\t", mode="a", index=False)
+    gwas[["chrom","pos","beta","standard_error","p_value","-log10pvalue"]].to_csv(outpath, sep="\t", mode="a", index=False)
 
 
 def Inverse_Quantile_Normalization(M):
@@ -90,10 +95,12 @@ def main():
     parser.add_argument("--phenotype", help="Phenotypes file path, or phenotype name", type=str, required=True)
     parser.add_argument("--method", help="GWAS method. Options: %s"",".join(GWAS_METHODS), type=str, default="hail")
     parser.add_argument("--samples", help="List of sample IDs, sex to keep", type=str, default=SAMPLEFILE)
+    parser.add_argument("--ancestry-pred-path", help="Path to ancestry predictions", default=ANCESTRY_PRED_PATH)
     parser.add_argument("--region", help="chr:start-end to restrict to. Default is genome-wide", type=str)
     parser.add_argument("--num-pcs", help="Number of PCs to use as covariates", type=int, default=10)
     parser.add_argument("--ptcovars", help="Comma-separated list of phenotype-specific covariates. Default: age", type=str, default="age")
     parser.add_argument("--sharedcovars", help="Comma-separated list of shared covariates (besides PCs). Default: sex_at_birth_Male", type=str, default="sex_at_birth_Male")
+    parser.add_argument("--tr-vcf", help="VCF file with TR genotypes. Required if running associaTR", type=str)
     parser.add_argument("--plot", help="Make a Manhattan plot", action="store_true")
     parser.add_argument("--norm", help="Normalize phenotype either quantile or zscore",type=str)
     parser.add_argument("--norm-by-sex",
@@ -119,6 +126,8 @@ def main():
         ERROR("Invalid region %s"%args.region)
     if args.num_pcs > 10:
         ERROR("Specify a maximum of 10 PCs")
+    if args.method == "associaTR" and args.tr_vcf is None:
+        ERROR("Must specify --tr-vcf for associTR")
 
     # Get covarlist
     pcols = ["PC_%s"%i for i in range(1, args.num_pcs+1)]
@@ -128,7 +137,7 @@ def main():
 
     # Set up data frame with phenotype and covars
     data = pd.read_csv(ptcovar_path)
-    ancestry = LoadAncestry()
+    ancestry = LoadAncestry(args.ancestry_pred_path)
     data = pd.merge(data, ancestry[["person_id"]+pcols], on=["person_id"])
     data["person_id"] = data["person_id"].apply(str)
 
@@ -170,12 +179,16 @@ def main():
 
     # Set up GWAS method
     if args.method == "hail":
+        from hail_runner import HailRunner
         runner = HailRunner(data, region=args.region, covars=covars, sample_call_rate = args.sample_call_rate, variant_call_rate = args.variant_call_rate, MAF = args.MAF, HWE = args.HWE, GQ = args.GQ)
+    elif args.method == "associaTR":
+        from associatr_runner import AssociaTRRunner
+        runner = AssociaTRRunner(data, args.tr_vcf, region=args.region, covars=covars)
     else:
         ERROR("GWAS method %s not implemented" % args.method)
 
     # Run GWAS
-    outpath = GetOutPath(args.phenotype, args.method, args.region)
+    outpath = GetOutPath(args.phenotype, args.method, args.region, sampfile)
     runner.RunGWAS()
     WriteGWAS(runner.gwas, outpath+".tab", covars)
 
