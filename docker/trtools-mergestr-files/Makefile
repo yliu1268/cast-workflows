@@ -9,8 +9,10 @@ tag = ${version}--${git_commit}
 # Steps
 build:
 	# do the docker build
-	docker build -t ${name}:${tag} .
+	docker build --platform="linux/amd64" -t ${name}:${tag} .
+	docker build -t ${name}:${tag}-native .
 	docker tag ${name}:${tag} ${name}:latest
+	docker tag ${name}:${tag}-native ${name}:latest-native
 
 push:
 	# Requires ~/.dockercfg

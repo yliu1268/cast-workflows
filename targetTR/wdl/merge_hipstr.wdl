@@ -5,7 +5,7 @@ workflow merge_hipstr {
         Array[File] vcfs
         Array[File] vcf_indexes
         String out_prefix
-	Int? merge_mem = 4
+	      Int? merge_mem = 4
     }
 
     call mergestr {
@@ -13,7 +13,7 @@ workflow merge_hipstr {
           vcfs=vcfs,
           vcf_indexes=vcf_indexes,
           out_prefix=out_prefix+".merged",
-	  merge_mem=merge_mem
+	        merge_mem=merge_mem
     }
 
     output {
@@ -39,7 +39,8 @@ task mergestr {
       FILEARRAY=(~{sep=' ' vcfs}) # Load array into bash variable
       for (( c = 0; c < ~{total}; c++ )) # bash array are 0-indexed ;)
       do
-           echo ${FILEARRAY[$c]} >> vcf.list
+           vcf-validator && echo ${FILEARRAY[$c]} >> vcf.list
+           vcf-validator || echo "Failed: " ${FILEARRAY[$c]}
       done
       mergeSTR --vcfs-list vcf.list --out ~{out_prefix}
   >>>
