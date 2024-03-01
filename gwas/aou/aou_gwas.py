@@ -68,15 +68,11 @@ def WriteGWAS(gwas, outpath, covars):
     # Append gwas results
     gwas[["chrom","pos","beta","standard_error","p_value","-log10pvalue"]].to_csv(outpath, sep="\t", mode="a", index=False)
 
-
 def Inverse_Quantile_Normalization(M):
-    
-    #After quantile normalization of samples, standardize expression of each gene
     M = M.transpose()
     R = stats.mstats.rankdata(M,axis=1)  # ties are averaged
     Q = stats.norm.ppf(R/(M.shape[1]+1))
-    Q = Q.transpose()
-    
+    Q = Q.transpose() 
     return Q
 
 def NormalizeData(data, norm):
@@ -90,6 +86,9 @@ def NormalizeData(data, norm):
         data["phenotype"]  = stats.zscore(data[["phenotype"]])
         return data
 
+    else:
+        ERROR("No normalization method specified")
+
 def main():
     parser = argparse.ArgumentParser(__doc__)
     parser.add_argument("--phenotype", help="Phenotypes file path, or phenotype name", type=str, required=True)
@@ -102,7 +101,7 @@ def main():
     parser.add_argument("--sharedcovars", help="Comma-separated list of shared covariates (besides PCs). Default: sex_at_birth_Male", type=str, default="sex_at_birth_Male")
     parser.add_argument("--tr-vcf", help="VCF file with TR genotypes. Required if running associaTR", type=str)
     parser.add_argument("--plot", help="Make a Manhattan plot", action="store_true")
-    parser.add_argument("--norm", help="Normalize phenotype either quantile or zscore",type=str)
+    parser.add_argument("--norm", help="Normalize phenotype either quantile or zscore", type=str)
     parser.add_argument("--norm-by-sex",
                         help="Apply the normalization for each sex separately. Default: False",
                         action="store_true")
@@ -127,7 +126,9 @@ def main():
     if args.num_pcs > 10:
         ERROR("Specify a maximum of 10 PCs")
     if args.method == "associaTR" and args.tr_vcf is None:
-        ERROR("Must specify --tr-vcf for associTR")
+        ERROR("Must specify --tr-vcf for associaTR")
+    if args.norm_by_sex and args.norm is None:
+        ERROR("Must specify --norm if using --norm-by-sex")
 
     # Get covarlist
     pcols = ["PC_%s"%i for i in range(1, args.num_pcs+1)]
@@ -143,7 +144,6 @@ def main():
 
     # Add normalization. If indicated, normalize for each sex separately.
     if args.norm_by_sex:
-
         # Separate the data into two smaller dataframes based on sex at birth.
         female_data = data[data['sex_at_birth_Male'] == 0].copy()
         male_data = data[data['sex_at_birth_Male'] == 1].copy()
@@ -158,7 +158,8 @@ def main():
         data = data.sort_index()
     else:
         # Apply normalization on the entire data.
-        data = NormalizeData(data=data, norm=args.norm)
+        if args.norm is not None:
+            data = NormalizeData(data=data, norm=args.norm)
         
     # Add shared covars
     sampfile = args.samples
