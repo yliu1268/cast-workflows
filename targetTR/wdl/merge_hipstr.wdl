@@ -39,8 +39,9 @@ task mergestr {
       FILEARRAY=(~{sep=' ' vcfs}) # Load array into bash variable
       for (( c = 0; c < ~{total}; c++ )) # bash array are 0-indexed ;)
       do
-           vcf-validator && echo ${FILEARRAY[$c]} >> vcf.list
-           vcf-validator || echo "Failed: " ${FILEARRAY[$c]}
+           f=${FILEARRAY[$c]}
+           vcf-validator $f && echo $f >> vcf.list
+           vcf-validator $f || echo "Failed: " $f
       done
       mergeSTR --vcfs-list vcf.list --out ~{out_prefix}
   >>>

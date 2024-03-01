@@ -27,4 +27,11 @@ Run HipSTR genotyping on all TRs of interest from [Margoliash et al.](https://ww
   --separate-hipstr-runs \
   --batch-num 2 \
   --action run-batches
+
+./targetTR_launcher_aou.py \
+  --tr-bed test.bed \
+  --name UKB_test_2batches_1TR \
+  --separate-hipstr-runs \
+  --batch-num 2 \
+  --action run-batches
 ```
