@@ -169,8 +169,6 @@ def main():
     samples = pd.read_csv(sampfile)
     samples["person_id"] = samples["person_id"].apply(str)
     
-    print(samples.head())
-    print(data.head())
     data = pd.merge(data, samples)
 
     # Check we have all covars
