@@ -16,8 +16,7 @@ batch=1 # 1..10
 
 # Outputs
 
-Outputs of each job are being copied to:
-
+You should copy outputs of each job (.vcf.gz and .vcf.gz.tbi) to:
 ```
 ${WORKSPACE_BUCKET}/ukb_finemapped_hg38/
 ```
