@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# TODO - add running on all 3 cohorts
 # TODO - add ability to do outprefix 
 VCF=${WORKSPACE_BUCKET}/cromwell-execution/targetTR/4519d903-dde6-4c8e-b1ee-bcc2d7cd6dd7/call-sort_index/CBL_test.filtered.sorted.vcf.gz
 
@@ -12,7 +11,12 @@ do
   	fi
   	echo $phenotype
   	cd ..
-  	./aou_gwas.py --phenotype ${phenotype} --num-pcs 10 --method associaTR --tr-vcf $VCF --norm quantile
+  	for cohort in passing_samples_v7 EUR_WHITE AFR_BLACK
+  	do
+  		./aou_gwas.py --phenotype ${phenotype} --num-pcs 10 \
+  			--method associaTR --tr-vcf $VCF --norm quantile \
+  			--samples ${WORKSPACE_BUCKET}/samples/${cohort}.csv
+  	done
   	cd -
-  	mv ../${phenotype}_associaTR_ALL.gwas.tab .
+  	mv ../${phenotype}_associaTR_*.gwas.tab .
 done < ../phenotypes_manifest.csv 
