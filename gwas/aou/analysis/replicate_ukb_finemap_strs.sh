@@ -23,3 +23,12 @@ do
   	cd -
   	mv ../${phenotype}_associaTR_*.gwas.tab .
 done < ../phenotypes_manifest.csv 
+
+# compile results
+cat urea_associaTR_ALL.gwas.tab | grep -v "^#" | head -n 1 | awk '{print "trait\tcohort\t" $0}'> all_traits_associaTR.tab
+for resfile in $(ls *gwas.tab)
+do
+	phenotype=$(echo $resfile | sed 's/_associaTR_ALL.gwas.tab//' | sed 's/_associaTR_AFR_BLACK.gwas.tab//' | sed 's/_associaTR_EUR_WHITE.gwas.tab//')
+	cohort=$(echo $resfile | awk -F"_" '{print $NF}' | sed 's/.gwas.tab//')
+	cat $resfile | grep -v "^#" | grep -v "^chrom" | awk -v"trait=$phenotype" -v"cohort=$cohort" '{print trait "\t" cohort "\t" $0}' >> all_traits_associaTR.tab
+done
