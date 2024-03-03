@@ -4,7 +4,7 @@
 
 # TODO update with full UKB finemapped results
 #VCF=${WORKSPACE_BUCKET}/cromwell-execution/targetTR/4519d903-dde6-4c8e-b1ee-bcc2d7cd6dd7/call-sort_index/CBL_test.filtered.sorted.vcf.gz
-VCF=${WORKSPACE_BUCKET}/ukb_finemapped_hg38/UKB_finemapped-batch1_10.filtered.sorted.vcf.gz
+VCF=${WORKSPACE_BUCKET}/ukb_finemapped_hg38/UKB_finemapped-batch1.filtered.sorted.vcf.gz
 
 while IFS= read -r line
 do
