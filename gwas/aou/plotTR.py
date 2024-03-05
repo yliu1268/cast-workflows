@@ -48,7 +48,7 @@ def main():
         afreqs = trrecord.GetAlleleFreqs()
         genotypes = trrecord.GetLengthGenotypes()
         dosages = [sum(item)/2 for item in genotypes]
-        trdf = pd.DataFame({"person_id": samples, "tr_dosage": dosages})
+        trdf = pd.DataFrame({"person_id": samples, "tr_dosage": dosages})
         nrecords += 1
     if nrecords == 0:
         ERROR("No matching TR records found")
