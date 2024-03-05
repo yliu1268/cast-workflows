@@ -64,6 +64,8 @@ def main():
     # Merge phenotype and TR dosages
     df = pd.merge(data, trdf, on=["person_id"])
     pltdata = df.groupby("tr_dosage", as_index=False).agg(phenotype_mean=("phenotype", np.mean), n=("phenotype", len))
+
+    pltdata = pltdata[pltdata["n"]>100]
     print(pltdata.head())
 
 	# Plot - TODO
