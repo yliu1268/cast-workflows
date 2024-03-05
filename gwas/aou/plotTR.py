@@ -34,6 +34,7 @@ def main():
     parser.add_argument("--tr-vcf", help="VCF file with TR genotypes.", type=str, required=True)
     parser.add_argument("--region", help="chr:start-end of target TR", type=str, required=True)
     parser.add_argument("--outprefix", help="Output prefix", type=str, required=True)
+    parser.add_argument("--min-samples-per-dosage", help="Filter dosages with fewer samples", type=int, default=100)
     args = parser.parse_args()
 
     # Load phenotype data
@@ -64,11 +65,9 @@ def main():
     # Merge phenotype and TR dosages
     df = pd.merge(data, trdf, on=["person_id"])
     pltdata = df.groupby("tr_dosage", as_index=False).agg(phenotype_mean=("phenotype", np.mean), n=("phenotype", len))
+    pltdata = pltdata[pltdata["n"]>args.min_samples_per_dosage]
 
-    pltdata = pltdata[pltdata["n"]>100]
-    print(pltdata.head())
-
-	# Plot - TODO
+	# Plot
     fig = plt.figure()
     ax = fig.add_subplot(111)
     ax.plot(pltdata["tr_dosage"], pltdata["phenotype_mean"])
