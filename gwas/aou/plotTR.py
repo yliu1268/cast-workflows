@@ -13,6 +13,7 @@ mpl.use('Agg')
 import matplotlib.pyplot as plt
 
 import argparse
+import numpy as np
 import os
 import pandas as pd
 import trtools.utils.tr_harmonizer as trh
@@ -69,6 +70,6 @@ def main():
     fig = plt.figure()
     ax = fig.add_subplot(111)
     ax.plot(pltdata["tr_dosage"], pltdata["phenotype_mean"])
-    
+    fig.savefig(args.outprefix + ".png")
 if __name__ == "__main__":
     main()
