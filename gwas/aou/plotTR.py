@@ -7,6 +7,11 @@ Example:
 ./plotTR.py --phenotype platelet_count --tr-vcf CBL_test.filtered.sorted.vcf.gz --region chr11:119206290-119206323 --outprefix CBL_platelet_count
 """
 
+# Allow making plots even with no x-forward
+import matplotlib as mpl
+mpl.use('Agg')
+import matplotlib.pyplot as plt
+
 import argparse
 import os
 import pandas as pd
