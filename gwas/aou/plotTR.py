@@ -64,10 +64,10 @@ def main():
 
     # Merge phenotype and TR dosages
     df = pd.merge(data, trdf, on=["person_id"])
-    pltdata = df.groupby("tr_dosage", as_index=False).agg(phenotype_mean=("phenotype", np.median), n=("phenotype", len))
+    pltdata = df.groupby("tr_dosage", as_index=False).agg(phenotype_mean=("phenotype", np.mean), n=("phenotype", len))
     pltdata = pltdata[pltdata["n"]>args.min_samples_per_dosage]
 
-	# Plot
+	# Plot - TODO
     fig = plt.figure()
     ax = fig.add_subplot(111)
     ax.plot(pltdata["tr_dosage"], pltdata["phenotype_mean"])
