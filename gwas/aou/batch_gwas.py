@@ -1,4 +1,3 @@
-import numpy as np
 import subprocess
 import os
 import sys
@@ -8,9 +7,12 @@ bucket = os.getenv('WORKSPACE_BUCKET')
 phenotype = sys.argv[1]
 full_gwas_cmd_file = sys.argv[2]
 
-chr_regions = np.loadtxt("chrom_regions_hg38.txt", dtype='str')
+chr_regions_file = "chrom_regions_hg38.txt"
 if (len(sys.argv) == 4):
-    chr_regions = np.loadtxt(sys.argv[3], dtype='str') #for debugging on a smaller set of regions
+    chr_regions_file = sys.argv[3] #for debugging on a smaller set of regions
+
+with open(chr_regions_file, "r") as f:
+    chr_regions = [line.strip() for line in f.readlines()]
 
 
 f = open(full_gwas_cmd_file, 'r')
