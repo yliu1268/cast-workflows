@@ -2,6 +2,9 @@
 
 """
 Make a plot summarizing TR/trait association and allele freqs
+
+Example:
+./plotTR.py --phenotype platelet_count --tr-vcf ${WORKSPACE_BUCKET}/cromwell-execution/targetTR/4519d903-dde6-4c8e-b1ee-bcc2d7cd6dd7/call-sort_index/CBL_test.filtered.sorted.vcf.gz --region chr11:119206290-119206323 --outprefix CBL_platelet_count
 """
 
 import argparse
@@ -38,23 +41,23 @@ def main():
     # Load TR genotypes
     invcf = utils.LoadSingleReader(args.vcf, checkgz=True)
     samples = invcf.samples
-	region = invcf(args.region)
-	nrecords = 0
-	for record in region:
-		trrecord = trh.HarmonizeRecord(vcftype, record)
-		afreqs = trrecord.GetAlleleFreqs()
-		genotypes = trrecord.GetLengthGenotypes()
-		dosages = [sum(item)/2 for item in genotypes]
-		trdf = pd.DataFame({"person_id": samples, "tr_dosage": dosages})
-		nrecords += 1
-	if nrecords == 0:
-		ERROR("No matching TR records found")
-	if nrecords > 1:
-		ERROR("Multiple matching TR records found")
+    region = invcf(args.region)
+    nrecords = 0
+    for record in region:
+        trrecord = trh.HarmonizeRecord(vcftype, record)
+        afreqs = trrecord.GetAlleleFreqs()
+        genotypes = trrecord.GetLengthGenotypes()
+        dosages = [sum(item)/2 for item in genotypes]
+        trdf = pd.DataFame({"person_id": samples, "tr_dosage": dosages})
+        nrecords += 1
+    if nrecords == 0:
+        ERROR("No matching TR records found")
+    if nrecords > 1:
+        ERROR("Multiple matching TR records found")
 
-	# Merge phenotype and TR dosages
-	df = pd.merge(data, trdf, on=["person_id"])
-	print(df.head())
+    # Merge phenotype and TR dosages
+    df = pd.merge(data, trdf, on=["person_id"])
+    print(df.head())
 
 if __name__ == "__main__":
     main()
