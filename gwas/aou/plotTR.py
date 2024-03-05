@@ -39,7 +39,7 @@ def main():
     data["person_id"] = data["person_id"].apply(str)
 
     # Load TR genotypes
-    invcf = utils.LoadSingleReader(args.vcf, checkgz=True)
+    invcf = utils.LoadSingleReader(args.tr_vcf, checkgz=True)
     samples = invcf.samples
     region = invcf(args.region)
     nrecords = 0
@@ -59,5 +59,6 @@ def main():
     df = pd.merge(data, trdf, on=["person_id"])
     print(df.head())
 
+    # Plot - TODO
 if __name__ == "__main__":
     main()
