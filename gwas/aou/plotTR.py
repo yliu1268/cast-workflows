@@ -4,7 +4,7 @@
 Make a plot summarizing TR/trait association and allele freqs
 
 Example:
-./plotTR.py --phenotype platelet_count --tr-vcf ${WORKSPACE_BUCKET}/cromwell-execution/targetTR/4519d903-dde6-4c8e-b1ee-bcc2d7cd6dd7/call-sort_index/CBL_test.filtered.sorted.vcf.gz --region chr11:119206290-119206323 --outprefix CBL_platelet_count
+./plotTR.py --phenotype platelet_count --tr-vcf CBL_test.filtered.sorted.vcf.gz --region chr11:119206290-119206323 --outprefix CBL_platelet_count
 """
 
 import argparse
@@ -44,7 +44,7 @@ def main():
     region = invcf(args.region)
     nrecords = 0
     for record in region:
-        trrecord = trh.HarmonizeRecord(vcftype, record)
+        trrecord = trh.HarmonizeRecord(trh.VcfTypes["hipstr"], record)
         afreqs = trrecord.GetAlleleFreqs()
         genotypes = trrecord.GetLengthGenotypes()
         dosages = [sum(item)/2 for item in genotypes]
