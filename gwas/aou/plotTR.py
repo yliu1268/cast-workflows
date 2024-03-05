@@ -35,23 +35,26 @@ def main():
     data = pd.read_csv(ptcovar_path)
     data["person_id"] = data["person_id"].apply(str)
 
-    # Load TR genotypes - TODO
+    # Load TR genotypes
     invcf = utils.LoadSingleReader(args.vcf, checkgz=True)
     samples = invcf.samples
 	region = invcf(args.region)
 	nrecords = 0
 	for record in region:
 		trrecord = trh.HarmonizeRecord(vcftype, record)
+		afreqs = trrecord.GetAlleleFreqs()
 		genotypes = trrecord.GetLengthGenotypes()
-		dosages = [sum(item) for item in genotypes]
+		dosages = [sum(item)/2 for item in genotypes]
 		trdf = pd.DataFame({"person_id": samples, "tr_dosage": dosages})
 		nrecords += 1
 	if nrecords == 0:
 		ERROR("No matching TR records found")
 	if nrecords > 1:
 		ERROR("Multiple matching TR records found")
+
+	# Merge phenotype and TR dosages
 	df = pd.merge(data, trdf, on=["person_id"])
 	print(df.head())
-	
+
 if __name__ == "__main__":
     main()
