@@ -62,8 +62,13 @@ def main():
 
     # Merge phenotype and TR dosages
     df = pd.merge(data, trdf, on=["person_id"])
-    print(df.head())
+    pltdata = df.groupby("tr_dosage").agg(phenotype_mean=("phenotype", np.mean), n=("phenotype", len))
+    print(pltdata.head())
 
-    # Plot - TODO
+	# Plot - TODO
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    ax.plot(pltdata["tr_dosage"], pltdata["phenotype_mean"])
+    
 if __name__ == "__main__":
     main()
