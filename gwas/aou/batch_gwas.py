@@ -29,5 +29,5 @@ for r in chr_regions:
     for f in filtered_files:
         copy_cmd = "gsutil cp " + f + " " + bucket+"/gwas/"+phenotype+"/"+f
         print(copy_cmd)
-        #subprocess.run(copy_cmd, shell=True, check=True)
+        subprocess.run(copy_cmd, shell=True, check=True)
 
