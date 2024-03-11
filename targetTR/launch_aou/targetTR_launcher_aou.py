@@ -249,6 +249,7 @@ def main():
 
 	# Zip all the WDL depencies
 	wdl_dependencies_file = args.name + "-wdl.zip"
+	print(wdl_dependencies_file)
 	ZipWDL(wdl_dependencies_file)
 
 	# Run workflow on AoU using cromwell
