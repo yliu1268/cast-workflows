@@ -14,9 +14,19 @@ batch=1 # 1..10
   --action run-batches 
 ```
 
-# Outputs
-
 You should copy outputs of each job (.vcf.gz and .vcf.gz.tbi) to:
 ```
 ${WORKSPACE_BUCKET}/ukb_finemapped_hg38/
+```
+
+## Interesting STRs
+
+
+```
+# Run on one batch
+./targetTR_launcher_aou.py \
+  --tr-bed ../strsets/interesting_strs_batch1.bed \
+  --name interesting_strs_batch1.bed \
+  --separate-hipstr-runs \
+  --action run-batches 
 ```
