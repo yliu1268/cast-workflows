@@ -164,6 +164,7 @@ def ZipWDL(wdl_dependencies_file):
 	for f in files:
 		shutil.copyfile("../wdl/%s"%f, dirname+"/"+f)
 	shutil.make_archive(wdl_dependencies_file.strip(".zip"), "zip", root_dir=dirname)
+	print(wdl_dependencies_file.strip(".zip"))
 
 def main():
 	parser = argparse.ArgumentParser(__doc__)
@@ -249,7 +250,6 @@ def main():
 
 	# Zip all the WDL depencies
 	wdl_dependencies_file = args.name + "-wdl.zip"
-	print(wdl_dependencies_file)
 	ZipWDL(wdl_dependencies_file)
 
 	# Run workflow on AoU using cromwell
