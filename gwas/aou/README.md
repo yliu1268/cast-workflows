@@ -20,6 +20,8 @@ will output `ALT_hail_ALL_chr11_119206339_119308149.gwas.tab`
 ```
 will output `ALT_hail_ALL.gwas.tab`
 
+Finding the appropriate spark parameters can be challenging/expensive. Instead, we recommend using the batched version instead of the full GWAS (see instructions below).
+
 3. Small example associaTR run (requires installing TRTools - see setup note below)
 
 ```
@@ -102,3 +104,29 @@ cd TRTools
 git checkout associatr-updates
 pip install -e .
 ```
+
+## Batching the full GWAS
+
+Follow the instructions above to determine the command you would run for a full gwas. Write this command to a file (e.g. `full_gwas_cmd.txt`). Then run the following:
+
+`python batch_gwas.py <phenotype_name> <full_gwas_cmd _file_name>`
+
+OR
+
+`nohup python batch_gwas.py <phenotype_name> <full_gwas_cmd _file_name> > nohup.log 2>&1 &`
+
+This will run a gwas per chromosome. The per chromosome gwas results will get stored at `${WORKSPACE_BUCKET}/gwas/<phenotype_name>`. You will need a spark cluster to run the batched gwas. We have found that the following spark parameters are sufficient (but the full batched gwas will still take on the order of 12 hours to complete):
+
+<img width="687" alt="Screen Shot 2024-03-08 at 4 10 44 PM" src="https://github.com/CAST-genomics/cast-workflows/assets/16807372/4b22fa94-efbc-4c7b-974b-dab86d43db48">
+
+
+The next step is to combine per chromosome results. This does not require a spark cluster, a regular compute environment is sufficient. First, determine the name of the gwas files that got written. You can do this by running the following:
+
+`gsutil ls ${WORKSPACE_BUCKET}/gwas/<phenotype_name>`
+
+Look for any file ending in `.gwas.tab`. Copy the file name up until the region (i.e. from the start up to but excluding 'chr'). For example, if the file is `ldl_cholesterol_hail_EUR_WHITE_chr1_1_248956422.gwas.tab`, the prefix you should copy is `ldl_cholesterol_hail_EUR_WHITE`.
+
+Then run the following:
+`python combine_gwas_batches.py <phenotype_name> <gwas_file_prefix>`
+
+This will write out the gwas results across all chromosomes to a single file and copy it to `${WORKSPACE_BUCKET}/gwas/<phenotype_name>` as if you had run the full gwas described above (quickstart point 2). Note that the gwas file is likely to be on the order of 1GB and will take 5-10 min to copy over to the bucket.
