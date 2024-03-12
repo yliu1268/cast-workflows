@@ -27,3 +27,5 @@ phenotype,concept_id,units,outlier_sd,min,max,drugcovars
 #white_blood_cell_count,3000905,"thousand per microliter,thousand per cubic millimeter",5,0,100,
 #total_bilirubin,3024128,"milligram per deciliter",5,0,3,
 #urea,3013682,"milligram per deciliter",5,0,100,
+albumin,3024561,"gram per liter",5,0,100,
+hemoglobin,3000963,"gram per liter",5,0,250,
