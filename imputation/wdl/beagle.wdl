@@ -7,6 +7,8 @@ workflow beagle {
         File genome
         File genome_index
         String out_prefix
+        String GOOGLE_PROJECT = ""
+        String GCS_OAUTH_TOKEN = ""
     }
 
     call beagle {
@@ -15,7 +17,9 @@ workflow beagle {
           vcf_index=vcf_index,
           genome=genome, 
           genome_index=genome_index,
-          out_prefix=out_prefix
+          out_prefix=out_prefix,
+          GOOGLE_PROJECT=GOOGLE_PROJECT,
+          GCS_OAUTH_TOKEN=GCS_OAUTH_TOKEN
     }
     call sort_index_beagle {
         input :
@@ -38,9 +42,16 @@ task beagle {
         File genome
         File genome_index
         String out_prefix
+        String GOOGLE_PROJECT = ""
+        String GCS_OAUTH_TOKEN = ""
+
     } 
 
     command <<<
+      #set tokens for AoU
+      export GCS_REQUESTER_PAYS_PROJECT=~{GOOGLE_PROJECT}
+      export GCS_OAUTH_TOKEN=~{GCS_OAUTH_TOKEN}
+
       java -Xmx4g -jar beagle.version.jar \
             gt= ~{vcf} \
             ref= ~{genome} \
