@@ -34,41 +34,12 @@ def RunWorkflow(json_file, json_options_file, dryrun=False):
 	print(output.decode("utf-8"))
 	
 
-def DownloadGS(filename):
-	"""
-	Download a GCP path locally
-
-	Arguments
-	---------
-	filename : str
-	   GCP path
-	"""
-	cmd = "gsutil -u $GOOGLE_PROJECT cp {filename} .".format(filename=filename)
-	output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
-	print(output.decode("utf-8"))	
-
-def UploadGS(local_path, gcp_path):
-	"""
-	Upload a local file to GCP
-
-	Arguments
-	---------
-	local_path : str
-	   Local path
-	gcp_path : str
-	   GCP path to upload to
-	"""
-	cmd = "gsutil cp {src} {dest}".format(src=local_path, dest=gcp_path)
-	output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
-	print(output.decode("utf-8"))	
-	
 def main():
 	parser = argparse.ArgumentParser(__doc__)
 	parser.add_argument("--name", help="Name of the TR job", required=True, type=str)
 	parser.add_argument("--vcf", help="Name of the genotype vcf file", required=True, type=str)
 	parser.add_argument("--ref-genome", help="File id of ref genome", type=str, default="https://ensemble-tr.s3.us-east-2.amazonaws.com/additional-phased-trs/chr21_final_SNP_merged_additional_TRs.vcf.gz")
-	parser.add_argument("--ref-genome-tbi", help="File id of ref genome index", type=str, default="https://ensemble-tr.s3.us-east-2.amazonaws.com/additional-phased-trs/chr21_final_SNP_merged_additional_TRs.vcf.gz.tbi")
-	parser.add_argument("--action", help="Options: create-batches, run-batches, both", type=str, required=True)
+	parser.add_argument("--ref-genome-index", help="File id of ref genome index", type=str, default="https://ensemble-tr.s3.us-east-2.amazonaws.com/additional-phased-trs/chr21_final_SNP_merged_additional_TRs.vcf.gz.tbi")
 	parser.add_argument("--dryrun", help="Don't actually run the workflow. Just set up", action="store_true")
 
 	args = parser.parse_args()
@@ -86,11 +57,12 @@ def main():
 
     # Set up workflow JSON
 	json_dict = {}
-	json_dict["targetTR.genome"] = args.genome_id
-	json_dict["targetTR.genome_index"] = args.genome_idx_id
-	json_dict["targetTR.outprefix"] = args.name
-	json_dict["targetTR.GOOGLE_PROJECT"] = project
-	json_dict["targetTR.GCS_OAUTH_TOKEN"] = token
+	json_dict["beagle.vcf"] = args.vcf
+	json_dict["beagle.genome"] = args.ref_genome
+	json_dict["beagle.genome_index"] = args.ref_genome_index
+	json_dict["beagle.outprefix"] = args.name
+	json_dict["beagle.GOOGLE_PROJECT"] = project
+	json_dict["beagle.GCS_OAUTH_TOKEN"] = token
 
 
 	# Convert to json and save as a file
@@ -109,4 +81,4 @@ def main():
 
 
 if __name__ == "__main__":
-main()
+	main()
