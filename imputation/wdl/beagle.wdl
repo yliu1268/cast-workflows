@@ -4,22 +4,18 @@ workflow beagle {
     input {
         File vcf
         File vcf_index
-        File genome
-        File genome_index
+        File ref_panel
+        File ref_panel_index
         String out_prefix
-        String GOOGLE_PROJECT = ""
-        String GCS_OAUTH_TOKEN = ""
     }
 
     call beagle {
         input : 
           vcf=vcf, 
           vcf_index=vcf_index,
-          genome=genome, 
-          genome_index=genome_index,
-          out_prefix=out_prefix,
-          GOOGLE_PROJECT=GOOGLE_PROJECT,
-          GCS_OAUTH_TOKEN=GCS_OAUTH_TOKEN
+          ref_panel=ref_panel, 
+          ref_panel_index=ref_panel_index,
+          out_prefix=out_prefix
     }
     call sort_index_beagle {
         input :
@@ -39,12 +35,9 @@ task beagle {
     input {
         File vcf
         File vcf_index
-        File genome
-        File genome_index
+        File ref_panel
+        File ref_panel_index
         String out_prefix
-        String GOOGLE_PROJECT = ""
-        String GCS_OAUTH_TOKEN = ""
-
     } 
 
     command <<<
@@ -53,9 +46,9 @@ task beagle {
       export GCS_OAUTH_TOKEN=~{GCS_OAUTH_TOKEN}
 
       java -Xmx4g -jar beagle.version.jar \
-            gt= ~{vcf} \
-            ref= ~{genome} \
-            out= ~{out_prefix}_imputed_TR_SNPs
+            gt=~{vcf} \
+            ref=~{ref_panel} \
+            out=~{out_prefix}_imputed_TR_SNPs
     >>>
     
     #need to create new docker
@@ -69,11 +62,11 @@ task beagle {
 }
 
 task sort_index_beagle {
-  input {
-    File vcf
-  }
+    input {
+      File vcf
+    }
 
-  String basename = basename(vcf, ".vcf.gz")
+    String basename = basename(vcf, ".vcf.gz")
 
     command <<<
         zcat ~{vcf} | vcf-sort | bgzip -c > ~{basename}.sorted.vcf.gz && tabix -p vcf ~{basename}.sorted.vcf.gz
