@@ -38,8 +38,8 @@ def main():
 	parser = argparse.ArgumentParser(__doc__)
 	parser.add_argument("--name", help="Name of the TR job", required=True, type=str)
 	parser.add_argument("--vcf", help="Name of the genotype vcf file", required=True, type=str)
-	parser.add_argument("--ref-genome", help="File id of ref genome", type=str, default="https://ensemble-tr.s3.us-east-2.amazonaws.com/additional-phased-trs/chr21_final_SNP_merged_additional_TRs.vcf.gz")
-	parser.add_argument("--ref-genome-index", help="File id of ref genome index", type=str, default="https://ensemble-tr.s3.us-east-2.amazonaws.com/additional-phased-trs/chr21_final_SNP_merged_additional_TRs.vcf.gz.tbi")
+	parser.add_argument("--ref-panel", help="File id of ref genome", type=str, default="https://ensemble-tr.s3.us-east-2.amazonaws.com/additional-phased-trs/chr21_final_SNP_merged_additional_TRs.vcf.gz")
+	parser.add_argument("--ref-panel-index", help="File id of ref genome index", type=str, default="https://ensemble-tr.s3.us-east-2.amazonaws.com/additional-phased-trs/chr21_final_SNP_merged_additional_TRs.vcf.gz.tbi")
 	parser.add_argument("--dryrun", help="Don't actually run the workflow. Just set up", action="store_true")
 
 	args = parser.parse_args()
@@ -58,11 +58,10 @@ def main():
     # Set up workflow JSON
 	json_dict = {}
 	json_dict["beagle.vcf"] = args.vcf
-	json_dict["beagle.genome"] = args.ref_genome
-	json_dict["beagle.genome_index"] = args.ref_genome_index
+	json_dict["beagle.ref_panel"] = args.ref_panel
+	json_dict["beagle.ref_panel_index"] = args.ref_panel_index
 	json_dict["beagle.outprefix"] = args.name
-	json_dict["beagle.GOOGLE_PROJECT"] = project
-	json_dict["beagle.GCS_OAUTH_TOKEN"] = token
+
 
 
 	# Convert to json and save as a file

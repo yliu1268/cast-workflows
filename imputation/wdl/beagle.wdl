@@ -51,9 +51,9 @@ task beagle {
             out=~{out_prefix}_imputed_TR_SNPs
     >>>
     
-    #need to create new docker
+  
     runtime {
-        docker:"gcr.io/ucsd-medicine-cast/hipstr-gymreklab:latest"
+        docker:"gcr.io/ucsd-medicine-cast/beagle:latest"
     }
 
     output {
