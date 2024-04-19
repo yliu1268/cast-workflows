@@ -4,6 +4,7 @@ RUN apt-get update && DEBIAN_FRONTEND="noninteractive" apt-get install -qqy \
     python3 \
     python3-pip \
     git-all wget \
+    curl \
     default-jre
 
 # Download and install gcloud
