@@ -33,6 +33,20 @@ def RunWorkflow(json_file, json_options_file, dryrun=False):
 	output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
 	print(output.decode("utf-8"))
 	
+def UploadGS(local_path, gcp_path):
+	"""
+	Upload a local file to GCP
+
+	Arguments
+	---------
+	local_path : str
+	   Local path
+	gcp_path : str
+	   GCP path to upload to
+	"""
+	cmd = "gsutil cp {src} {dest}".format(src=local_path, dest=gcp_path)
+	output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
+	print(output.decode("utf-8"))	
 
 def main():
 	parser = argparse.ArgumentParser(__doc__)
@@ -43,7 +57,7 @@ def main():
 
 	args = parser.parse_args()
 
-	'''
+	
     # Get token
 	token_fetch_command = subprocess.run(['gcloud', 'auth', 'application-default', 'print-access-token'], \
 		capture_output=True, check=True, encoding='utf-8')
@@ -54,7 +68,7 @@ def main():
 	project = os.getenv("GOOGLE_PROJECT")
 	output_bucket = bucket + "/" + args.name
 
-	'''
+	
 
     # Set up workflow JSON
 	json_dict = {}
@@ -64,12 +78,20 @@ def main():
 	json_dict["beagle.ref_panel_index"] = args.ref_panel+".tbi"
 	json_dict["beagle.out_prefix"] = args.name
 
-
+	# Upload TR bed file
+	if args.tr_bed.startswith("gs://"):
+		tr_bedfile_gcs = args.tr_bed
+	else:
+		tr_bedfile_gcs = output_bucket + "/" + args.name + "/" + args.name + ".bed"
+		UploadGS(args.tr_bed, tr_bedfile_gcs)
 
 	# Convert to json and save as a file
 	json_file = args.name+".aou.json"
 	with open(json_file, "w") as f:
 		json.dump(json_dict, f, indent=4)
+
+
+	
 
 	# Set up json optionsß
 	json_options_dict = {}
