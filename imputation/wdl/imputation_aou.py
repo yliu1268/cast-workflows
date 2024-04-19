@@ -60,9 +60,10 @@ def main():
     # Set up workflow JSON
 	json_dict = {}
 	json_dict["beagle.vcf"] = args.vcf
+	json_dict["beagle.vcf_index"]=args.vcf+".tbi"
 	json_dict["beagle.ref_panel"] = args.ref_panel
 	json_dict["beagle.ref_panel_index"] = args.ref_panel_index
-	json_dict["beagle.outprefix"] = args.name
+	json_dict["beagle.out_prefix"] = args.name
 
 
 
