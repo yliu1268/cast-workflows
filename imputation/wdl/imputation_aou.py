@@ -39,12 +39,11 @@ def main():
 	parser.add_argument("--name", help="Name of the TR job", required=True, type=str)
 	parser.add_argument("--vcf", help="Name of the genotype vcf file", required=True, type=str)
 	parser.add_argument("--ref-panel", help="File id of ref genome", type=str, default="https://ensemble-tr.s3.us-east-2.amazonaws.com/additional-phased-trs/chr21_final_SNP_merged_additional_TRs.vcf.gz")
-	parser.add_argument("--ref-panel-index", help="File id of ref genome index", type=str, default="https://ensemble-tr.s3.us-east-2.amazonaws.com/additional-phased-trs/chr21_final_SNP_merged_additional_TRs.vcf.gz.tbi")
 	parser.add_argument("--dryrun", help="Don't actually run the workflow. Just set up", action="store_true")
 
 	args = parser.parse_args()
 
-	
+	'''
     # Get token
 	token_fetch_command = subprocess.run(['gcloud', 'auth', 'application-default', 'print-access-token'], \
 		capture_output=True, check=True, encoding='utf-8')
@@ -55,14 +54,14 @@ def main():
 	project = os.getenv("GOOGLE_PROJECT")
 	output_bucket = bucket + "/" + args.name
 
-	
+	'''
 
     # Set up workflow JSON
 	json_dict = {}
 	json_dict["beagle.vcf"] = args.vcf
 	json_dict["beagle.vcf_index"]=args.vcf+".tbi"
 	json_dict["beagle.ref_panel"] = args.ref_panel
-	json_dict["beagle.ref_panel_index"] = args.ref_panel_index
+	json_dict["beagle.ref_panel_index"] = args.ref_panel+".tbi"
 	json_dict["beagle.out_prefix"] = args.name
 
 
@@ -72,7 +71,7 @@ def main():
 	with open(json_file, "w") as f:
 		json.dump(json_dict, f, indent=4)
 
-	# Set up json options
+	# Set up json optionsß
 	json_options_dict = {}
 	json_options_file = args.name+".options.aou.json"
 	with open(json_options_file, "w") as f:
