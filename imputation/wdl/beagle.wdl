@@ -54,7 +54,7 @@ task beagle {
     # Update token. expires every hour
       export GCS_OAUTH_TOKEN=$(gcloud auth application-default print-access-token)
 
-      java -Xmx4g -jar beagle.version.jar \
+      java -jar beagle.jar \
             gt=~{vcf} \
             ref=~{ref_panel} \
             out=~{out_prefix}_imputed_TR_SNPs

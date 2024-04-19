@@ -6,7 +6,7 @@ RUN apt-get update && DEBIAN_FRONTEND="noninteractive" apt-get install -qqy \
     git-all wget \
     default-jre
 
-RUN wget https://faculty.washington.edu/browning/beagle/beagle.01Mar24.d36.jar 
+RUN wget https://faculty.washington.edu/browning/beagle/beagle.01Mar24.d36.jar -O beagle.jar
 
 
 
