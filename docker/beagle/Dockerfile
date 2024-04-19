@@ -16,6 +16,7 @@ ENV PATH $PATH:/usr/local/gcloud/google-cloud-sdk/bin
 
 #Download beagle.jar 5.4
 RUN wget https://faculty.washington.edu/browning/beagle/beagle.01Mar24.d36.jar -O beagle.jar
+RUN chmod u+x beagle.jar
 
 
 

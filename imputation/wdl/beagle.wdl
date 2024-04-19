@@ -52,7 +52,7 @@ task beagle {
       export GCS_OAUTH_TOKEN=~{GCS_OAUTH_TOKEN}
 
     # Update token. expires every hour
-      export GCS_OAUTH_TOKEN=$(gcloud auth application-default print-access-token)
+      #export GCS_OAUTH_TOKEN=$(gcloud auth application-default print-access-token)
 
       java -jar beagle.jar \
             gt=~{vcf} \
