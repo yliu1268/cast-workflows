@@ -7,6 +7,8 @@ workflow beagle {
         File ref_panel
         File ref_panel_index
         String out_prefix
+        String GOOGLE_PROJECT = ""
+        String GCS_OAUTH_TOKEN = ""
     }
 
     call beagle {
@@ -15,7 +17,9 @@ workflow beagle {
           vcf_index=vcf_index,
           ref_panel=ref_panel, 
           ref_panel_index=ref_panel_index,
-          out_prefix=out_prefix
+          out_prefix=out_prefix,
+          GOOGLE_PROJECT=GOOGLE_PROJECT,
+          GCS_OAUTH_TOKEN=GCS_OAUTH_TOKEN
     }
     call sort_index_beagle {
         input :
@@ -38,12 +42,17 @@ task beagle {
         File ref_panel
         File ref_panel_index
         String out_prefix
+        String GOOGLE_PROJECT = ""
+        String GCS_OAUTH_TOKEN = ""
     } 
 
     command <<<
       #set tokens for AoU
       export GCS_REQUESTER_PAYS_PROJECT=~{GOOGLE_PROJECT}
       export GCS_OAUTH_TOKEN=~{GCS_OAUTH_TOKEN}
+
+    # Update token. expires every hour
+      export GCS_OAUTH_TOKEN=$(gcloud auth application-default print-access-token)
 
       java -Xmx4g -jar beagle.version.jar \
             gt=~{vcf} \

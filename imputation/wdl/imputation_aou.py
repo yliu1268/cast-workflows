@@ -44,7 +44,7 @@ def main():
 
 	args = parser.parse_args()
 
-
+	'''
     # Get token
 	token_fetch_command = subprocess.run(['gcloud', 'auth', 'application-default', 'print-access-token'], \
 		capture_output=True, check=True, encoding='utf-8')
@@ -54,6 +54,8 @@ def main():
 	bucket = os.getenv("WORKSPACE_BUCKET")
 	project = os.getenv("GOOGLE_PROJECT")
 	output_bucket = bucket + "/" + args.name
+
+	'''
 
     # Set up workflow JSON
 	json_dict = {}
