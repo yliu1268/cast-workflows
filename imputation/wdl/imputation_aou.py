@@ -78,12 +78,12 @@ def main():
 	json_dict["beagle.ref_panel_index"] = args.ref_panel+".tbi"
 	json_dict["beagle.out_prefix"] = args.name
 
-	# Upload TR bed file
-	if args.tr_bed.startswith("gs://"):
-		tr_bedfile_gcs = args.tr_bed
+	# Upload vcf file
+	if args.vcf.startswith("gs://"):
+		vcf_gcs = args.vcf
 	else:
-		tr_bedfile_gcs = output_bucket + "/" + args.name + "/" + args.name + ".bed"
-		UploadGS(args.tr_bed, tr_bedfile_gcs)
+		vcf_gcs = output_bucket + "/" + args.name + "/" + args.name + ".vcf.gz"
+		UploadGS(args.vcf, vcf_gcs)
 
 	# Convert to json and save as a file
 	json_file = args.name+".aou.json"
