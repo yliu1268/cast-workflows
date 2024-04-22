@@ -52,7 +52,7 @@ def main():
 	parser = argparse.ArgumentParser(__doc__)
 	parser.add_argument("--name", help="Name of the TR job", required=True, type=str)
 	parser.add_argument("--vcf", help="Name of the genotype vcf file", required=True, type=str)
-	parser.add_argument("--ref-panel", help="File id of ref genome", type=str, default="https://ensemble-tr.s3.us-east-2.amazonaws.com/additional-phased-trs/chr21_final_SNP_merged_additional_TRs.vcf.gz")
+	parser.add_argument("--ref-panel", help="File id of ref genome", type=str)
 	parser.add_argument("--dryrun", help="Don't actually run the workflow. Just set up", action="store_true")
 
 	args = parser.parse_args()
@@ -90,8 +90,6 @@ def main():
 	with open(json_file, "w") as f:
 		json.dump(json_dict, f, indent=4)
 
-
-	
 
 	# Set up json optionsß
 	json_options_dict = {}
