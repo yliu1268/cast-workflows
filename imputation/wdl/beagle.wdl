@@ -46,7 +46,7 @@ task beagle {
     command <<<
       #export GCS_REQUESTER_PAYS_PROJECT=~{GOOGLE_PROJECT}
       #export GCS_OAUTH_TOKEN=$(gcloud auth application-default print-access-token)
-      java -Xmx4500m -jar /beagle.jar \
+      java -Xmx4g -jar /beagle.jar \
             gt=~{vcf} \
             ref=~{ref_panel} \
             out=~{out_prefix}_imputed_TR_SNPs
