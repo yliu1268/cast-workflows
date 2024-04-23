@@ -46,7 +46,7 @@ task beagle {
     command <<<
       #export GCS_REQUESTER_PAYS_PROJECT=~{GOOGLE_PROJECT}
       #export GCS_OAUTH_TOKEN=$(gcloud auth application-default print-access-token)
-      java -jar /beagle.jar \
+      java -Xmx3392m -jar /beagle.jar \
             gt=~{vcf} \
             ref=~{ref_panel} \
             out=~{out_prefix}_imputed_TR_SNPs
@@ -56,6 +56,7 @@ task beagle {
     runtime {
         #docker:"gcr.io/ucsd-medicine-cast/beagle:latest"
 	docker: "sarajava/beagle:v3"
+	memory: "4GB"
     }
 
     output {
