@@ -55,7 +55,7 @@ task beagle {
   
     runtime {
         #docker:"gcr.io/ucsd-medicine-cast/beagle:latest"
-	docker: "sarajava/beagle:latest"
+	docker: "sarajava/beagle:v3"
     }
 
     output {
