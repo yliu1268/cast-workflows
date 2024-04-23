@@ -56,7 +56,7 @@ task beagle {
     runtime {
         #docker:"gcr.io/ucsd-medicine-cast/beagle:latest"
 	docker: "sarajava/beagle:v3"
-	memory: "4GB"
+	memory: "15GB"
     }
 
     output {
