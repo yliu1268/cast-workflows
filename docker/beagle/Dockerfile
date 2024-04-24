@@ -25,6 +25,8 @@ ENV PATH $PATH:/usr/local/gcloud/google-cloud-sdk/bin
 
 RUN wget "http://faculty.washington.edu/browning/beagle/beagle.01Mar24.d36.jar" -O beagle.jar
 
+RUN vim /etc/profile
+RUN export _JAVA_OPTIONS=-Xmx5g
 #
 #
 #RUN wget -qO- "https://cmake.org/files/v3.17/cmake-3.17.0-Linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C /usr/local
