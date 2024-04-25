@@ -4,9 +4,9 @@ import subprocess
 
 bucket = os.getenv('WORKSPACE_BUCKET')
 
-subprocess.run("gsutil cp "+bucket+"/samples/passing_samples_v7.csv ./", shell=True, check=True)
+subprocess.run("gsutil cp "+bucket+"/samples/passing_samples_v7.1.csv ./", shell=True, check=True)
 
-passing_samples = pd.read_csv("passing_samples_v7.csv")
+passing_samples = pd.read_csv("passing_samples_v7.1.csv")
 #columns = person_id, sex_at_birth_Male
 
 ancestry_path = "gs://fc-aou-datasets-controlled/v7/wgs/short_read/snpindel/aux/ancestry/ancestry_preds.tsv"
