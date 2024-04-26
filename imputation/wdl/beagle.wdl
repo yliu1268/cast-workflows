@@ -49,14 +49,14 @@ task beagle {
       java -Xmx5g -jar /beagle.jar \
             gt=~{vcf} \
             ref=~{ref_panel} \
-            out=~{out_prefix}_imputed_TR_SNPs
+            out=~{out_prefix}
     >>>
     
   
     runtime {
-        #docker:"gcr.io/ucsd-medicine-cast/beagle:latest"
-	docker: "sarajava/beagle:v3"
-	memory: "20GB"
+        docker:"gcr.io/ucsd-medicine-cast/beagle:latest"
+	#docker: "sarajava/beagle:v3"
+	    memory: "5GB"
     }
 
     output {
