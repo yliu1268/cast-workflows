@@ -56,6 +56,7 @@ def main():
 	parser.add_argument("--name", help="Name of the TR job", required=True, type=str)
 	parser.add_argument("--vcf", help="Name of the genotype vcf file", required=True, type=str)
 	parser.add_argument("--ref-panel", help="File id of ref genome", type=str)
+	parser.add_argument("--mem", help="Specify run memory ", type=int, default=10)
 	parser.add_argument("--dryrun", help="Don't actually run the workflow. Just set up", action="store_true")
 
 	args = parser.parse_args()
@@ -89,6 +90,7 @@ def main():
 	json_dict["beagle.ref_panel_index"] = args.ref_panel+".tbi"
 	json_dict["beagle.out_prefix"] = args.name
 	json_dict["beagle.GOOGLE_PROJECT"] = project
+	json_dict["beagle.mem"] = args.mem
 
 	# Convert to json and save as a file
 	json_file = args.name+".aou.json"

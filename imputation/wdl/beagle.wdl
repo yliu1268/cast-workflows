@@ -8,6 +8,7 @@ workflow beagle {
         File ref_panel_index
         String out_prefix
         String GOOGLE_PROJECT = ""
+        Int? mem = 10
     }
 
     call beagle {
@@ -18,6 +19,7 @@ workflow beagle {
           ref_panel_index=ref_panel_index,
           out_prefix=out_prefix,
           GOOGLE_PROJECT=GOOGLE_PROJECT,
+          mem=mem
     }
     call sort_index_beagle {
         input :
@@ -41,6 +43,7 @@ task beagle {
         File ref_panel_index
         String out_prefix
         String GOOGLE_PROJECT = ""
+        Int? mem = 10
     } 
 
     command <<<
@@ -63,10 +66,10 @@ task beagle {
                 out=~{out_prefix}
     >>>
     
-  
+    #file upto 300mb use mem=25
     runtime {
         docker:"gcr.io/ucsd-medicine-cast/beagle:latest"
-	    memory: "25GB"
+	    memory: mem + "GB"
     }
 
     output {
