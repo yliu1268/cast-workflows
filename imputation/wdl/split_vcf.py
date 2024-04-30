@@ -61,14 +61,14 @@ def main():
 
 	
 	# Get token
-	#token_fetch_command = subprocess.run(['gcloud', 'auth', 'application-default', 'print-access-token'], \
-	#	capture_output=True, check=True, encoding='utf-8')
-	#token = str.strip(token_fetch_command.stdout)
+	token_fetch_command = subprocess.run(['gcloud', 'auth', 'application-default', 'print-access-token'], \
+		capture_output=True, check=True, encoding='utf-8')
+	token = str.strip(token_fetch_command.stdout)
 
 	# Set up output bucket
 	bucket = os.getenv("WORKSPACE_BUCKET")
 	project = os.getenv("GOOGLE_PROJECT")
-	#output_bucket = bucket + "/" + args.name
+	output_bucket = bucket + "/" + args.name
 
 	# Upload vcf file
 	if args.vcf.startswith("gs://"):
@@ -86,7 +86,7 @@ def main():
 	json_dict["split_vcf.vcf_index"]=args.vcf+".tbi"
 	json_dict["split_vcf.out_prefix"] = args.name
 	json_dict["split_vcf.GOOGLE_PROJECT"] = project
-	json_dict["split_vcf.GCS_OAUTH_TOKEN"] = "fsgsgg"
+	json_dict["split_vcf.GCS_OAUTH_TOKEN"] = token
 
 	# Convert to json and save as a file
 	json_file = args.name+".aou.json"
