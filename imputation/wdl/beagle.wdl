@@ -44,19 +44,29 @@ task beagle {
     } 
 
     command <<<
-      #export GCS_REQUESTER_PAYS_PROJECT=~{GOOGLE_PROJECT}
-      #export GCS_OAUTH_TOKEN=$(gcloud auth application-default print-access-token)
-      java -Xmx5g -jar /beagle.jar \
-            gt=~{vcf} \
-            ref=~{ref_panel} \
-            out=~{out_prefix}
+        set -e
+    # We need at least 1 GB of available memory outside of the Java heap in order to execute native code, thus, limit
+    # Java's memory by the total memory minus 1 GB. We need to compute the total memory as it might differ from
+    # memory_size_gb because of Cromwell's retry with more memory feature.
+    # Note: In the future this should be done using Cromwell's ${MEM_SIZE} and ${MEM_UNIT} environment variables,
+    #       which do not rely on the output format of the `free` command.
+        available_memory_mb=$(free -m | awk '/^Mem/ {print $2}')
+        let java_memory_size_mb=available_memory_mb-3072
+        echo Total available memory: ${available_memory_mb} MB >&2
+        echo Memory reserved for Java: ${java_memory_size_mb} MB >&2
+        #export GCS_REQUESTER_PAYS_PROJECT=~{GOOGLE_PROJECT}
+        #export GCS_OAUTH_TOKEN=$(gcloud auth application-default print-access-token)
+
+        java -Xmx${java_memory_size_mb}m -Xms${java_memory_size_mb}m -jar /beagle.jar  \
+                gt=~{vcf} \
+                ref=~{ref_panel} \
+                out=~{out_prefix}
     >>>
     
   
     runtime {
         docker:"gcr.io/ucsd-medicine-cast/beagle:latest"
-	#docker: "sarajava/beagle:v3"
-	    memory: "5GB"
+	    memory: "25GB"
     }
 
     output {
