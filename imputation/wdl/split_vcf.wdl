@@ -44,7 +44,7 @@ task get_sample_list {
     
   
     runtime {
-        docker:"nichole/bcftoold-gcs"
+        docker:"gcr.io/ucsd-medicine-cast/bcftools-gcs:latest"
     }
 
     output {
