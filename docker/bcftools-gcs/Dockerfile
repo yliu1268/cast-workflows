@@ -4,10 +4,7 @@ RUN apt-get update && DEBIAN_FRONTEND="noninteractive" apt-get install -qqy \
     python3 \
     python3-pip \
     bcftools \
-    curl \
-    git-all wget \
-    make 
-
+    curl 
 
 
 # Download and install gcloud
