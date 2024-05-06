@@ -13,7 +13,7 @@ workflow split_vcf {
     call get_sample_list {
         input : 
           vcf_str=vcf_str, 
-          vvcf_str_index=vcf_str_index,
+          vcf_str_index=vcf_str_index,
           out_prefix=out_prefix,
           GOOGLE_PROJECT=GOOGLE_PROJECT,
           GCS_OAUTH_TOKEN=GCS_OAUTH_TOKEN
