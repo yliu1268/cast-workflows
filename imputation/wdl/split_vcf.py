@@ -82,8 +82,8 @@ def main():
 
 	# Set up workflow JSON
 	json_dict = {}
-	json_dict["split_vcf.vcf"] = args.vcf
-	json_dict["split_vcf.vcf_index"]=args.vcf+".tbi"
+	json_dict["split_vcf.vcf_str"] = args.vcf
+	json_dict["split_vcf.vcf_str_index"]=args.vcf+".tbi"
 	json_dict["split_vcf.out_prefix"] = args.name
 	json_dict["split_vcf.GOOGLE_PROJECT"] = project
 	json_dict["split_vcf.GCS_OAUTH_TOKEN"] = token
