@@ -26,10 +26,10 @@ def RunWorkflow(json_file, json_options_file, dryrun=False):
 	dryrun : bool
 		Just print the command, don't actually run cromshell
 	"""
-	#cmd = "cromshell submit ../wdl/split_vcf.wdl {json} -op {options}".format(json=json_file, options=json_options_file)
-	cmd = "java -jar -Dconfig.file={} ".format("cromwell.conf") + \
-				"cromwell-86.jar run split_vcf.wdl " + \
-				"--inputs {} --options {}".format(json_file, json_options_file)
+	cmd = "cromshell submit ../wdl/split_vcf.wdl {json} -op {options}".format(json=json_file, options=json_options_file)
+	#cmd = "java -jar -Dconfig.file={} ".format("cromwell.conf") + \
+	#			"cromwell-86.jar run split_vcf.wdl " + \
+	#			"--inputs {} --options {}".format(json_file, json_options_file)
 	if dryrun:
 		sys.stderr.write("Run: %s\n"%cmd)
 		return
@@ -61,14 +61,14 @@ def main():
 
 	
 	# Get token
-	#token_fetch_command = subprocess.run(['gcloud', 'auth', 'application-default', 'print-access-token'], \
-	#	capture_output=True, check=True, encoding='utf-8')
-	#token = str.strip(token_fetch_command.stdout)
+	token_fetch_command = subprocess.run(['gcloud', 'auth', 'application-default', 'print-access-token'], \
+		capture_output=True, check=True, encoding='utf-8')
+	token = str.strip(token_fetch_command.stdout)
 
 	# Set up output bucket
-	#bucket = os.getenv("WORKSPACE_BUCKET")
-	#project = os.getenv("GOOGLE_PROJECT")
-	#output_bucket = bucket + "/" + args.name
+	bucket = os.getenv("WORKSPACE_BUCKET")
+	project = os.getenv("GOOGLE_PROJECT")
+	output_bucket = bucket + "/" + args.name
 
 	# Upload vcf file
 	if args.vcf.startswith("gs://"):
@@ -83,11 +83,11 @@ def main():
 
 	# Set up workflow JSON
 	json_dict = {}
-	json_dict["split_vcf.vcf_"] = [args.vcf]
+	json_dict["split_vcf.vcf"] = [args.vcf]
 	json_dict["split_vcf.vcf_index"]= [args.vcf+".tbi"]
 	json_dict["split_vcf.out_prefix"] = args.name
-	#json_dict["split_vcf.GOOGLE_PROJECT"] = "testproject"
-	#json_dict["split_vcf.GCS_OAUTH_TOKEN"] = "dummy"
+	json_dict["split_vcf.GOOGLE_PROJECT"] = project
+	json_dict["split_vcf.GCS_OAUTH_TOKEN"] = token
 
 	# Convert to json and save as a file
 	json_file = args.name+".aou.json"
