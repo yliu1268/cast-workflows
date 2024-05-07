@@ -26,8 +26,8 @@ def RunWorkflow(json_file, json_options_file, dryrun=False):
 	dryrun : bool
 		Just print the command, don't actually run cromshell
 	"""
-	#cmd = "cromshell submit ../wdl/beagle.wdl {json} -op {options}".format(json=json_file, options=json_options_file)
-	cmd = "java -jar -Dconfig.file={} ".format("/home/jupyter/cromwell.conf") + \
+	#cmd = "cromshell submit ../wdl/split_vcf.wdl {json} -op {options}".format(json=json_file, options=json_options_file)
+	cmd = "java -jar -Dconfig.file={} ".format("cromwell.conf") + \
 				"cromwell-86.jar run split_vcf.wdl " + \
 				"--inputs {} --options {}".format(json_file, json_options_file)
 	if dryrun:
@@ -61,32 +61,33 @@ def main():
 
 	
 	# Get token
-	token_fetch_command = subprocess.run(['gcloud', 'auth', 'application-default', 'print-access-token'], \
-		capture_output=True, check=True, encoding='utf-8')
-	token = str.strip(token_fetch_command.stdout)
+	#token_fetch_command = subprocess.run(['gcloud', 'auth', 'application-default', 'print-access-token'], \
+	#	capture_output=True, check=True, encoding='utf-8')
+	#token = str.strip(token_fetch_command.stdout)
 
 	# Set up output bucket
-	bucket = os.getenv("WORKSPACE_BUCKET")
-	project = os.getenv("GOOGLE_PROJECT")
-	output_bucket = bucket + "/" + args.name
+	#bucket = os.getenv("WORKSPACE_BUCKET")
+	#project = os.getenv("GOOGLE_PROJECT")
+	#output_bucket = bucket + "/" + args.name
 
 	# Upload vcf file
 	if args.vcf.startswith("gs://"):
 		vcf_gcs = args.vcf
 	else:
 				# Copying the vcf file
-		vcf_gcs = output_bucket + "/" + args.name + "/"
+		vcf_gcs = args.name + "/"
+		#vcf_gcs = output_bucket + "/" + args.name + "/"
 		UploadGS(args.vcf, vcf_gcs)
 				# Copying the index file
 		UploadGS(args.vcf + ".tbi", vcf_gcs)
 
 	# Set up workflow JSON
 	json_dict = {}
-	json_dict["split_vcf.vcf_str"] = [args.vcf]
-	json_dict["split_vcf.vcf_str_index"]= [args.vcf+".tbi"]
+	json_dict["split_vcf.vcf_"] = [args.vcf]
+	json_dict["split_vcf.vcf_index"]= [args.vcf+".tbi"]
 	json_dict["split_vcf.out_prefix"] = args.name
-	json_dict["split_vcf.GOOGLE_PROJECT"] = project
-	json_dict["split_vcf.GCS_OAUTH_TOKEN"] = token
+	#json_dict["split_vcf.GOOGLE_PROJECT"] = "testproject"
+	#json_dict["split_vcf.GCS_OAUTH_TOKEN"] = "dummy"
 
 	# Convert to json and save as a file
 	json_file = args.name+".aou.json"

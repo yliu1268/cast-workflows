@@ -3,20 +3,20 @@ version 1.0
 
 workflow split_vcf {
     input {
-        Array[File] vcf_str = []
-        Array[File] vcf_str_index = []
+        Array[File] vcf = []
+        Array[File] vcf_ndex = []
         String out_prefix
-        String GOOGLE_PROJECT = ""
-        String GCS_OAUTH_TOKEN = ""
+        #String GOOGLE_PROJECT = ""
+        #String GCS_OAUTH_TOKEN = ""
     }
 
     call get_sample_list {
         input : 
-          vcf_str=vcf_str, 
-          vcf_str_index=vcf_str_index,
+          vcf=vcf, 
+          vcf_index=vcf_index,
           out_prefix=out_prefix,
-          GOOGLE_PROJECT=GOOGLE_PROJECT,
-          GCS_OAUTH_TOKEN=GCS_OAUTH_TOKEN
+          #GOOGLE_PROJECT=GOOGLE_PROJECT,
+          #GCS_OAUTH_TOKEN=GCS_OAUTH_TOKEN
     }
 
     output {
@@ -29,17 +29,18 @@ workflow split_vcf {
 
 task get_sample_list {
     input {
-        Array[File] vcf_str = []
-        Array[File] vcf_str_index = []
+        Array[File] vcf
+        Array[File] vcf_index 
         String out_prefix
-        String GOOGLE_PROJECT = ""
-        String GCS_OAUTH_TOKEN = ""
+        #String GOOGLE_PROJECT = ""
+        #String GCS_OAUTH_TOKEN = ""
     } 
 
     command <<<
-      export GCS_REQUESTER_PAYS_PROJECT=~{GOOGLE_PROJECT}
-      export GCS_OAUTH_TOKEN=$(gcloud auth application-default print-access-token)
-      bcftools query -l ~(vcf_str) > ~(out_prefix).txt
+      vcf_input=~{sep=',' vcf}
+      #export GCS_REQUESTER_PAYS_PROJECT=~{GOOGLE_PROJECT}
+      #export GCS_OAUTH_TOKEN=$(gcloud auth application-default print-access-token)
+      bcftools query -l ~(vcf_input) > ~(out_prefix).txt
     >>>
     
   
