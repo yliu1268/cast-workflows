@@ -40,7 +40,7 @@ task get_sample_list {
       vcf_input=~{sep=',' vcf}
       export GCS_REQUESTER_PAYS_PROJECT=~{GOOGLE_PROJECT}
       export GCS_OAUTH_TOKEN=$(gcloud auth application-default print-access-token)
-      bcftools query -l ~(vcf_input) > ~(out_prefix).txt
+      bcftools query -l $(vcf_input) > ~(out_prefix).txt
     >>>
     
   
