@@ -72,7 +72,7 @@ passing_samples = passing_samples.merge(demog, on='person_id', how='inner')
 
 eur_white = passing_samples[(passing_samples['ancestry_pred']=='eur') & (passing_samples['race']=='White')]
 afr_black = passing_samples[(passing_samples['ancestry_pred']=='afr') & (passing_samples['race']=='Black or African American')]
-not_afr_black = passing_samples[!((passing_samples['ancestry_pred']=='afr') | (passing_samples['race']=='Black or African American'))]
+not_afr_black = passing_samples[~((passing_samples['ancestry_pred']=='afr') | (passing_samples['race']=='Black or African American'))]
 
 
 eur_white[['person_id', 'sex_at_birth_Male']].to_csv("EUR_WHITE.csv", index=False)
