@@ -85,6 +85,15 @@ def main():
 				# Copying the index file
 		UploadGS(args.vcf + ".tbi", vcf_gcs)
 
+	# Upload exclude sample file
+	if args.excludesamples.startswith("gs://"):
+		exclude_files = args.excludesamples
+	else:
+				# Copying the exclude sample file
+		exclude_files = output_bucket + "/" + args.name + "/"
+		UploadGS(args.excludesamples, exclude_files)
+
+
 	# Set up workflow JSON
 	json_dict = {}
 	json_dict["beagle.vcf"] = args.vcf
