@@ -2,8 +2,8 @@ version 1.0
 
 workflow beagle {
     input {
-        File vcf
-        File vcf_index
+        String vcf 
+        String vcf_index 
         File ref_panel
         File ref_panel_index
         String out_prefix
@@ -43,8 +43,8 @@ workflow beagle {
 
 task beagle {
     input {
-        File vcf
-        File vcf_index
+        String vcf 
+        String vcf_index 
         File ref_panel
         File ref_panel_index
         String out_prefix
