@@ -93,6 +93,7 @@ def main():
 	json_dict["beagle.ref_panel_index"] = args.ref_panel+".tbi"
 	json_dict["beagle.out_prefix"] = args.name
 	json_dict["beagle.GOOGLE_PROJECT"] = project
+	json_dict["beagle.GCS_OAUTH_TOKEN"] = token
 	json_dict["beagle.mem"] = args.mem
 	json_dict["beagle.window_size"] = args.window
 	json_dict["beagle.excludesamples"] = args.excludesamples
