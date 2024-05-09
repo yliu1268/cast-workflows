@@ -10,6 +10,7 @@ workflow beagle {
         String GOOGLE_PROJECT = ""
         Int? mem = 32
         Int? window_size = 20
+        File? excludesamples = excludesamples
     }
 
     call beagle {
@@ -21,7 +22,8 @@ workflow beagle {
           out_prefix=out_prefix,
           GOOGLE_PROJECT=GOOGLE_PROJECT,
           mem=mem,
-          window_size=window_size
+          window_size=window_size,
+          excludesamples=excludesamples
     }
     call sort_index_beagle {
         input :
@@ -47,6 +49,7 @@ task beagle {
         String GOOGLE_PROJECT = ""
         Int? mem = 32
         Int? window_size = 20
+        File? excludesamples = excludesamples
     } 
 
     command <<<
@@ -78,6 +81,7 @@ task beagle {
             gt=~{vcf} \
             ref=~{ref_panel} \
             window=~{window_size} \
+            excludesamples=~{excludesamples} \
             out=~{out_prefix}
 
 

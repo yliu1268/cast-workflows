@@ -58,7 +58,9 @@ def main():
 	parser.add_argument("--ref-panel", help="File id of ref genome", type=str)
 	parser.add_argument("--mem", help="Specify run memory ", type=int, default=32)
 	parser.add_argument("--window", help="Specify window size for imputation ", type=int, default=20)
+	parser.add_argument("--excludesamples", help="Name of excludesamples file ", type=str)
 	parser.add_argument("--dryrun", help="Don't actually run the workflow. Just set up", action="store_true")
+
 
 	args = parser.parse_args()
 
@@ -93,6 +95,7 @@ def main():
 	json_dict["beagle.GOOGLE_PROJECT"] = project
 	json_dict["beagle.mem"] = args.mem
 	json_dict["beagle.window_size"] = args.window
+	json_dict["beagle.excludesamples"] = args.excludesamples
 
 	# Convert to json and save as a file
 	json_file = args.name+".aou.json"
