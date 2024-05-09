@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
 """
 Script to launch AOU imputation use new ref panel 
+Example command:  python split_vcf.py --name extract_sample_aou --vcf gs://fc-aou-datasets-controlled/v7/wgs/short_read/snpindel/acaf_threshold_v7.1/vcf/acaf_threshold.chr21.vcf.bgz
+output file:  ${WORKSPACE_BUCKET}/cromwell-execution/split_vcf/d2b62462-a509-4a78-b418-b0dd3b04667e/call-get_sample_list/extract_sample_aou.txt
+
 """
+
 
 import argparse
 import json
