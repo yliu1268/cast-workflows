@@ -26,10 +26,10 @@ def RunWorkflow(json_file, json_options_file, dryrun=False):
 	dryrun : bool
 		Just print the command, don't actually run cromshell
 	"""
-	#cmd = "cromshell submit ../wdl/beagle.wdl {json} -op {options}".format(json=json_file, options=json_options_file)
-	cmd = "java -jar -Dconfig.file={} ".format("/home/jupyter/cromwell.conf") + \
-				"cromwell-86.jar run beagle.wdl " + \
-				"--inputs {} --options {}".format(json_file, json_options_file)
+	cmd = "cromshell submit ../wdl/beagle.wdl {json} -op {options}".format(json=json_file, options=json_options_file)
+	# cmd = "java -jar -Dconfig.file={} ".format("/home/jupyter/cromwell.conf") + \
+	# 			"cromwell-86.jar run beagle.wdl " + \
+	# 			"--inputs {} --options {}".format(json_file, json_options_file)
 	if dryrun:
 		sys.stderr.write("Run: %s\n"%cmd)
 		return
@@ -56,7 +56,8 @@ def main():
 	parser.add_argument("--name", help="Name of the TR job", required=True, type=str)
 	parser.add_argument("--vcf", help="Name of the genotype vcf file", required=True, type=str)
 	parser.add_argument("--ref-panel", help="File id of ref genome", type=str)
-	parser.add_argument("--mem", help="Specify run memory ", type=int, default=10)
+	parser.add_argument("--mem", help="Specify run memory ", type=int, default=32)
+	parser.add_argument("--window", help="Specify window size for imputation ", type=int, default=20)
 	parser.add_argument("--dryrun", help="Don't actually run the workflow. Just set up", action="store_true")
 
 	args = parser.parse_args()
@@ -91,6 +92,7 @@ def main():
 	json_dict["beagle.out_prefix"] = args.name
 	json_dict["beagle.GOOGLE_PROJECT"] = project
 	json_dict["beagle.mem"] = args.mem
+	json_dict["beagle.window_size"] = args.window
 
 	# Convert to json and save as a file
 	json_file = args.name+".aou.json"
