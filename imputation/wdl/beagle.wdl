@@ -8,6 +8,7 @@ workflow beagle {
         File ref_panel_index
         String out_prefix
         String GOOGLE_PROJECT = ""
+        String GCS_OAUTH_TOKEN = ""
         Int? mem = 32
         Int? window_size = 20
         File? excludesamples = excludesamples
@@ -21,6 +22,7 @@ workflow beagle {
           ref_panel_index=ref_panel_index,
           out_prefix=out_prefix,
           GOOGLE_PROJECT=GOOGLE_PROJECT,
+          GCS_OAUTH_TOKEN=GCS_OAUTH_TOKEN,
           mem=mem,
           window_size=window_size,
           excludesamples=excludesamples
@@ -47,6 +49,7 @@ task beagle {
         File ref_panel_index
         String out_prefix
         String GOOGLE_PROJECT = ""
+        String GCS_OAUTH_TOKEN = ""
         Int? mem = 32
         Int? window_size = 20
         File? excludesamples = excludesamples
