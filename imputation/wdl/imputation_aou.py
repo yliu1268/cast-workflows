@@ -58,7 +58,7 @@ def main():
 	parser.add_argument("--ref-panel", help="File id of ref genome", type=str)
 	parser.add_argument("--mem", help="Specify run memory ", type=int, required=False, default=32)
 	parser.add_argument("--window", help="Specify window size for imputation ", type=int, required=False, default=20)
-	parser.add_argument("--excludesamples", help="Name of excludesamples file ", type=str, required=False)
+	parser.add_argument("--samples_file ", help="Name of sub_samples file ", type=str, required=False)
 	parser.add_argument("--dryrun", help="Don't actually run the workflow. Just set up", action="store_true")
 
 
@@ -105,7 +105,7 @@ def main():
 	json_dict["beagle.GCS_OAUTH_TOKEN"] = token
 	json_dict["beagle.mem"] = args.mem
 	json_dict["beagle.window_size"] = args.window
-	json_dict["beagle.excludesamples"] = args.excludesamples
+	json_dict["beagle.samples_file "] = args.samples_file 
 
 	# Convert to json and save as a file
 	json_file = args.name+".aou.json"
