@@ -36,8 +36,7 @@ workflow beagle {
           GOOGLE_PROJECT=GOOGLE_PROJECT,
           GCS_OAUTH_TOKEN=GCS_OAUTH_TOKEN,
           mem=mem,
-          window_size=window_size,
-          samples_file=samples_file
+          window_size=window_size
     }
     call sort_index_beagle {
         input :
@@ -57,7 +56,7 @@ task subset_vcf {
     input {
         String vcf
         String vcf_index
-        File samples_file
+        File? samples_file
         String out_prefix=out_prefix
     }
 
@@ -70,7 +69,7 @@ task subset_vcf {
     runtime {
         docker:"gcr.io/ucsd-medicine-cast/bcftools-gcs:latest"
     }
-    
+
     output {
        File outfile = "${out_prefix}.vcf"
     }
