@@ -2,8 +2,8 @@ version 1.0
 
 workflow beagle {
     input {
-        File vcf 
-        File vcf_index 
+        String vcf 
+        String vcf_index 
         File ref_panel
         File ref_panel_index
         String out_prefix
@@ -11,13 +11,25 @@ workflow beagle {
         String GCS_OAUTH_TOKEN = ""
         Int? mem 
         Int? window_size 
-        File? excludesamples = excludesamples
+        File? samples_file 
     }
 
+    call subset_vcf {
+        input:
+            samples_file=samples_file,
+            vcf=vcf,
+            vcf_index=vcf_index,
+            out_prefix=out_prefix
+    }
+
+    call index_vcf {
+        input:
+            vcf=subset_vcf.outfile
+    }
     call beagle {
         input : 
-          vcf=vcf, 
-          vcf_index=vcf_index,
+          vcf=index_vcf.outvcf, 
+          vcf_index=index_vcf.outvcf_index,
           ref_panel=ref_panel, 
           ref_panel_index=ref_panel_index,
           out_prefix=out_prefix,
@@ -25,7 +37,7 @@ workflow beagle {
           GCS_OAUTH_TOKEN=GCS_OAUTH_TOKEN,
           mem=mem,
           window_size=window_size,
-          excludesamples=excludesamples
+          samples_file=samples_file
     }
     call sort_index_beagle {
         input :
@@ -37,9 +49,54 @@ workflow beagle {
         File outfile_index = sort_index_beagle.outvcf_index
     }
     meta {
-      description: "Run Beagle on a single chromesome with default parameters"
+      description: "Run Beagle on a subset of samples on a single chromesome with default parameters"
     }
 }
+
+task subset_vcf {
+    input {
+        String vcf
+        String vcf_index
+        File samples_file
+        String out_prefix=out_prefix
+    }
+
+    command <<<
+        bcftools view -S ~{samples_file} ~{vcf} > ~{out_prefix}.vcf
+        bgzip -c > ~{out_prefix}.vcf && tabix -p vcf ~{out_prefix}.vcf.gz
+
+    >>>
+
+    runtime {
+        docker:"gcr.io/ucsd-medicine-cast/bcftools-gcs:latest"
+    }
+    
+    output {
+       File outfile = "${out_prefix}.vcf"
+    }
+}
+
+task index_vcf {
+    input {
+      File vcf
+    }
+
+    String basename = basename(vcf, ".vcf")
+
+    command <<<
+        bgzip -c ~{vcf}> ~{basename}.vcf && tabix -p vcf ~{basename}.vcf.gz
+    >>>
+
+    runtime {
+        docker:"gcr.io/ucsd-medicine-cast/vcfutils:latest"
+    }
+
+    output {
+    File outvcf = "${basename}.vcf.gz"
+    File outvcf_index = "${basename}.vcf.gz.tbi"
+  }
+}
+
 
 task beagle {
     input {
@@ -52,7 +109,6 @@ task beagle {
         String GCS_OAUTH_TOKEN = ""
         Int? mem 
         Int? window_size 
-        File? excludesamples = excludesamples
     } 
 
     command <<<
@@ -84,7 +140,6 @@ task beagle {
             gt=~{vcf} \
             ref=~{ref_panel} \
             window=~{window_size} \
-            excludesamples=~{excludesamples} \
             out=~{out_prefix}
 
 
