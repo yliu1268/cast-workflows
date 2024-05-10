@@ -19,6 +19,8 @@ workflow beagle {
             samples_file=samples_file,
             vcf=vcf,
             vcf_index=vcf_index,
+            GOOGLE_PROJECT=GOOGLE_PROJECT,
+            GCS_OAUTH_TOKEN=GCS_OAUTH_TOKEN,
             out_prefix=out_prefix
     }
 
@@ -57,6 +59,8 @@ task subset_vcf {
         String vcf
         String vcf_index
         File samples_file
+        GOOGLE_PROJECT=GOOGLE_PROJECT,
+        GCS_OAUTH_TOKEN=GCS_OAUTH_TOKEN,
         String out_prefix=out_prefix
     }
 
