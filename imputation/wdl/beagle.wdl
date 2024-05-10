@@ -59,8 +59,8 @@ task subset_vcf {
         String vcf
         String vcf_index
         File samples_file
-        GOOGLE_PROJECT=GOOGLE_PROJECT,
-        GCS_OAUTH_TOKEN=GCS_OAUTH_TOKEN,
+        String GOOGLE_PROJECT = ""
+        String GCS_OAUTH_TOKEN = ""
         String out_prefix=out_prefix
     }
 
