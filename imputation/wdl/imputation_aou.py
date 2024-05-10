@@ -87,11 +87,11 @@ def main():
 
 	# Upload exclude sample file
 	if args.samples_file.startswith("gs://"):
-		sample_files = args.samples_file
+		samples_files = args.samples_file
 	else:
 				# Copying the exclude sample file
-		sample_files = output_bucket + "/" + args.name + "/"
-		UploadGS(args.samples_file, sample_files)
+		samples_files = output_bucket + "/" + args.name + "/"
+		UploadGS(args.samples_file, samples_files)
 
 
 	# Set up workflow JSON
