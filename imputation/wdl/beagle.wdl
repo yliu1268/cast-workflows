@@ -11,7 +11,7 @@ workflow beagle {
         String GCS_OAUTH_TOKEN = ""
         Int? mem 
         Int? window_size 
-        File? samples_file 
+        File samples_file 
     }
 
     call subset_vcf {
@@ -56,13 +56,12 @@ task subset_vcf {
     input {
         String vcf
         String vcf_index
-        File? samples_file
+        File samples_file
         String out_prefix=out_prefix
     }
 
     command <<<
         bcftools view -S ~{samples_file} ~{vcf} > ~{out_prefix}.vcf
-        bgzip -c > ~{out_prefix}.vcf && tabix -p vcf ~{out_prefix}.vcf.gz
 
     >>>
 
