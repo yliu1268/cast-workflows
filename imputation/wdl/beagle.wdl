@@ -9,8 +9,8 @@ workflow beagle {
         String out_prefix
         String GOOGLE_PROJECT = ""
         String GCS_OAUTH_TOKEN = ""
-        Int? mem = 32
-        Int? window_size = 20
+        Int? mem 
+        Int? window_size 
         File? excludesamples = excludesamples
     }
 
@@ -50,8 +50,8 @@ task beagle {
         String out_prefix
         String GOOGLE_PROJECT = ""
         String GCS_OAUTH_TOKEN = ""
-        Int? mem = 32
-        Int? window_size = 20
+        Int? mem 
+        Int? window_size 
         File? excludesamples = excludesamples
     } 
 
