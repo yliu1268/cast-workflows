@@ -58,7 +58,7 @@ def main():
 	parser.add_argument("--ref-panel", help="File id of ref genome", type=str)
 	parser.add_argument("--mem", help="Specify run memory ", type=int, required=False, default=32)
 	parser.add_argument("--window", help="Specify window size for imputation ", type=int, required=False, default=20)
-	parser.add_argument("--samples_file ", help="Name of sub_samples file ", type=str, required=False)
+	parser.add_argument("--samples_file", help="Name of sub_samples file ", type=str, required=False)
 	parser.add_argument("--dryrun", help="Don't actually run the workflow. Just set up", action="store_true")
 
 
