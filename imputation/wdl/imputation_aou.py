@@ -86,12 +86,12 @@ def main():
 		UploadGS(args.vcf + ".tbi", vcf_gcs)
 
 	# Upload exclude sample file
-	if args.excludesamples.startswith("gs://"):
-		exclude_files = args.excludesamples
+	if args.samples_file.startswith("gs://"):
+		sample_files = args.samples_file
 	else:
 				# Copying the exclude sample file
-		exclude_files = output_bucket + "/" + args.name + "/"
-		UploadGS(args.excludesamples, exclude_files)
+		sample_files = output_bucket + "/" + args.name + "/"
+		UploadGS(args.samples_file, sample_files)
 
 
 	# Set up workflow JSON
@@ -105,7 +105,7 @@ def main():
 	json_dict["beagle.GCS_OAUTH_TOKEN"] = token
 	json_dict["beagle.mem"] = args.mem
 	json_dict["beagle.window_size"] = args.window
-	json_dict["beagle.samples_file "] = args.samples_file 
+	json_dict["beagle.samples_file"] = args.samples_file 
 
 	# Convert to json and save as a file
 	json_file = args.name+".aou.json"
