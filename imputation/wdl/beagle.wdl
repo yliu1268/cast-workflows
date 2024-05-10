@@ -61,6 +61,8 @@ task subset_vcf {
     }
 
     command <<<
+        export GCS_REQUESTER_PAYS_PROJECT=~{GOOGLE_PROJECT}
+        export GCS_OAUTH_TOKEN=$(gcloud auth application-default print-access-token)
         bcftools view -S ~{samples_file} ~{vcf} > ~{out_prefix}.vcf
 
     >>>
