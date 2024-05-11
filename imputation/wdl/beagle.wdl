@@ -4,8 +4,8 @@ workflow beagle {
     input {
         String vcf 
         String vcf_index 
-        String ref_panel
-        String ref_panel_index
+        File ref_panel
+        File ref_panel_index
         String out_prefix
         String GOOGLE_PROJECT = ""
         String GCS_OAUTH_TOKEN = ""
@@ -104,8 +104,8 @@ task beagle {
     input {
         File vcf 
         File vcf_index 
-        String ref_panel
-        String ref_panel_index
+        File ref_panel
+        File ref_panel_index
         String out_prefix
         String GOOGLE_PROJECT = ""
         String GCS_OAUTH_TOKEN = ""
