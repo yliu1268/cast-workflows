@@ -117,9 +117,9 @@ task beagle {
 
         export GCS_REQUESTER_PAYS_PROJECT=~{GOOGLE_PROJECT}
         export GCS_OAUTH_TOKEN=$(gcloud auth application-default print-access-token)
-        java_mem = ~{mem}-2
+        java_mem = ~{mem}-3
 
-        java -Xmx~{mem-2}g -jar /beagle.jar \
+        java -Xmx${java_mem}g -jar /beagle.jar \
             gt=~{vcf} \
             ref=~{ref_panel} \
             window=~{window_size} \
