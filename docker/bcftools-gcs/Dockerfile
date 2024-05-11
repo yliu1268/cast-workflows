@@ -12,7 +12,9 @@ RUN apt-get update && DEBIAN_FRONTEND="noninteractive" apt-get install -qqy \
     libbz2-dev \
     liblzma-dev \
     libncurses5 libncurses5-dev \
-    libcurl4-gnutls-dev 
+    libcurl4-gnutls-dev \
+    libnss3-dev \
+    libssl-dev 
 
 
 # Make sources directory
@@ -41,7 +43,7 @@ WORKDIR /sources
 RUN wget -O bcftools-1.20.tar.bz2 https://github.com/samtools/bcftools/releases/download/1.20/bcftools-1.20.tar.bz2
 RUN tar -xjvf bcftools-1.20.tar.bz2
 WORKDIR bcftools-1.20
-RUN ./configure --enable-gcs --enable-libcurl 
+RUN ./configure --enable-gcs --enable-libcurl --enable-s3 
 RUN make install
 
 
