@@ -83,6 +83,7 @@ task subset_vcf {
 task index_vcf {
     input {
       File vcf
+      String out_prefix=out_prefix
     }
 
     command <<<
