@@ -83,11 +83,12 @@ task subset_vcf {
 task index_vcf {
     input {
       File vcf
-      String out_prefix=out_prefix
     }
 
+    String basename = basename(vcf, ".vcf")
+
     command <<<
-        bgzip -c ~{vcf}> ~{out_prefix}.vcf.gz && tabix -p vcf ~{out_prefix}.vcf.gz
+        bgzip -c ~{vcf}> ~{basename}.vcf.gz && tabix -p vcf ~{basename}.vcf.gz
     >>>
 
     runtime {
@@ -95,8 +96,8 @@ task index_vcf {
     }
 
     output {
-    File outvcf = "${out_prefix}.gz"
-    File outvcf_index = "${out_prefix}.gz.tbi"
+    File outvcf = "${basename}.gz"
+    File outvcf_index = "${basename}.gz.tbi"
   }
 }
 
