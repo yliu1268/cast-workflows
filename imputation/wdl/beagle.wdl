@@ -96,8 +96,8 @@ task index_vcf {
     }
 
     output {
-    File outvcf = "${basename}.gz"
-    File outvcf_index = "${basename}.gz.tbi"
+    File outvcf = "${basename}.vcf.gz"
+    File outvcf_index = "${basename}.vcf.gz.tbi"
   }
 }
 
