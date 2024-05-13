@@ -87,7 +87,7 @@ task index_vcf {
     }
 
     command <<<
-        bgzip -c ~{vcf}> ~{vcf}.gz && tabix -p vcf ~{vcf}.gz
+        bgzip -c ~{vcf}> ~{out_prefix}.vcf.gz && tabix -p vcf ~{out_prefix}.vcf.gz
     >>>
 
     runtime {
