@@ -70,6 +70,7 @@ def main():
 	parser.add_argument("--window", help="Specify window size for imputation ", type=int, required=False, default=20)
 	parser.add_argument("--samples-file", help="Name of sub_samples file ", type=str, required=False)
 	parser.add_argument("--regions-file", help="Name of sub_region file ", type=str, required=False)
+	parser.add_argument("--subset_regions", help="Apply subset region in each chromesome ",action="store_true", default=False)
 	parser.add_argument("--dryrun", help="Don't actually run the workflow. Just set up", action="store_true")
 
 
@@ -127,6 +128,7 @@ def main():
 	json_dict["imputation.window_size"] = args.window
 	json_dict["imputation.samples_file"] = args.samples_file 
 	json_dict["imputation.regions_file"] = args.regions_file 
+	json_dict["imputation.subset_regions"] = args.subset_regions
 
 	# Convert to json and save as a file
 	json_file = args.name+".aou.json"
