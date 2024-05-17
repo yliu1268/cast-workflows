@@ -14,6 +14,7 @@ workflow imputation {
         File? samples_file 
 	    File? regions_file
         Boolean subset_regions = false
+        String chrom
     }
 
     call subset_vcf {
@@ -42,7 +43,8 @@ workflow imputation {
           GOOGLE_PROJECT=GOOGLE_PROJECT,
           GCS_OAUTH_TOKEN=GCS_OAUTH_TOKEN,
           mem=mem,
-          window_size=window_size
+          window_size=window_size,
+          chrom=chrom
     }
     call sort_index_beagle {
         input :
@@ -120,7 +122,8 @@ task beagle {
         String GOOGLE_PROJECT = ""
         String GCS_OAUTH_TOKEN = ""
         Int? mem 
-        Int? window_size 
+        Int? window_size
+        String chrom
     } 
 
     command <<<
@@ -132,6 +135,7 @@ task beagle {
             gt=~{vcf} \
             ref=~{ref_panel} \
             window=~{window_size} \
+            chrom=~{chrom} \
             out=~{out_prefix}
     >>>
     
