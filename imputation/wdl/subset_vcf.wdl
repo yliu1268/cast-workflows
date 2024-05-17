@@ -6,6 +6,7 @@ workflow subset_vcf {
         String vcf_index 
         String out_prefix
         File samples_file 
+        File regions_file
         String GOOGLE_PROJECT = ""
         String GCS_OAUTH_TOKEN = ""
         
@@ -15,8 +16,9 @@ workflow subset_vcf {
         input:
             vcf=vcf,
             vcf_index=vcf_index,
-            out_prefix=out_prefix
+            out_prefix=out_prefix,
             samples_file=samples_file,
+            regions_file=regions_file,
             GOOGLE_PROJECT=GOOGLE_PROJECT,
             GCS_OAUTH_TOKEN=GCS_OAUTH_TOKEN
             
@@ -42,9 +44,11 @@ task subset_vcf {
         String vcf_index
         String out_prefix=out_prefix
         File samples_file
+        File regions_file
         String GOOGLE_PROJECT = ""
         String GCS_OAUTH_TOKEN = ""    
     }
+
 
     command <<<
         export GCS_REQUESTER_PAYS_PROJECT=~{GOOGLE_PROJECT}
@@ -67,8 +71,10 @@ task index_vcf {
       File vcf
     }
 
+    String basename = basename(vcf, ".vcf")
+
     command <<<
-        bgzip -c ~{vcf}> ~{vcf}.gz && tabix -p vcf ~{vcf}.gz
+        bgzip -c ~{vcf}> ~{basename}.vcf.gz && tabix -p vcf ~{basename}.vcf.gz
     >>>
 
     runtime {
@@ -76,7 +82,7 @@ task index_vcf {
     }
 
     output {
-        File outvcf = "${vcf}.gz"
-        File outvcf_index = "${vcf}.gz.tbi"
-  }
+        File outvcf = "${basename}.vcf.gz"
+        File outvcf_index = "${basename}.vcf.gz.tbi"
+    }
 }

@@ -12,11 +12,13 @@ workflow beagle {
         Int? mem 
         Int? window_size 
         File samples_file 
+	    File regions_file
     }
 
     call subset_vcf {
         input:
             samples_file=samples_file,
+	        regions_file=regions_file,
             vcf=vcf,
             vcf_index=vcf_index,
             GOOGLE_PROJECT=GOOGLE_PROJECT,
@@ -53,12 +55,12 @@ workflow beagle {
       description: "Run Beagle on a subset of samples on a single chromesome with default parameters"
     }
 }
-
 task subset_vcf {
     input {
         String vcf
         String vcf_index
         File samples_file
+	    File regions_file
         String GOOGLE_PROJECT = ""
         String GCS_OAUTH_TOKEN = ""
         String out_prefix=out_prefix
@@ -67,7 +69,9 @@ task subset_vcf {
     command <<<
         export GCS_REQUESTER_PAYS_PROJECT=~{GOOGLE_PROJECT}
         export GCS_OAUTH_TOKEN=$(gcloud auth application-default print-access-token)
-        bcftools view -S ~{samples_file} ~{vcf} > ~{out_prefix}.vcf
+        bcftools view --regions-file ~{regions_file} -S ~{samples_file} ~{vcf} > ~{out_prefix}.vcf
+	    #bcftools view -S ~{samples_file} ~{vcf} > ~{out_prefix}.vcf
+
 
     >>>
 
