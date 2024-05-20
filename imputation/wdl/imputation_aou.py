@@ -6,7 +6,7 @@ example code:
 ./imputation_aou.py \
 --name test_imputation 
 --vcf gs://fc-aou-datasets-controlled/v7/wgs/short_read/snpindel/acaf_threshold_v7.1/vcf/acaf_threshold.chr11.vcf.bgz \
---ref-panel https://ensemble-tr.s3.us-east-2.amazonaws.com/additional-phased-trs/chr11_final_SNP_merged_additional_TRs.vcf.gz \
+--ref-panel $WORKSPACE_BUCKET/tr_imputation/tr_imputation/chr11_final_SNP_merged_additional_TRs.vcf.gz \
 --samples_file $WORKSPACE_BUCKET/tr_imputation/tr_imputation/test_sample.txt \
 --regions-file $WORKSPACE_BUCKET/tr_imputation/tr_imputation/CBL_region.bed \
 --mem 40
@@ -71,7 +71,6 @@ def main():
 	parser.add_argument("--samples-file", help="Name of sub_samples file ", type=str, required=True)
 	parser.add_argument("--regions-file", help="Name of sub_region file ", type=str,required=False)
 	parser.add_argument("--subset-regions", help="Apply subset region in each chromesome ",action="store_true", default=False)
-	parser.add_argument("--chrom", help="Apply chrom region in imputation,chrom:start-end ",type=str, default=False)
 	parser.add_argument("--dryrun", help="Don't actually run the workflow. Just set up", action="store_true")
 
 
@@ -132,7 +131,7 @@ def main():
 	json_dict["imputation.samples_file"] = args.samples_file 
 	json_dict["imputation.regions_file"] = args.regions_file 
 	json_dict["imputation.subset_regions"] = args.subset_regions
-	json_dict["imputation.chrom"] = args.chrom
+
 
 	# Convert to json and save as a file
 	json_file = args.name+".aou.json"
