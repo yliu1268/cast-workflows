@@ -75,9 +75,9 @@ task subset_vcf {
         export GCS_OAUTH_TOKEN=$(gcloud auth application-default print-access-token)
         # Subsetting region for each chromesome
         if [["~{subset_regions}"== true]];then
-            bcftools view -R ~{regions_file} -S ~{samples_file} ~{vcf} > ~{out_prefix}.vcf
+            bcftools view -R ~{regions_file} -S ~{samples_file} --force-samples ~{vcf} > ~{out_prefix}.vcf
         else
-            bcftools view -S ~{samples_file} ~{vcf} > ~{out_prefix}.vcf
+            bcftools view -S ~{samples_file} --force-samples ~{vcf} > ~{out_prefix}.vcf
         fi
     >>>
 
