@@ -70,7 +70,6 @@ def main():
 	parser.add_argument("--window", help="Specify window size for imputation ", type=int, required=False, default=20)
 	parser.add_argument("--samples-file", help="Name of sub_samples file ", type=str, required=True)
 	parser.add_argument("--regions-file", help="Name of sub_region file ", type=str,required=False)
-	parser.add_argument("--subset-regions", help="Apply subset region in each chromesome ",action="store_true", default=False)
 	parser.add_argument("--dryrun", help="Don't actually run the workflow. Just set up", action="store_true")
 
 
@@ -106,14 +105,14 @@ def main():
 		UploadGS(args.samples_file, samples_file)
 
 
-	if args.subset_regions:
+
 	# Upload subset region file
-		if args.regions_file.startswith("gs://"):
-			regions_file = args.regions_file
-		else:
-					# Copying the exclude sample file
-			regions_file = output_bucket + "/" + args.name + "/"
-			UploadGS(args.regions_file, regions_file)
+	if args.regions_file.startswith("gs://"):
+		regions_file = args.regions_file
+	else:
+				# Copying the exclude sample file
+		regions_file = output_bucket + "/" + args.name + "/"
+		UploadGS(args.regions_file, regions_file)
 
 
 
@@ -130,7 +129,7 @@ def main():
 	json_dict["imputation.window_size"] = args.window
 	json_dict["imputation.samples_file"] = args.samples_file 
 	json_dict["imputation.regions_file"] = args.regions_file 
-	json_dict["imputation.subset_regions"] = args.subset_regions
+
 
 
 	# Convert to json and save as a file
