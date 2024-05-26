@@ -126,7 +126,7 @@ task beagle {
             gt=~{vcf} \
             ref=~{ref_panel} \
             window=~{window_size} \
-            out=~{out_prefix}
+            out=~{out_prefix}_output
     >>>
     
     #file upto 300mb use mem=25
@@ -136,7 +136,7 @@ task beagle {
     }
 
     output {
-       File outfile = "${out_prefix}.vcf.gz"
+       File outfile = "${out_prefix}_output.vcf.gz"
     }
 }
 
