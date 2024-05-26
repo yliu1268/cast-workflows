@@ -11,9 +11,8 @@ workflow imputation {
         String GCS_OAUTH_TOKEN = ""
         Int? mem 
         Int? window_size 
-        File? samples_file 
-	    File? regions_file
-        Boolean subset_regions = false
+        File samples_file 
+	    File regions_file
     }
 
     call subset_vcf {
@@ -24,8 +23,7 @@ workflow imputation {
         vcf_index=vcf_index,
         GOOGLE_PROJECT=GOOGLE_PROJECT,
         GCS_OAUTH_TOKEN=GCS_OAUTH_TOKEN,
-        out_prefix=out_prefix,
-        subset_regions=subset_regions
+        out_prefix=out_prefix
     }
     
     call index_vcf {
@@ -62,23 +60,19 @@ task subset_vcf {
     input {
         String vcf
         String vcf_index
-        File? samples_file
-	    File? regions_file
+        File samples_file
+	    File regions_file
         String GOOGLE_PROJECT = ""
         String GCS_OAUTH_TOKEN = ""
         String out_prefix=out_prefix
-        Boolean subset_regions = false
     }
 
     command <<<
         export GCS_REQUESTER_PAYS_PROJECT=~{GOOGLE_PROJECT}
         export GCS_OAUTH_TOKEN=$(gcloud auth application-default print-access-token)
         # Subsetting region for each chromesome
-        if [["~{subset_regions}"== true]];then
-            bcftools view -R ~{regions_file} -S ~{samples_file} ~{vcf} > ~{out_prefix}.vcf
-        else
-            bcftools view -S ~{samples_file}  ~{vcf} > ~{out_prefix}.vcf
-        fi
+        bcftools view -R ~{regions_file} -S ~{samples_file} ~{vcf} > ~{out_prefix}.vcf
+    
     >>>
 
     runtime {
