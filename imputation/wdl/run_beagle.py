@@ -34,10 +34,10 @@ def RunWorkflow(json_file, json_options_file, dryrun=False):
 	dryrun : bool
 		Just print the command, don't actually run cromshell
 	"""
-	#cmd = "cromshell submit ../wdl/beagle.wdl {json} -op {options}".format(json=json_file, options=json_options_file)
-	cmd = "java -jar -Dconfig.file={} ".format("/home/jupyter/cromwell.conf") + \
-	  			"cromwell-86.jar run beagle.wdl " + \
-	  			"--inputs {} --options {}".format(json_file, json_options_file)
+	cmd = "cromshell submit ../wdl/beagle.wdl {json} -op {options}".format(json=json_file, options=json_options_file)
+	#cmd = "java -jar -Dconfig.file={} ".format("/home/jupyter/cromwell.conf") + \
+	#  			"cromwell-86.jar run beagle.wdl " + \
+	#  			"--inputs {} --options {}".format(json_file, json_options_file)
 	if dryrun:
 		sys.stderr.write("Run: %s\n"%cmd)
 		return
