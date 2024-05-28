@@ -60,8 +60,8 @@ task subset_vcf {
     input {
         String vcf
         String vcf_index
-        File samples_file
-	    File regions_file
+        File? samples_file
+	File? regions_file
         String GOOGLE_PROJECT = ""
         String GCS_OAUTH_TOKEN = ""
         String out_prefix=out_prefix
@@ -70,9 +70,10 @@ task subset_vcf {
     command <<<
         export GCS_REQUESTER_PAYS_PROJECT=~{GOOGLE_PROJECT}
         export GCS_OAUTH_TOKEN=$(gcloud auth application-default print-access-token)
+        # The "bcftools head" command was to check the header for the labeling if contigs e.g. chr21 vs 21.
+        # bcftools head ~{vcf} > header.txt
         # Subsetting region for each chromesome
-        bcftools view -R ~{regions_file} -S ~{samples_file} --force-samples ~{vcf} > ~{out_prefix}.vcf
-    
+        bcftools view -R ~{regions_file} -S ~{samples_file} ~{vcf} > ~{out_prefix}.vcf
     >>>
 
     runtime {
@@ -81,6 +82,7 @@ task subset_vcf {
 
     output {
         File outfile = "${out_prefix}.vcf"
+        File outheader = "header.txt"
     }    
 }
 task index_vcf {
@@ -149,6 +151,8 @@ task sort_index_beagle {
 
     command <<<
         zcat ~{vcf} | vcf-sort | bgzip -c > ~{basename}.sorted.vcf.gz && tabix -p vcf ~{basename}.sorted.vcf.gz
+        echo "Number of TRs in the genotyped file"
+        bcftools view -i 'ID="."' ~{basename}.sorted.vcf.gz | grep -v "^#" | wc -l
     >>>
 
     runtime {

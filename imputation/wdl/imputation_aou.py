@@ -22,7 +22,7 @@ import sys
 import tempfile
 
 
-def RunWorkflow(json_file, json_options_file, dryrun=False):
+def RunWorkflow(json_file, json_options_file, cromwell, dryrun=False):
 	"""
 	Run workflow on AoU
 
@@ -36,10 +36,12 @@ def RunWorkflow(json_file, json_options_file, dryrun=False):
 	dryrun : bool
 		Just print the command, don't actually run cromshell
 	"""
-	cmd = "cromshell submit ../wdl/imputation.wdl {json} -op {options}".format(json=json_file, options=json_options_file)
-	# cmd = "java -jar -Dconfig.file={} ".format("/home/jupyter/cromwell.conf") + \
-	#  			"cromwell-86.jar run beagle.wdl " + \
-	#  			"--inputs {} --options {}".format(json_file, json_options_file)
+	if cromwell is False:
+		cmd = "cromshell submit ../wdl/imputation.wdl {json} -op {options}".format(json=json_file, options=json_options_file)
+	else:
+		cmd = "java -jar -Dconfig.file={} ".format("/home/jupyter/cromwell.conf") + \
+	  			"cromwell-87.jar run imputation.wdl " + \
+	  			"--inputs {} --options {}".format(json_file, json_options_file)
 	if dryrun:
 		sys.stderr.write("Run: %s\n"%cmd)
 		return
@@ -71,6 +73,8 @@ def main():
 	parser.add_argument("--samples-file", help="Name of sub_samples file ", type=str, required=True)
 	parser.add_argument("--regions-file", help="Name of sub_region file ", type=str,required=False)
 	parser.add_argument("--dryrun", help="Don't actually run the workflow. Just set up", action="store_true")
+	parser.add_argument("--cromwell", help="Run using cormwell as opposed to the default cromshell",
+                            action="store_true", default=False)
 
 
 	args = parser.parse_args()
@@ -145,7 +149,7 @@ def main():
 		json.dump(json_options_dict, f, indent=4)
 
 	# Run workflow on AoU using cromwell
-	RunWorkflow(json_file, json_options_file, dryrun=args.dryrun)
+	RunWorkflow(json_file, json_options_file, args.cromwell, dryrun=args.dryrun)
 
 
 if __name__ == "__main__":
