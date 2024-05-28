@@ -12,7 +12,7 @@ workflow imputation {
         Int? mem 
         Int? window_size 
         File samples_file 
-	    File regions_file
+	File regions_file
     }
 
     call subset_vcf {
@@ -82,7 +82,6 @@ task subset_vcf {
 
     output {
         File outfile = "${out_prefix}.vcf"
-        File outheader = "header.txt"
     }    
 }
 task index_vcf {
