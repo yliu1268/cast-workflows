@@ -5,7 +5,6 @@ RUN apt-get update && DEBIAN_FRONTEND="noninteractive" apt-get install -qqy \
     python3-pip \
     git-all wget \
     curl \
-    default-jre \
     make \
     cmake \
     gcc \
@@ -13,7 +12,12 @@ RUN apt-get update && DEBIAN_FRONTEND="noninteractive" apt-get install -qqy \
     automake \
     libtool \
     subversion \
-    pkg-config
+    pkg-config \
+    openjdk-21-jdk 
+
+
+#default-jre \
+
 
 # Download and install gcloud
 RUN curl https://dl.google.com/dl/cloudsdk/release/google-cloud-sdk.tar.gz > /tmp/google-cloud-sdk.tar.gz
