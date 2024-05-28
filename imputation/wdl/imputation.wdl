@@ -71,7 +71,7 @@ task subset_vcf {
         export GCS_REQUESTER_PAYS_PROJECT=~{GOOGLE_PROJECT}
         export GCS_OAUTH_TOKEN=$(gcloud auth application-default print-access-token)
         # Subsetting region for each chromesome
-        bcftools view -R ~{regions_file} -S ~{samples_file} ~{vcf} > ~{out_prefix}.vcf
+        bcftools view -R ~{regions_file} -S --force-samples ~{samples_file} ~{vcf} > ~{out_prefix}.vcf
     
     >>>
 
