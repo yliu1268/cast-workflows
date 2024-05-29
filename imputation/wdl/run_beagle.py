@@ -35,7 +35,7 @@ def RunWorkflow(json_file, json_options_file, dryrun=False):
 		Just print the command, don't actually run cromshell
 	"""
 	cmd = "cromshell submit ../wdl/beagle.wdl {json} -op {options}".format(json=json_file, options=json_options_file)
-	# cmd = "java -jar -Dconfig.file={} ".format("/home/jupyter/cromwell.conf") + \
+	#cmd = "java -jar -Dconfig.file={} ".format("/home/jupyter/cromwell.conf") + \
 	#  			"cromwell-86.jar run beagle.wdl " + \
 	#  			"--inputs {} --options {}".format(json_file, json_options_file)
 	if dryrun:
@@ -81,6 +81,7 @@ def main():
 	bucket = os.getenv("WORKSPACE_BUCKET")
 	project = os.getenv("GOOGLE_PROJECT")
 	output_bucket = bucket + "/" + args.name
+	output_path = os.path.join(bucket, "workflows", "cromwell-executions", "beagle_3")
 
 	# Upload vcf file
 	if args.vcf.startswith("gs://"):
@@ -111,8 +112,9 @@ def main():
 		json.dump(json_dict, f, indent=4)
 
 
-	# Set up json optionsß
-	json_options_dict = {}
+	# Set up json options
+	json_options_dict = {"jes_gcs_root": output_path}
+	json_options_file = args.name+".options.aou.json"
 	json_options_file = args.name+".options.aou.json"
 	with open(json_options_file, "w") as f:
 		json.dump(json_options_dict, f, indent=4)
