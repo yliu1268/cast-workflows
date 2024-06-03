@@ -72,6 +72,8 @@ def main():
 	parser.add_argument("--window", help="Specify window size for imputation ", type=int, required=False, default=20)
 	parser.add_argument("--samples-file", help="Name of sub_samples file ", type=str, required=True)
 	parser.add_argument("--regions-file", help="Name of sub_region file ", type=str,required=False)
+	parser.add_argument("--chrom", help="Name of chrom position  chr:xxx-xxx ", type=str,required=False)
+	parser.add_argument("--beagle_region", help="Apply chrom for beagle", action="store_true",required=False)
 	parser.add_argument("--dryrun", help="Don't actually run the workflow. Just set up", action="store_true")
 	parser.add_argument("--cromwell", help="Run using cormwell as opposed to the default cromshell",
                             action="store_true", default=False)
@@ -132,7 +134,8 @@ def main():
 	json_dict["imputation.window_size"] = args.window
 	json_dict["imputation.samples_file"] = args.samples_file 
 	json_dict["imputation.regions_file"] = args.regions_file 
-
+	json_dict["imputation.beagle_region"] = args.beagle_region
+	json_dict["imputation.chrom"] = args.chrom
 
 
 	# Convert to json and save as a file

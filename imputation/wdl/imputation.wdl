@@ -12,6 +12,8 @@ workflow imputation {
         Int? window_size 
         File samples_file 
 	    File regions_file
+        Boolean beagle_region = false
+        String? chrom
     }
 
     call subset_vcf {
@@ -38,7 +40,9 @@ workflow imputation {
           GOOGLE_PROJECT=GOOGLE_PROJECT,
           GCS_OAUTH_TOKEN=GCS_OAUTH_TOKEN,
           mem=mem,
-          window_size=window_size
+          window_size=window_size,
+          beagle_region=beagle_region,
+          chrom=chrom
     }
     call sort_index_beagle {
         input :
@@ -113,18 +117,28 @@ task beagle {
         String GCS_OAUTH_TOKEN = ""
         Int? mem 
         Int? window_size
+        Boolean beagle_region = false
+        String? chrom
     } 
 
     command <<<
 
         export GCS_REQUESTER_PAYS_PROJECT=~{GOOGLE_PROJECT}
         export GCS_OAUTH_TOKEN=$(gcloud auth application-default print-access-token)
-
+        if [[ "~{beagle_region}" == false ]] ; then
         java -Xmx~{mem}g -jar /beagle.jar \
             gt=~{vcf} \
             ref=~{ref_panel} \
             window=~{window_size} \
             out=~{out_prefix}_output
+        else
+            java -Xmx~{mem}g -jar /beagle.jar \
+            gt=~{vcf} \
+            ref=~{ref_panel} \
+            window=~{window_size} \
+            chrom=~{chrom} \
+            out=~{out_prefix}_output
+
     >>>
     
     #file upto 300mb use mem=25
