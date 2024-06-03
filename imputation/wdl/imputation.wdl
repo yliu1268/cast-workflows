@@ -138,7 +138,7 @@ task beagle {
             window=~{window_size} \
             chrom=~{chrom} \
             out=~{out_prefix}_output
-
+        fi
     >>>
     
     #file upto 300mb use mem=25
