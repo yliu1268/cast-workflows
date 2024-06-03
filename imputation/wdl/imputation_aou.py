@@ -125,7 +125,6 @@ def main():
 	json_dict["imputation.vcf"] = args.vcf
 	json_dict["imputation.vcf_index"]=args.vcf+".tbi"
 	json_dict["imputation.ref_panel"] = args.ref_panel
-	json_dict["imputation.ref_panel_index"] = args.ref_panel+".tbi"
 	json_dict["imputation.out_prefix"] = args.name
 	json_dict["imputation.GOOGLE_PROJECT"] = project
 	json_dict["imputation.GCS_OAUTH_TOKEN"] = token

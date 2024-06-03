@@ -5,7 +5,6 @@ workflow imputation {
         String vcf 
         String vcf_index 
         File ref_panel
-        File ref_panel_index
         String out_prefix
         String GOOGLE_PROJECT = ""
         String GCS_OAUTH_TOKEN = ""
@@ -35,7 +34,6 @@ workflow imputation {
           vcf=index_vcf.outvcf, 
           vcf_index=index_vcf.outvcf_index,
           ref_panel=ref_panel, 
-          ref_panel_index=ref_panel_index,
           out_prefix=out_prefix,
           GOOGLE_PROJECT=GOOGLE_PROJECT,
           GCS_OAUTH_TOKEN=GCS_OAUTH_TOKEN,
@@ -110,7 +108,6 @@ task beagle {
         File vcf 
         File vcf_index 
         File ref_panel
-        File ref_panel_index
         String out_prefix
         String GOOGLE_PROJECT = ""
         String GCS_OAUTH_TOKEN = ""
