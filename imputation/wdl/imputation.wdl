@@ -12,7 +12,7 @@ workflow imputation {
         Int? mem 
         Int? window_size 
         File samples_file 
-	File regions_file
+	    File regions_file
     }
 
     call subset_vcf {
@@ -60,8 +60,8 @@ task subset_vcf {
     input {
         String vcf
         String vcf_index
-        File? samples_file
-	File? regions_file
+        File samples_file
+	    File regions_file
         String GOOGLE_PROJECT = ""
         String GCS_OAUTH_TOKEN = ""
         String out_prefix=out_prefix
