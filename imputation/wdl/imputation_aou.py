@@ -5,12 +5,17 @@ Script to launch AOU imputation use new ref panel
 example code to impute 10 samples at CBL region 
 ./imputation_aou.py \
 --name test_imputation 
---vcf gs://fc-aou-datasets-controlled/v7/wgs/short_read/snpindel/acaf_threshold_v7.1/vcf/acaf_threshold.chr11.vcf.bgz \
---ref-panel $WORKSPACE_BUCKET/tr_imputation/tr_imputation/chr11_final_SNP_merged_additional_TRs.vcf.gz \
---samples-file $WORKSPACE_BUCKET/tr_imputation/tr_imputation/aou_subset_samples_10.txt \
---regions-file $WORKSPACE_BUCKET/tr_imputation/tr_imputation/CBL_region.bed \
---mem 70
+--vcf gs://fc-aou-datasets-controlled/v7/wgs/short_read/snpindel/acaf_threshold_v7.1/vcf/acaf_threshold.chr21.vcf.bgz \
+--ref-panel $WORKSPACE_BUCKET/tr_imputation/tr_imputation/ref/chr21_final_SNP_merged_additional_TRs.bref3 \
+--samples-file $WORKSPACE_BUCKET/tr_imputation/tr_imputation/subset_samples/aou_subset_samples_100.txt \
+--regions-file $WORKSPACE_BUCKET/tr_imputation/tr_imputation/sub_region5mb.bed \
+--beagle_region
+--chrom chr21:5101889-6101889
+--mem 40
 """
+
+
+
 
 
 import argparse
