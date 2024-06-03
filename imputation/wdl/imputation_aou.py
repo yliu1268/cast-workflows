@@ -117,14 +117,14 @@ def main():
 		UploadGS(args.samples_file, samples_file)
 
 
-
-	# Upload subset region file
-	if args.regions_file.startswith("gs://"):
-		regions_file = args.regions_file
-	else:
-				# Copying the exclude sample file
-		regions_file = output_bucket + "/" + args.name + "/"
-		UploadGS(args.regions_file, regions_file)
+	if args.subset_region:
+		# Upload subset region file
+		if args.regions_file.startswith("gs://"):
+			regions_file = args.regions_file
+		else:
+					# Copying the exclude sample file
+			regions_file = output_bucket + "/" + args.name + "/"
+			UploadGS(args.regions_file, regions_file)
 
 
 
