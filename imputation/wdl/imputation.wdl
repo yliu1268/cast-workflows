@@ -11,7 +11,8 @@ workflow imputation {
         Int? mem 
         Int? window_size 
         File samples_file 
-	    File regions_file
+	    File? regions_file
+        Boolean subset_region = false
         Boolean beagle_region = false
         String? chrom
     }
@@ -24,6 +25,7 @@ workflow imputation {
         vcf_index=vcf_index,
         GOOGLE_PROJECT=GOOGLE_PROJECT,
         GCS_OAUTH_TOKEN=GCS_OAUTH_TOKEN,
+        subset_region=subset_region,
         out_prefix=out_prefix
     }
     
@@ -63,10 +65,11 @@ task subset_vcf {
         String vcf
         String vcf_index
         File samples_file
-	    File regions_file
+	    File? regions_file
         String GOOGLE_PROJECT = ""
         String GCS_OAUTH_TOKEN = ""
         String out_prefix=out_prefix
+        Boolean subset_region = false
     }
 
     command <<<
@@ -75,7 +78,12 @@ task subset_vcf {
         # The "bcftools head" command was to check the header for the labeling if contigs e.g. chr21 vs 21.
         # bcftools head ~{vcf} > header.txt
         # Subsetting region for each chromesome
+        if [[ "~{subset_region}" == true ]] ; then
         bcftools view -R ~{regions_file} -S ~{samples_file} ~{vcf} > ~{out_prefix}.vcf
+        else:
+            bcftools view -S ~{samples_file} ~{vcf} > ~{out_prefix}.vcf
+        fi
+
     >>>
 
     runtime {
