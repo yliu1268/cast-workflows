@@ -78,10 +78,11 @@ task subset_vcf {
         # The "bcftools head" command was to check the header for the labeling if contigs e.g. chr21 vs 21.
         # bcftools head ~{vcf} > header.txt
         # Subsetting region for each chromesome
-        if [[ "~{subset_region}" == true ]] ; then
-        bcftools view -R ~{regions_file} -S ~{samples_file} ~{vcf} > ~{out_prefix}.vcf
-        else:
-            bcftools view -S ~{samples_file} ~{vcf} > ~{out_prefix}.vcf
+
+        if [[ "~{subset_region}" == false ]] ; then
+        bcftools view -S ~{samples_file} ~{vcf} > ~{out_prefix}.vcf
+        else:   
+            bcftools view -R ~{regions_file} -S ~{samples_file} ~{vcf} > ~{out_prefix}.vcf
         fi
 
     >>>
