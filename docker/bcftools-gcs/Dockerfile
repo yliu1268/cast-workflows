@@ -46,4 +46,5 @@ WORKDIR bcftools-1.20
 RUN ./configure --enable-gcs --enable-libcurl --enable-s3 
 RUN make install
 
-
+COPY subset_vcf.sh /usr/bin/
+RUN chmod +x /usr/bin/subset_vcf.sh
