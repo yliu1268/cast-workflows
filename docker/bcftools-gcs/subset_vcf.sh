@@ -3,6 +3,8 @@ VCF=$1
 SAMPFILE=$2
 OUTPREFIX=$3
 
+# TODO: option to take in a region
+
 # Get column subset to extract
 sampcols=$(echo $(bcftools query -l $VCF | awk '{print 9+NR "\t" $1}' | grep -w -f $SAMPFILE | cut -f 1 ) | tr ' ' ,)
 cols=$(echo "1-9,${sampcols}") # always need 1-9. samples start at 10
