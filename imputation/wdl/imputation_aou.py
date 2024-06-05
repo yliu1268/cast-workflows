@@ -132,8 +132,8 @@ def main():
 	json_dict["imputation.mem"] = args.mem
 	json_dict["imputation.window_size"] = args.window
 	json_dict["imputation.sample_file"] = args.sample_file 
-	json_dict["imputation.regions"] = args.region
-	json_dict["imputation.subset-region"] = args.subset_region 
+	json_dict["imputation.region"] = args.region
+	json_dict["imputation.subset_region"] = args.subset_region 
 	
 
 
