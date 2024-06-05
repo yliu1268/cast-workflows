@@ -73,7 +73,7 @@ task subset_vcf {
         ./subset_vcf.sh ~{vcf} ~{sample_file} ~{out_prefix}
 
         else:   
-            bcftools view -r ~{region} -S ~{samples_file} ~{vcf} -Oz -o ~{out_prefix}.vcf.gz
+            bcftools view -r ~{region} -S ~{sample_file} ~{vcf} -Oz -o ~{out_prefix}.vcf.gz
             tabix -p vcf ~{out_prefix}.vcf.gz
         fi
 
