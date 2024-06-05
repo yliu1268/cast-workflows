@@ -7,44 +7,36 @@ workflow imputation {
         File ref_panel
         String out_prefix
         String GOOGLE_PROJECT = ""
-        String GCS_OAUTH_TOKEN = ""
         Int? mem 
         Int? window_size 
-        File samples_file 
-	    File? regions_file
+        File sample_file 
+	    String? region
         Boolean subset_region = false
         Boolean beagle_region = false
-        String? chrom
     }
 
     call subset_vcf {
     input:
-        samples_file=samples_file,
-        regions_file=regions_file,
+        sample_file=sample_file,
+        region=region,
         vcf=vcf,
         vcf_index=vcf_index,
         GOOGLE_PROJECT=GOOGLE_PROJECT,
-        GCS_OAUTH_TOKEN=GCS_OAUTH_TOKEN,
         subset_region=subset_region,
         out_prefix=out_prefix
     }
     
-    call index_vcf {
-        input:
-            vcf=subset_vcf.outfile
-    }
     call beagle {
         input : 
-          vcf=index_vcf.outvcf, 
-          vcf_index=index_vcf.outvcf_index,
+          vcf=subset_vcf.outvcf, 
+          vcf_index=subset_vcf.outvcf_index,
           ref_panel=ref_panel, 
           out_prefix=out_prefix,
           GOOGLE_PROJECT=GOOGLE_PROJECT,
-          GCS_OAUTH_TOKEN=GCS_OAUTH_TOKEN,
           mem=mem,
           window_size=window_size,
           beagle_region=beagle_region,
-          chrom=chrom
+          region=region
     }
     call sort_index_beagle {
         input :
@@ -64,10 +56,9 @@ task subset_vcf {
     input {
         String vcf
         String vcf_index
-        File samples_file
-	    File? regions_file
+        File sample_file
+	    String? region
         String GOOGLE_PROJECT = ""
-        String GCS_OAUTH_TOKEN = ""
         String out_prefix=out_prefix
         Boolean subset_region = false
     }
@@ -75,14 +66,15 @@ task subset_vcf {
     command <<<
         export GCS_REQUESTER_PAYS_PROJECT=~{GOOGLE_PROJECT}
         export GCS_OAUTH_TOKEN=$(gcloud auth application-default print-access-token)
-        # The "bcftools head" command was to check the header for the labeling if contigs e.g. chr21 vs 21.
-        # bcftools head ~{vcf} > header.txt
         # Subsetting region for each chromesome
 
         if [[ "~{subset_region}" == false ]] ; then
-            bcftools view -S ~{samples_file} ~{vcf} > ~{out_prefix}.vcf
+            #bcftools view -S ~{sample_file} ~{vcf} > ~{out_prefix}.vcf
+        ./subset_vcf.sh ~{vcf} ~{sample_file} ~{out_prefix}
+
         else:   
-            bcftools view -R ~{regions_file} -S ~{samples_file} ~{vcf} > ~{out_prefix}.vcf
+            bcftools view -r ~{region} -S ~{samples_file} ~{vcf} -Oz -o ~{out_prefix}.vcf.gz
+            tabix -p vcf ~{out_prefix}.vcf.gz
         fi
 
     >>>
@@ -92,28 +84,9 @@ task subset_vcf {
     }
 
     output {
-        File outfile = "${out_prefix}.vcf"
+        File outvcf = "${out_prefix}.vcf.gz"
+        File outvcf_index = "${out_prefix}.vcf.gz.tbi"
     }    
-}
-task index_vcf {
-    input {
-      File vcf
-    }
-
-    String basename = basename(vcf, ".vcf")
-
-    command <<<
-        bgzip -c ~{vcf}> ~{basename}.vcf.gz && tabix -p vcf ~{basename}.vcf.gz
-    >>>
-
-    runtime {
-        docker:"gcr.io/ucsd-medicine-cast/vcfutils:latest"
-    }
-
-    output {
-        File outvcf = "${basename}.vcf.gz"
-        File outvcf_index = "${basename}.vcf.gz.tbi"
-    }
 }
 
 task beagle {
@@ -123,11 +96,10 @@ task beagle {
         File ref_panel
         String out_prefix
         String GOOGLE_PROJECT = ""
-        String GCS_OAUTH_TOKEN = ""
         Int? mem 
         Int? window_size
         Boolean beagle_region = false
-        String? chrom
+        String? region
     } 
 
     command <<<
@@ -145,7 +117,7 @@ task beagle {
             gt=~{vcf} \
             ref=~{ref_panel} \
             window=~{window_size} \
-            chrom=~{chrom} \
+            chrom=~{region} \
             out=~{out_prefix}_output
         fi
     >>>

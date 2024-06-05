@@ -25,6 +25,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+from utils import MSG, ERROR
 
 
 def RunWorkflow(json_file, json_options_file, cromwell, dryrun=False):
@@ -75,11 +76,10 @@ def main():
 	parser.add_argument("--ref-panel", help="File id of ref genome", type=str)
 	parser.add_argument("--mem", help="Specify run memory ", type=int, required=False, default=32)
 	parser.add_argument("--window", help="Specify window size for imputation ", type=int, required=False, default=20)
-	parser.add_argument("--samples-file", help="Name of sub_samples file ", type=str, required=True)
-	parser.add_argument("--regions-file", help="Name of sub_region file ", type=str,required=False)
-	parser.add_argument("--chrom", help="Name of chrom position  chr:xxx-xxx ", type=str,required=False)
-	parser.add_argument("--beagle_region", help="Apply chrom for beagle", action="store_true",required=False)
-	parser.add_argument("--subset_region", help="Subsetting region for vcf file", action="store_true",required=False)
+	parser.add_argument("--sample-file", help="Name of sub_samples file ", type=str, required=True)
+	parser.add_argument("--region", help="Name of chrom position  chr:xxx-xxx", type=str,required=False)
+	parser.add_argument("--beagle-region", help="Apply chrom for beagle", action="store_true",required=False)
+	parser.add_argument("--subset-region", help="Subsetting region for vcf file", action="store_true",required=False)
 	parser.add_argument("--dryrun", help="Don't actually run the workflow. Just set up", action="store_true")
 	parser.add_argument("--cromwell", help="Run using cormwell as opposed to the default cromshell",
                             action="store_true", default=False)
@@ -109,22 +109,16 @@ def main():
 		UploadGS(args.vcf + ".tbi", vcf_gcs)
 
 	# Upload subset sample file
-	if args.samples_file.startswith("gs://"):
-		samples_file = args.samples_file
+	if args.sample_file.startswith("gs://"):
+		sample_file = args.sample_file
 	else:
 				# Copying the exclude sample file
-		samples_file = output_bucket + "/" + args.name + "/"
-		UploadGS(args.samples_file, samples_file)
+		sample_file = output_bucket + "/" + args.name + "/"
+		UploadGS(args.sample_file, sample_file)
 
 
-	if args.subset_region:
-		# Upload subset region file
-		if args.regions_file.startswith("gs://"):
-			regions_file = args.regions_file
-		else:
-					# Copying the exclude sample file
-			regions_file = output_bucket + "/" + args.name + "/"
-			UploadGS(args.regions_file, regions_file)
+	if args.subset_region and args.region is None:
+		ERROR("Must specify --region for --subset-region")
 
 
 
@@ -135,14 +129,11 @@ def main():
 	json_dict["imputation.ref_panel"] = args.ref_panel
 	json_dict["imputation.out_prefix"] = args.name
 	json_dict["imputation.GOOGLE_PROJECT"] = project
-	json_dict["imputation.GCS_OAUTH_TOKEN"] = token
 	json_dict["imputation.mem"] = args.mem
 	json_dict["imputation.window_size"] = args.window
-	json_dict["imputation.samples_file"] = args.samples_file 
-	json_dict["imputation.regions_file"] = args.regions_file 
-	json_dict["imputation.beagle_region"] = args.beagle_region
-	json_dict["imputation.chrom"] = args.chrom
-	json_dict["imputation.subset_region"] = args.subset_region 
+	json_dict["imputation.sample_file"] = args.sample_file 
+	json_dict["imputation.regions"] = args.region
+	json_dict["imputation.subset-region"] = args.subset_region 
 	
 
 

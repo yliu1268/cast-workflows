@@ -46,5 +46,13 @@ WORKDIR bcftools-1.20
 RUN ./configure --enable-gcs --enable-libcurl --enable-s3 
 RUN make install
 
+
+# Install VCFTools
+WORKDIR /sources
+RUN wget https://github.com/vcftools/vcftools/releases/download/v0.1.16/vcftools-0.1.16.tar.gz
+RUN tar -xzvf vcftools-0.1.16.tar.gz
+WORKDIR vcftools-0.1.16
+RUN ./autogen.sh && ./configure && make && make install
+
 COPY subset_vcf.sh /usr/bin/
 RUN chmod +x /usr/bin/subset_vcf.sh
