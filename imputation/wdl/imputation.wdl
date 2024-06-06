@@ -70,7 +70,7 @@ task subset_vcf {
 
         if [[ "~{subset_region}" == false ]] ; then
             #bcftools view -S ~{sample_file} ~{vcf} > ~{out_prefix}.vcf
-        ./subset_vcf.sh ~{vcf} ~{sample_file} ~{out_prefix}
+        ./usr/bin/subset_vcf.sh/subset_vcf.sh ~{vcf} ~{sample_file} ~{out_prefix}
 
         else:   
             bcftools view -r ~{region} -S ~{sample_file} ~{vcf} -Oz -o ~{out_prefix}.vcf.gz
