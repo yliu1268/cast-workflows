@@ -14,7 +14,7 @@ bcftools view -h $VCF | grep "^##" > ${OUTPREFIX}.vcf
 bcftools view -h $VCF | grep "^#CHROM" | cut -f${cols} >> ${OUTPREFIX}.vcf
 
 # Get rest of data
-gcloud storage cp $VCF | bgzip --decompress | grep -v "^#" | cut -f${cols} >> ${OUTPREFIX}.vcf
+gcloud storage cp $VCF - | bgzip --decompress | grep -v "^#" | cut -f${cols} >> ${OUTPREFIX}.vcf
 
 # Compress and index
 bgzip ${OUTPREFIX}.vcf
