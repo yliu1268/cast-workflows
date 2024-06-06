@@ -17,6 +17,11 @@ RUN apt-get update && DEBIAN_FRONTEND="noninteractive" apt-get install -qqy \
     libssl-dev 
 
 
+# copy bash script
+COPY subset_vcf.sh /usr/bin/
+RUN chmod +x /usr/bin/subset_vcf.sh
+
+
 # Make sources directory
 RUN mkdir /sources
 
@@ -54,5 +59,5 @@ RUN tar -xzvf vcftools-0.1.16.tar.gz
 WORKDIR vcftools-0.1.16
 RUN ./autogen.sh && ./configure && make && make install
 
-COPY subset_vcf.sh /usr/bin/
-RUN chmod +x /usr/bin/subset_vcf.sh
+
+
