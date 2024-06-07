@@ -14,7 +14,6 @@ bcftools view -h $VCF | grep "^##" > ${OUTPREFIX}.vcf
 bcftools view -h $VCF | grep "^#CHROM" | cut -f${cols} >> ${OUTPREFIX}.vcf
 
 # Get rest of data
-gcloud auth application-default print-access-token
 gcloud storage cp $VCF - --billing-project=$GOOGLEPROJECT| bgzip --decompress | grep -v "^#" | cut -f${cols} >> ${OUTPREFIX}.vcf
 
 # Compress and index
