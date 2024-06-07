@@ -76,7 +76,7 @@ task subset_vcf {
             #bcftools view -S ~{sample_file} ~{vcf} > ~{out_prefix}.vcf
         bash /usr/bin/subset_vcf.sh ~{vcf} ~{sample_file} ~{out_prefix} ~{GOOGLE_PROJECT}
 
-        else:   
+        else 
             bcftools view -r ~{region} -S ~{sample_file} ~{vcf} > ~{out_prefix}.vcf
             bgzip ~{out_prefix}.vcf > ~{out_prefix}.vcf.gz
             tabix -p vcf ~{out_prefix}.vcf.gz
