@@ -2,7 +2,7 @@
 VCF=$1
 SAMPFILE=$2
 OUTPREFIX=$3
-
+GOOGLEPROJECT=$4
 # TODO: option to take in a region
 
 # Get column subset to extract
@@ -15,7 +15,7 @@ bcftools view -h $VCF | grep "^#CHROM" | cut -f${cols} >> ${OUTPREFIX}.vcf
 
 # Get rest of data
 gcloud auth application-default print-access-token
-gcloud storage cp $VCF - --billing-project=${GOOGLE_PROJECT}| bgzip --decompress | grep -v "^#" | cut -f${cols} >> ${OUTPREFIX}.vcf
+gcloud storage cp $VCF - --billing-project=$GOOGLEPROJECT| bgzip --decompress | grep -v "^#" | cut -f${cols} >> ${OUTPREFIX}.vcf
 
 # Compress and index
 bgzip ${OUTPREFIX}.vcf > ${OUTPREFIX}.vcf.gz
