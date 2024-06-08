@@ -27,11 +27,16 @@ workflow imputation {
         subset_region=subset_region,
         out_prefix=out_prefix
     }
+
+    call index_vcf {
+        input:
+            vcf=subset_vcf.outfile
+    }
     
     call beagle {
         input : 
-          vcf=subset_vcf.outvcf, 
-          vcf_index=subset_vcf.outvcf_index,
+          vcf=index_vcf.outvcf, 
+          vcf_index=index_vcf.outvcf_index,
           ref_panel=ref_panel, 
           out_prefix=out_prefix,
           GOOGLE_PROJECT=GOOGLE_PROJECT,
@@ -78,8 +83,6 @@ task subset_vcf {
 
         else 
             bcftools view -r ~{region} -S ~{sample_file} ~{vcf} > ~{out_prefix}.vcf
-            bgzip ~{out_prefix}.vcf > ~{out_prefix}.vcf.gz
-            tabix -p vcf ~{out_prefix}.vcf.gz
         fi
 
     >>>
@@ -89,9 +92,30 @@ task subset_vcf {
     }
 
     output {
-        File outvcf = "${out_prefix}.vcf.gz"
-        File outvcf_index = "${out_prefix}.vcf.gz.tbi"
+        File outfile = "${out_prefix}.vcf"
     }    
+}
+
+
+task index_vcf {
+    input {
+      File vcf
+    }
+
+    String basename = basename(vcf, ".vcf")
+
+    command <<<
+        bgzip -c ~{vcf}> ~{basename}.vcf.gz && tabix -p vcf ~{basename}.vcf.gz
+    >>>
+
+    runtime {
+        docker:"gcr.io/ucsd-medicine-cast/vcfutils:latest"
+    }
+
+    output {
+        File outvcf = "${basename}.vcf.gz"
+        File outvcf_index = "${basename}.vcf.gz.tbi"
+    }
 }
 
 task beagle {

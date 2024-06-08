@@ -16,6 +16,4 @@ bcftools view -h $VCF | grep "^#CHROM" | cut -f${cols} >> ${OUTPREFIX}.vcf
 # Get rest of data
 gcloud storage cp $VCF - --billing-project=$GOOGLEPROJECT| bgzip --decompress | grep -v "^#" | cut -f${cols} >> ${OUTPREFIX}.vcf
 
-# Compress and index
-bgzip ${OUTPREFIX}.vcf > ${OUTPREFIX}.vcf.gz
-tabix -p vcf ${OUTPREFIX}.vcf.gz
+
