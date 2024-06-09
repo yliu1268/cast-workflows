@@ -129,7 +129,7 @@ def main():
 	json_dict["imputation.ref_panel"] = args.ref_panel
 	json_dict["imputation.out_prefix"] = args.name
 	json_dict["imputation.GOOGLE_PROJECT"] = project
-	json_dict["imputation.GCS_OAUTH_TOKEN"] = token
+	#json_dict["imputation.GCS_OAUTH_TOKEN"] = token
 	json_dict["imputation.mem"] = args.mem
 	json_dict["imputation.window_size"] = args.window
 	json_dict["imputation.sample_file"] = args.sample_file 

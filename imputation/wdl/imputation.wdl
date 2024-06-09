@@ -7,7 +7,7 @@ workflow imputation {
         File ref_panel
         String out_prefix
         String GOOGLE_PROJECT = ""
-        String GCS_OAUTH_TOKEN = ""
+        #String GCS_OAUTH_TOKEN = ""
         Int? mem 
         Int? window_size 
         File sample_file 
@@ -23,7 +23,7 @@ workflow imputation {
         vcf=vcf,
         vcf_index=vcf_index,
         GOOGLE_PROJECT=GOOGLE_PROJECT,
-        GCS_OAUTH_TOKEN=GCS_OAUTH_TOKEN,
+        #GCS_OAUTH_TOKEN=GCS_OAUTH_TOKEN,
         subset_region=subset_region,
         out_prefix=out_prefix
     }
@@ -40,7 +40,7 @@ workflow imputation {
           ref_panel=ref_panel, 
           out_prefix=out_prefix,
           GOOGLE_PROJECT=GOOGLE_PROJECT,
-          GCS_OAUTH_TOKEN=GCS_OAUTH_TOKEN,
+          #GCS_OAUTH_TOKEN=GCS_OAUTH_TOKEN,
           mem=mem,
           window_size=window_size,
           beagle_region=beagle_region,
@@ -67,7 +67,7 @@ task subset_vcf {
         File sample_file
 	    String? region
         String GOOGLE_PROJECT = ""
-        String GCS_OAUTH_TOKEN = ""
+        #String GCS_OAUTH_TOKEN = ""
         String out_prefix=out_prefix
         Boolean subset_region = false
     }
@@ -125,7 +125,7 @@ task beagle {
         File ref_panel
         String out_prefix
         String GOOGLE_PROJECT = ""
-        String GCS_OAUTH_TOKEN = ""
+        #String GCS_OAUTH_TOKEN = ""
         Int? mem 
         Int? window_size
         Boolean beagle_region = false
