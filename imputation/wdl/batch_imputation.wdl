@@ -20,7 +20,7 @@ workflow batch_imputation {
 	}
 
 	### Call subsetting samples with batches ###
-    scatter (i in range(length(samples ))) {
+    scatter (i in range(length(samples))) {
         String sample = samples [i]
         call imputation_single.subset_vcf as imputation_batch_sample {
             input:
