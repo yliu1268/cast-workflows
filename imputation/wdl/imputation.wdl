@@ -7,7 +7,6 @@ workflow imputation {
         File ref_panel
         String out_prefix
         String GOOGLE_PROJECT = ""
-        #String GCS_OAUTH_TOKEN = ""
         Int? mem 
         Int? window_size 
         File sample_file 
@@ -16,17 +15,17 @@ workflow imputation {
         Boolean beagle_region = false
     }
 
+       
     call subset_vcf {
-    input:
-        sample_file=sample_file,
-        region=region,
-        vcf=vcf,
-        vcf_index=vcf_index,
-        GOOGLE_PROJECT=GOOGLE_PROJECT,
-        #GCS_OAUTH_TOKEN=GCS_OAUTH_TOKEN,
-        subset_region=subset_region,
-        out_prefix=out_prefix
-    }
+        input:
+            sample_file=sample_file,
+            region=region,
+            vcf=vcf,
+            vcf_index=vcf_index,
+            GOOGLE_PROJECT=GOOGLE_PROJECT,
+            subset_region=subset_region,
+            out_prefix=out_prefix,
+            }
 
     call index_vcf {
         input:
@@ -40,7 +39,6 @@ workflow imputation {
           ref_panel=ref_panel, 
           out_prefix=out_prefix,
           GOOGLE_PROJECT=GOOGLE_PROJECT,
-          #GCS_OAUTH_TOKEN=GCS_OAUTH_TOKEN,
           mem=mem,
           window_size=window_size,
           beagle_region=beagle_region,
@@ -67,7 +65,6 @@ task subset_vcf {
         File sample_file
 	    String? region
         String GOOGLE_PROJECT = ""
-        #String GCS_OAUTH_TOKEN = ""
         String out_prefix=out_prefix
         Boolean subset_region = false
     }
@@ -75,6 +72,7 @@ task subset_vcf {
     command <<<
         export GCS_REQUESTER_PAYS_PROJECT=~{GOOGLE_PROJECT}
         export GCS_OAUTH_TOKEN=$(gcloud auth application-default print-access-token)
+
         # Subsetting region for each chromesome
 
         if [[ "~{subset_region}" == false ]] ; then
@@ -84,6 +82,8 @@ task subset_vcf {
         else 
             bcftools view -r ~{region} -S ~{sample_file} ~{vcf} > ~{out_prefix}.vcf
         fi
+    
+        
 
     >>>
 
@@ -125,7 +125,6 @@ task beagle {
         File ref_panel
         String out_prefix
         String GOOGLE_PROJECT = ""
-        #String GCS_OAUTH_TOKEN = ""
         Int? mem 
         Int? window_size
         Boolean beagle_region = false

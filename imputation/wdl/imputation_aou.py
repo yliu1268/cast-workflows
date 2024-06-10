@@ -15,9 +15,6 @@ example code to impute 10 samples at CBL region
 """
 
 
-
-
-
 import argparse
 import json
 import os
@@ -25,7 +22,27 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import tqdm
 from utils import MSG, ERROR
+
+
+def GetVCFBatches(file_list, batch_size, batch_num=-1, gsprefix=None):
+	with open(file_list, 'r') as f:
+		lines = f.readlines()
+
+	num_lines = len(lines)
+	batch_num = num_lines // batch_size+ (1 if num_lines % batch_size != 0 else 0)
+
+	for i in range(batch_num):
+		start = i * batch_size
+		end = min((i + 1) * batch_size, num_lines)
+		batch_file = f"sample_batch{i}.txt"
+		with open(batch_file, 'w') as f_out:
+			f_out.writelines(lines[start:end])
+	
+	print(f"Split into {batch_num} chunks.")
+	return [ f"sample_batch{i}.txt" for i in range(batch_num)]
+
 
 
 def RunWorkflow(json_file, json_options_file, cromwell, dryrun=False):
@@ -81,8 +98,15 @@ def main():
 	parser.add_argument("--beagle-region", help="Apply chrom for beagle", action="store_true",required=False)
 	parser.add_argument("--subset-region", help="Subsetting region for vcf file", action="store_true",required=False)
 	parser.add_argument("--dryrun", help="Don't actually run the workflow. Just set up", action="store_true")
+	parser.add_argument("--file-list", help="List of sample to process"
+		"Format: person_id", type=str, required=False, \
+		default="$WORKSPACE_BUCKET/tr_imputation/tr_imputation/sample/aou_sample_list.txt")
+	parser.add_argument("--batch-size", help="Sample batch size", required=False, type=int, default=1000)
+	parser.add_argument("--batch-num", help="Number of batches. Default: -1 (all)", required=False, default=-1)
 	parser.add_argument("--cromwell", help="Run using cormwell as opposed to the default cromshell",
                             action="store_true", default=False)
+	#parser.add_argument("--action", help="Options: create-batches, run-batches, both", type=str, required=True)
+	
 
 
 	args = parser.parse_args()
@@ -98,6 +122,7 @@ def main():
 	project = os.getenv("GOOGLE_PROJECT")
 	output_bucket = bucket + "/" + args.name
 
+
 	# Upload vcf file
 	if args.vcf.startswith("gs://"):
 		vcf_gcs = args.vcf
@@ -107,6 +132,14 @@ def main():
 		UploadGS(args.vcf, vcf_gcs)
 				# Copying the index file
 		UploadGS(args.vcf + ".tbi", vcf_gcs)
+
+	# Set up batches of files
+	file_list = args.file_list
+	sample_batches_paths= \
+		GetVCFBatches(file_list, int(args.batch_size), int(args.batch_num), \
+			gsprefix = bucket + "/" + "tr_imputation" +"/" + + "tr_imputation" +"/"+ str(args.batch_size))
+	
+
 
 	# Upload subset sample file
 	if args.sample_file.startswith("gs://"):
@@ -135,6 +168,10 @@ def main():
 	json_dict["imputation.sample_file"] = args.sample_file 
 	json_dict["imputation.region"] = args.region
 	json_dict["imputation.subset_region"] = args.subset_region 
+	json_dict["imputation.file_list"] = args.file_list
+	json_dict["imputation.batch_size"] = args.batch_size
+	json_dict["imputation.batch_num"] = args.batch_num
+
 	
 
 
