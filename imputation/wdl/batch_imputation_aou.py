@@ -29,7 +29,7 @@ def GetFileBatches(samples,batch_num=-1):
 	return sample_batch
 
 
-def RunWorkflow(json_file, json_options_file, wdl_dependencies_file="", cromwell, dryrun=False):
+def RunWorkflow(json_file, json_options_file, wdl_dependencies_file, cromwell, dryrun=False):
 	"""
 	Run workflow on AoU
 
@@ -44,7 +44,7 @@ def RunWorkflow(json_file, json_options_file, wdl_dependencies_file="", cromwell
 		Just print the command, don't actually run cromshell
 	"""
 	if cromwell is False:
-		cmd = "cromshell submit ../wdl/imputation.wdl {json} -op {options}".format(json=json_file, options=json_options_file)
+		cmd = "cromshell submit ../wdl/batch_imputation.wdl {json} -op {options}".format(json=json_file, options=json_options_file)
 	else:
 		cmd = "java -jar -Dconfig.file={} ".format("/home/jupyter/cromwell.conf") + \
 	  			"cromwell-87.jar run imputation.wdl " + \
