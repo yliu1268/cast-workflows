@@ -54,6 +54,20 @@ def RunWorkflow(json_file, json_options_file, cromwell, dryrun=False):
 		return
 	output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
 	print(output.decode("utf-8"))
+
+
+def DownloadGS(filename):
+	"""
+	Download a GCP path locally
+
+	Arguments
+	---------
+	filename : str
+	   GCP path
+	"""
+	cmd = "gsutil cp {filename} .".format(filename=filename)
+	output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
+	print(output.decode("utf-8"))	
 	
 def UploadGS(local_path, gcp_path):
 	"""
@@ -100,6 +114,12 @@ def main():
 	project = os.getenv("GOOGLE_PROJECT")
 	output_bucket = bucket + "/" + args.name
 
+	#Set up sample file list
+	# Set up file list
+	if args.samples.startswith("gs://"):
+		DownloadGS(args.samples)
+		samples = os.path.basename(args.samples)
+	else: samples = args.samples
 
 	# Upload vcf file
 	if args.vcf.startswith("gs://"):
@@ -112,7 +132,7 @@ def main():
 		UploadGS(args.vcf + ".tbi", vcf_gcs)
 
 	# set up batches of file
-	sample_batch = GetFileBatches(args.sample,args.batch_num)
+	sample_batch = GetFileBatches(args.samples,args.batch_num)
 
 	# Upload subset sample file
 	#if args.samples.startswith("gs://"):
