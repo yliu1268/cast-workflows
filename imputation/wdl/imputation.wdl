@@ -14,7 +14,7 @@ workflow imputation {
         Boolean subset_region = false
         Boolean beagle_region = false
         Boolean using_batch_files = false
-        File? sample_file
+        #File? sample_file
     }
 
        
@@ -27,8 +27,8 @@ workflow imputation {
             GOOGLE_PROJECT=GOOGLE_PROJECT,
             subset_region=subset_region,
             using_batch_files=using_batch_files,
-            out_prefix=out_prefix,
-            sample_file=sample_file
+            out_prefix=out_prefix
+            #sample_file=sample_file
             }
 
     call index_vcf {
@@ -72,7 +72,7 @@ task subset_vcf {
         String out_prefix=out_prefix
         Boolean subset_region = false
         Boolean using_batch_files = false
-        File? sample_file
+        #File? sample_file
     }
 
     command <<<
