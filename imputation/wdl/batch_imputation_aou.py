@@ -29,10 +29,11 @@ def GetFileBatches(sample_list, batch_num=-1):
 	sample_batch = []
 # Open txt file
 	with open(sample_list, "r") as f:
-		for line in f:
-		# Initialize an empty list to store the extracted lines
-			extracted_lines = [f.readline().strip() for _ in range(batch_num)]
-			sample_batch.append(extracted_lines)
+		  # Read the first n lines
+		for _ in range(batch_num):
+			line = f.readline().strip()  # Read and strip newline character
+			if line:  # Check if the line is not empty
+				sample_batch.append(line)
 		return sample_batch
 
 def RunWorkflow(json_file, json_options_file, wdl_dependencies_file, cromwell, dryrun=False):
