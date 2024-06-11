@@ -84,6 +84,22 @@ def UploadGS(local_path, gcp_path):
 	output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
 	print(output.decode("utf-8"))	
 
+def ZipWDL(wdl_dependencies_file):
+	"""
+	Put all WDL dependencies into a zip file
+
+	Arguments
+	---------
+	wdl_dependencies_fie : str
+	    Zip file to put other wdls in
+	"""
+	files = ["imputation.wdl"]
+	dirname = tempfile.mkdtemp()
+	for f in files:
+		shutil.copyfile("../wdl/%s"%f, dirname+"/"+f)
+	shutil.make_archive(os.path.splitext(wdl_dependencies_file)[0], "zip", root_dir=dirname)
+
+
 def main():
 	parser = argparse.ArgumentParser(__doc__)
 	parser.add_argument("--name", help="Name of the TR job", required=True, type=str)
@@ -178,6 +194,11 @@ def main():
 	json_options_file = args.name+".options.aou.json"
 	with open(json_options_file, "w") as f:
 		json.dump(json_options_dict, f, indent=4)
+
+	# Zip all the WDL depencies
+	wdl_dependencies_file = args.name + "-wdl.zip"
+	ZipWDL(wdl_dependencies_file)
+
 
 	# Run workflow on AoU using cromwell
 	RunWorkflow(json_file, json_options_file, args.cromwell, dryrun=args.dryrun)
