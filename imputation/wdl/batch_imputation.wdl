@@ -15,15 +15,11 @@ workflow batch_imputation {
                 Boolean subset_region = false
                 Boolean beagle_region = false
                 Array[File] samples = []
-                Boolean using_batch_files = false
-
         }
     ### Call subsetting samples with batches ###
-
-        Boolean using_batch_files = (length(samples)>0)
         Int num_batches = length(samples)
         scatter (i in range(num_batches)) {
-                File sample_batch = samples [i]
+                File sample_batch = samples[i]
                 call imputation_t.run_imputation as run_imputation {
                     input:
                         sample=sample_batch,
@@ -33,7 +29,6 @@ workflow batch_imputation {
                         region=region,
                         GOOGLE_PROJECT=GOOGLE_PROJECT,
                         subset_region=subset_region,
-                        using_batch_files=using_batch_files,
                         beagle_region=beagle_region,
                         out_prefix=out_prefix+".BATCH"+i,
                         mem=mem,
@@ -42,8 +37,8 @@ workflow batch_imputation {
         }
         call merge_vcf {
             input:
-                vcfs=run_imputation.outvcf,
-                vcfs_index=run_imputation.outvcf,
+                vcfs=run_imputation.outfile,
+                vcfs_index=run_imputation.outfile_index,
                 out_prefix=out_prefix
         }
 
