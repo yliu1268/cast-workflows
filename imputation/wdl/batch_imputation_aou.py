@@ -29,7 +29,7 @@ def GetFileBatches(samples,batch_num=-1):
 	return sample_batch
 
 
-def RunWorkflow(json_file, json_options_file, cromwell, dryrun=False):
+def RunWorkflow(json_file, json_options_file, wdl_dependencies_file="", cromwell, dryrun=False):
 	"""
 	Run workflow on AoU
 
@@ -49,6 +49,9 @@ def RunWorkflow(json_file, json_options_file, cromwell, dryrun=False):
 		cmd = "java -jar -Dconfig.file={} ".format("/home/jupyter/cromwell.conf") + \
 	  			"cromwell-87.jar run imputation.wdl " + \
 	  			"--inputs {} --options {}".format(json_file, json_options_file)
+		
+	if wdl_dependencies_file.strip() != "":
+		cmd += " -d {otherwdl}".format(otherwdl=wdl_dependencies_file)
 	if dryrun:
 		sys.stderr.write("Run: %s\n"%cmd)
 		return
@@ -201,7 +204,7 @@ def main():
 
 
 	# Run workflow on AoU using cromwell
-	RunWorkflow(json_file, json_options_file, args.cromwell, dryrun=args.dryrun)
+	RunWorkflow(json_file, json_options_file, wdl_dependencies_file,args.cromwell, dryrun=args.dryrun)
 
 
 if __name__ == "__main__":
