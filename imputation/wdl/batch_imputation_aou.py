@@ -32,7 +32,7 @@ def GetFileBatches(sample_file,batch_num=-1):
     # Extract the first two items from each row
 		for row in reader:
 			sample_batch = row[:batch_num]
-
+	print(sample_batch)
 	return sample_batch
 
 
@@ -141,7 +141,6 @@ def main():
 	output_bucket = bucket + "/" + args.name
 
 	#Set up sample file list
-	# Set up file list
 	if args.samples.startswith("gs://"):
 		DownloadGS(args.samples)
 		samples = os.path.basename(args.samples)
