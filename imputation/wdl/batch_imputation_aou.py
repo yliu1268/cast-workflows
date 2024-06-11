@@ -97,7 +97,7 @@ def main():
 	parser.add_argument("--beagle-region", help="Apply chrom for beagle", action="store_true",required=False)
 	parser.add_argument("--subset-region", help="Subsetting region for vcf file", action="store_true",required=False)
 	parser.add_argument("--dryrun", help="Don't actually run the workflow. Just set up", action="store_true")
-	parser.add_argument("--batch-num", help="Number of batches. Default: -1 (all)", required=False, default=-1)
+	parser.add_argument("--batch-num", help="Number of batches. Default: -1 (all)",type=int, required=False, default=-1)
 	parser.add_argument("--cromwell", help="Run using cormwell as opposed to the default cromshell",
                             action="store_true", default=False)
 
