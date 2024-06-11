@@ -1,6 +1,6 @@
 version 1.0
 
-workflow imputation {
+workflow run_imputation {
     input {
         String vcf 
         String vcf_index 
@@ -10,11 +10,10 @@ workflow imputation {
         Int? mem 
         Int? window_size
         String? region
-        Array[File] samples = []
+        File sample
         Boolean subset_region = false
         Boolean beagle_region = false
         Boolean using_batch_files = false
-        #File? sample_file
     }
 
        
@@ -22,13 +21,12 @@ workflow imputation {
         input:
             vcf=vcf,
             vcf_index=vcf_index,
-            samples=samples,
+            sample=sample,
             region=region,
             GOOGLE_PROJECT=GOOGLE_PROJECT,
             subset_region=subset_region,
             using_batch_files=using_batch_files,
             out_prefix=out_prefix
-            #sample_file=sample_file
             }
 
     call index_vcf {
@@ -66,33 +64,27 @@ task subset_vcf {
     input {
         String vcf
         String vcf_index
-        Array[File] samples = []
+        File sample 
 	    String? region
         String GOOGLE_PROJECT = ""
         String out_prefix=out_prefix
         Boolean subset_region = false
         Boolean using_batch_files = false
-        #File? sample_file
+   
     }
 
     command <<<
         export GCS_REQUESTER_PAYS_PROJECT=~{GOOGLE_PROJECT}
         export GCS_OAUTH_TOKEN=$(gcloud auth application-default print-access-token)
 
-        # Batch process samples file
-        sample_input=~{sep=',' samples}
-        if [[ "~{using_batch_files}" == true ]] ; then
-            sample_input=$(paste -sd, ~{samples})
-        fi
-
         # Subsetting region for each chromesome
 
         if [[ "~{subset_region}" == false ]] ; then
-            #bcftools view -S ~{samples} ~{vcf} > ~{out_prefix}.vcf
-        bash /usr/bin/subset_vcf.sh ~{vcf} ~{samples} ~{out_prefix} ~{GOOGLE_PROJECT}
+            #bcftools view -S ~{sample} ~{vcf} > ~{out_prefix}.vcf
+        bash /usr/bin/subset_vcf.sh ~{vcf} ~{sample} ~{out_prefix} ~{GOOGLE_PROJECT}
 
         else 
-            bcftools view -r ~{region} -S ~{samples} ~{vcf} > ~{out_prefix}.vcf
+            bcftools view -r ~{region} -S ~{sample} ~{vcf} > ~{out_prefix}.vcf
         fi 
     >>>
 
