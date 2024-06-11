@@ -186,7 +186,7 @@ def main():
 	json_dict["batch_imputation.region"] = args.region
 	json_dict["batch_imputation.subset_region"] = args.subset_region 
 	json_dict["batch_imputation.beagle_region"] =args.beagle_region
-	json_dict["batch_imputation.batch_num"] = args.batch_num
+
 
 
 	
