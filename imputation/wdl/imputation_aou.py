@@ -93,7 +93,7 @@ def main():
 	parser.add_argument("--ref-panel", help="File id of ref genome", type=str)
 	parser.add_argument("--mem", help="Specify run memory ", type=int, required=False, default=32)
 	parser.add_argument("--window", help="Specify window size for imputation ", type=int, required=False, default=20)
-	parser.add_argument("--sample-file", help="Name of sub_samples file ", type=str, required=True)
+	parser.add_argument("--samples", help="Name of sub_samples file ", type=str, required=True)
 	parser.add_argument("--region", help="Name of chrom position  chr:xxx-xxx", type=str,required=False)
 	parser.add_argument("--beagle-region", help="Apply chrom for beagle", action="store_true",required=False)
 	parser.add_argument("--subset-region", help="Subsetting region for vcf file", action="store_true",required=False)
@@ -142,12 +142,12 @@ def main():
 
 
 	# Upload subset sample file
-	if args.sample_file.startswith("gs://"):
-		sample_file = args.sample_file
+	if args.samples.startswith("gs://"):
+		sample_file = args.samples
 	else:
 				# Copying the exclude sample file
 		sample_file = output_bucket + "/" + args.name + "/"
-		UploadGS(args.sample_file, sample_file)
+		UploadGS(args.samples, sample_file)
 
 
 	if args.subset_region and args.region is None:
@@ -165,7 +165,7 @@ def main():
 	#json_dict["imputation.GCS_OAUTH_TOKEN"] = token
 	json_dict["imputation.mem"] = args.mem
 	json_dict["imputation.window_size"] = args.window
-	json_dict["imputation.sample_file"] = args.sample_file 
+	json_dict["imputation.sample_file"] = args.samples 
 	json_dict["imputation.region"] = args.region
 	json_dict["imputation.subset_region"] = args.subset_region 
 	json_dict["imputation.file_list"] = args.file_list

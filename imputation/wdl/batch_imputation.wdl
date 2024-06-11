@@ -11,17 +11,21 @@ workflow batch_imputation {
             String GOOGLE_PROJECT = ""
             Int? mem 
             Int? window_size 
-            File sample_file 
+            #File? sample_file 
 	        String? region
             Boolean subset_region = false
             Boolean beagle_region = false
-            Array[String] samples = []
+            Array[File] samples = []
+            Boolean using_batch_files = false
 
 	}
+    ### Call subsetting samples with batches ###
 
-	### Call subsetting samples with batches ###
+    Boolean using_batch_files = (length(samples)>0)
+    Int num_batches = if using_batch_files
+            then length(samples)
     scatter (i in range(length(samples))) {
-        String sample = samples [i]
+            File sample = samples [i]
         call imputation_single.subset_vcf as imputation_batch_sample {
             input:
                 sample_file=sample,
@@ -31,6 +35,7 @@ workflow batch_imputation {
                 GOOGLE_PROJECT=GOOGLE_PROJECT,
                 subset_region=subset_region,
                 out_prefix=out_prefix,
+                using_batch_files=using_batch_files
         }
     
 
