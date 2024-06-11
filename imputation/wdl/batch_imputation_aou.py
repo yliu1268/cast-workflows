@@ -25,14 +25,11 @@ import tempfile
 import csv
 from utils import MSG, ERROR
 
-def GetFileBatches(sample_file,batch_num=-1):
+def GetFileBatches(sample_list, batch_num=-1):
 
-
-# Define the number of lines to extract
-	n = 5  # Change this number as needed
 
 # Open the CSV file
-	with open('sample_file', newline='') as f:
+	with open(sample_list, newline='') as f:
 		# Create a CSV reader
 		reader = csv.reader(f)
 		# Initialize an empty list to store the extracted lines
