@@ -13,7 +13,6 @@ workflow run_imputation {
         File sample
         Boolean subset_region = false
         Boolean beagle_region = false
-        Boolean using_batch_files = false
     }
 
        
@@ -25,7 +24,6 @@ workflow run_imputation {
             region=region,
             GOOGLE_PROJECT=GOOGLE_PROJECT,
             subset_region=subset_region,
-            using_batch_files=using_batch_files,
             out_prefix=out_prefix
             }
 
@@ -68,9 +66,7 @@ task subset_vcf {
 	    String? region
         String GOOGLE_PROJECT = ""
         String out_prefix=out_prefix
-        Boolean subset_region = false
-        Boolean using_batch_files = false
-   
+        Boolean subset_region = false   
     }
 
     command <<<
