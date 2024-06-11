@@ -158,7 +158,7 @@ def main():
 		UploadGS(args.vcf + ".tbi", vcf_gcs)
 
 	# set up batches of file
-	sample_batch = GetFileBatches(args.samples,args.batch_num)
+	sample_batch = GetFileBatches(samples,args.batch_num)
 
 	# Upload subset sample file
 	#if args.samples.startswith("gs://"):
