@@ -26,23 +26,24 @@ workflow batch_imputation {
                 File sample_batch = samples [i]
                 call imputation_t.run_imputation as run_imputation {
                     input:
+                        sample=sample_batch,
                         vcf=vcf,
                         vcf_index=vcf_index,
                         ref_panel=ref_panel,
-                        sample=sample_batch,
                         region=region,
                         GOOGLE_PROJECT=GOOGLE_PROJECT,
                         subset_region=subset_region,
                         using_batch_files=using_batch_files,
                         beagle_region=beagle_region,
-                        out_prefix=out_prefix,
+                        out_prefix=out_prefix+".BATCH"+i,
                         mem=mem,
                         window_size=window_size
                 }
         }
         call merge_vcf {
             input:
-                vcf=imputation.outvcf,
+                vcfs=run_imputation.outvcf,
+                vcfs_index=run_imputation.outvcf,
                 out_prefix=out_prefix
         }
 
@@ -57,12 +58,13 @@ workflow batch_imputation {
 
 task merge_vcf {
     input {
-        Array[File] vcf
+        Array[File] vcfs
+        Array[File] vcfs_index
         String out_prefix
     }
 
     command <<<
-        bcftools merge ${sep=' ' vcf} -O z -o ${out_prefix}.merged.vcf.gz
+        bcftools merge ${sep=' ' vcfs} -O z -o ${out_prefix}.merged.vcf.gz
         tabix -p vcf ${out_prefix}.merged.vcf.gz
 
     >>>
