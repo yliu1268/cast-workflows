@@ -37,8 +37,8 @@ def GetFileBatches(sample_file,batch_num=-1):
 	if len(curr_batch) > 0 and \
 		(len(cram_batches)<batch_num or batch_num==-1):
 		cram_batches.append(curr_batch)
-	print(sample_batch)
-	return sample_batch
+
+	return cram_batches
 
 
 def RunWorkflow(json_file, json_options_file, wdl_dependencies_file, cromwell, dryrun=False):
