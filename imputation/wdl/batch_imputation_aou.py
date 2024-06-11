@@ -22,11 +22,18 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import csv
 from utils import MSG, ERROR
 
 def GetFileBatches(samples,batch_num=-1):
-	sample_batch=samples[:batch_num]
-	return sample_batch
+	with open(samples, newline='') as csvfile:
+    # Create a CSV reader
+		reader = csv.reader(csvfile) 
+    # Extract the first two items from each row
+		for row in reader:
+			sample_batch = row[:batch_num]
+
+		return sample_batch
 
 
 def RunWorkflow(json_file, json_options_file, wdl_dependencies_file, cromwell, dryrun=False):
