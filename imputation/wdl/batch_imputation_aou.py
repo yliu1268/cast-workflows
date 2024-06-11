@@ -22,16 +22,12 @@ import shutil
 import subprocess
 import sys
 import tempfile
-import csv
 from utils import MSG, ERROR
 
 def GetFileBatches(sample_file,batch_num=-1):
-	with open(sample_file, newline='') as csvfile:
-    # Create a CSV reader
-		reader = csv.reader(csvfile) 
-    # Extract the first two items from each row
-		for row in reader:
-			sample_batch = row[:batch_num]
+	with open(sample_file, "r") as f:
+		for line in f:
+			sample_batch = line[:batch_num]
 	print(sample_batch)
 	return sample_batch
 
