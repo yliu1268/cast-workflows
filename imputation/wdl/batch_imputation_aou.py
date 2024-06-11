@@ -162,7 +162,7 @@ def main():
 		UploadGS(args.vcf + ".tbi", vcf_gcs)
 
 	# set up batches of file
-	#sample_batch = GetFileBatches(samples,args.batch_num)
+	sample_batch = GetFileBatches(samples,args.batch_num)
 
 	# Upload subset sample file
 	#if args.samples.startswith("gs://"):
@@ -187,7 +187,7 @@ def main():
 	json_dict["batch_imputation.GOOGLE_PROJECT"] = project
 	json_dict["batch_imputation.mem"] = args.mem
 	json_dict["batch_imputation.window_size"] = args.window
-	json_dict["batch_imputation.samples"] = samples 
+	json_dict["batch_imputation.samples"] = sample_batch 
 	json_dict["batch_imputation.region"] = args.region
 	json_dict["batch_imputation.subset_region"] = args.subset_region 
 	json_dict["batch_imputation.beagle_region"] =args.beagle_region
