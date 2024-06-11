@@ -24,12 +24,12 @@ import sys
 import tempfile
 from utils import MSG, ERROR
 
-def GetFileBatches(sample_file,batch_num=-1):
-	with open(sample_file, "r") as f:
-		for line in f:
-			sample_batch = line[:batch_num]
-	print(sample_batch)
-	return sample_batch
+#def GetFileBatches(sample_file,batch_num=-1):
+#	with open(sample_file, "r") as f:
+#		for line in f:
+#			sample_batch = line[:batch_num]
+#	print(sample_batch)
+#	return sample_batch
 
 
 def RunWorkflow(json_file, json_options_file, wdl_dependencies_file, cromwell, dryrun=False):
@@ -119,7 +119,7 @@ def main():
 	parser.add_argument("--beagle-region", help="Apply chrom for beagle", action="store_true",required=False)
 	parser.add_argument("--subset-region", help="Subsetting region for vcf file", action="store_true",required=False)
 	parser.add_argument("--dryrun", help="Don't actually run the workflow. Just set up", action="store_true")
-	parser.add_argument("--batch-num", help="Number of batches. Default: -1 (all)",type=int, required=False, default=-1)
+	#parser.add_argument("--batch-num", help="Number of batches. Default: -1 (all)",type=int, required=False, default=-1)
 	parser.add_argument("--cromwell", help="Run using cormwell as opposed to the default cromshell",
                             action="store_true", default=False)
 
@@ -153,7 +153,7 @@ def main():
 		UploadGS(args.vcf + ".tbi", vcf_gcs)
 
 	# set up batches of file
-	sample_batch = GetFileBatches(samples,args.batch_num)
+	#sample_batch = GetFileBatches(samples,args.batch_num)
 
 	# Upload subset sample file
 	#if args.samples.startswith("gs://"):
@@ -178,11 +178,11 @@ def main():
 	json_dict["batch_imputation.GOOGLE_PROJECT"] = project
 	json_dict["batch_imputation.mem"] = args.mem
 	json_dict["batch_imputation.window_size"] = args.window
-	json_dict["batch_imputation.samples"] = sample_batch 
+	json_dict["batch_imputation.samples"] = samples 
 	json_dict["batch_imputation.region"] = args.region
 	json_dict["batch_imputation.subset_region"] = args.subset_region 
 	json_dict["batch_imputation.beagle_region"] =args.beagle_region
-	json_dict["batch_imputation.batch_num"] = args.batch_num
+	#json_dict["batch_imputation.batch_num"] = args.batch_num
 
 
 	
