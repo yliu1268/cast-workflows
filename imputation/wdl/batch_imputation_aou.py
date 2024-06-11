@@ -22,24 +22,27 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import csv
 from utils import MSG, ERROR
 
 def GetFileBatches(sample_file,batch_num=-1):
-	# Keep track of batches
-	cram_batches = []
-	# Crams/indices in current batch
-	curr_batch = []
-	with open(sample_file, "r") as f:
-		for line in f:
-			# Add this cram to the current batch
-			sample_batch = line.line.strip().split(",")
-	# Add any leftovers
-	if len(curr_batch) > 0 and \
-		(len(cram_batches)<batch_num or batch_num==-1):
-		cram_batches.append(curr_batch)
 
-	return cram_batches
 
+# Define the number of lines to extract
+	n = 5  # Change this number as needed
+
+# Open the CSV file
+	with open('sample_file', newline='') as f:
+		# Create a CSV reader
+		reader = csv.reader(f)
+		# Initialize an empty list to store the extracted lines
+		sample_batch = []
+		# Read the first n lines
+		for i, row in enumerate(reader):
+			if i >= batch_num:
+				break
+			sample_batch.append(row)
+		return sample_batch
 
 def RunWorkflow(json_file, json_options_file, wdl_dependencies_file, cromwell, dryrun=False):
 	"""
