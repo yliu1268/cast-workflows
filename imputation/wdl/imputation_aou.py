@@ -40,7 +40,7 @@ def GetVCFBatches(file_list, batch_size, batch_num=-1, gsprefix=None):
 		with open(batch_file, 'w') as f_out:
 			f_out.writelines(lines[start:end])
 	
-	print(f"Split into {batch_num} chunks.")
+	print(f"Split into {batch_num} batches.")
 	return [ f"sample_batch{i}.txt" for i in range(batch_num)]
 
 

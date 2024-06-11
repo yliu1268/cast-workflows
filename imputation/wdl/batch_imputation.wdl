@@ -1,6 +1,6 @@
 version 1.0
 
-import "imputation.wdl" as imputation_single
+import "imputation.wdl" as imputation
 
 workflow batch_imputation {
 	input {
@@ -22,13 +22,12 @@ workflow batch_imputation {
     ### Call subsetting samples with batches ###
 
     Boolean using_batch_files = (length(samples)>0)
-    Int num_batches = if using_batch_files
-            then length(samples)
+    Int num_batches = length(samples)
     scatter (i in range(length(samples))) {
             File sample = samples [i]
-        call imputation_single.subset_vcf as imputation_batch_sample {
+        call imputation.subset_vcf as imputation_batch_sample {
             input:
-                sample_file=sample,
+                samples=sample,
                 region=region,
                 vcf=vcf,
                 vcf_index=vcf_index,
@@ -39,12 +38,12 @@ workflow batch_imputation {
         }
     
 
-        call imputation_single.index_vcf as index_vcf{
+        call imputation.index_vcf as index_vcf{
             input:
                 vcf=imputation_batch_sample.outfile
         }
 
-        call imputation_single.beagle as beagle{
+        call imputation.beagle as beagle{
             input: 
                 vcf=index_vcf.outvcf, 
                 vcf_index=index_vcf.outvcf_index,
@@ -57,7 +56,7 @@ workflow batch_imputation {
                 region=region
         }
 
-        call imputation_single.sort_index_beagle as sort_index_beagle {
+        call imputation.sort_index_beagle as sort_index_beagle {
             input:
                 vcf=beagle.outfile
         }

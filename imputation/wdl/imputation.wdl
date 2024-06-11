@@ -82,7 +82,7 @@ task subset_vcf {
         # Batch process samples file
         sample_input=~{sep=',' samples}
         if [[ "~{using_batch_files}" == true ]] ; then
-            sample_input=$(paste -sd, ~{sample_file})
+            sample_input=$(paste -sd, ~{samples})
         fi
 
         # Subsetting region for each chromesome
