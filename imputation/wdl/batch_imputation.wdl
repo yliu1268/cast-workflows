@@ -44,8 +44,8 @@ workflow batch_imputation {
 
         
         output {
-            File outfile = merge_vcf.outvcf 
-            File outfile_index = merge_vcf.outvcf_index
+            File finalvcf = merge_vcf.outvcf 
+            File finalvcf_index = merge_vcf.outvcf_index
         }
             
         
@@ -58,9 +58,10 @@ task merge_vcf {
         String out_prefix
     }
 
+    
     command <<<
-        bcftools merge ${sep=' ' vcfs} -O z -o ${out_prefix}.merged.vcf.gz
-        tabix -p vcf ${out_prefix}.merged.vcf.gz
+        bcftools merge ~{sep=' ' vcfs} -O z -o ~{out_prefix}.merged.vcf.gz
+        tabix -p vcf ~{out_prefix}.merged.vcf.gz
 
     >>>
 
