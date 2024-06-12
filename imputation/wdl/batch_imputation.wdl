@@ -47,6 +47,9 @@ workflow batch_imputation {
             File finalvcf = merge_vcf.outvcf 
             File finalvcf_index = merge_vcf.outvcf_index
         }
+        meta {
+            description: "This workflow run imputation on batches of sample on a single chromosome with default parameters"
+    }
             
         
 }
