@@ -8,6 +8,7 @@ example code to impute 10 samples at CBL region
 --name batch_test 
 --vcf gs://fc-aou-datasets-controlled/v7/wgs/short_read/snpindel/acaf_threshold_v7.1/vcf/acaf_threshold.chr21.vcf.bgz \
 --ref-panel $WORKSPACE_BUCKET/tr_imputation/tr_imputation/ref/chr21_final_SNP_merged_additional_TRs.bref3 \
+--ref $WORKSPACE_BUCKET/tr_imputation/tr_imputation/ref/chr21_final_SNP_merged_additional_TRs.vcf.gz \
 --mem 120 \
 --batch-num 2
 """
