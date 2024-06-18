@@ -1,12 +1,15 @@
 version 1.0
 
 import "imputation.wdl" as imputation_t
+import "processTR.wdl" as processTR_t
+import "merge_batch.wdl" as merge_batch_t
 
 workflow batch_imputation {
         input {
                 String vcf 
                 String vcf_index 
                 File ref_panel
+                File ref
                 String out_prefix
                 String GOOGLE_PROJECT = ""
                 Int? mem 
@@ -15,6 +18,8 @@ workflow batch_imputation {
                 Boolean subset_region = false
                 Boolean beagle_region = false
                 Array[File] samples = []
+                File header_file
+
         }
     ### Call subsetting samples with batches ###
         Int num_batches = length(samples)
@@ -34,46 +39,31 @@ workflow batch_imputation {
                         mem=mem,
                         window_size=window_size
                 }
+                call processTR_t.processTR as processTR {
+                    input:
+                        vcf=run_imputation.outfile,
+                        vcf_index=run_imputation.outfile_index,
+                        ref=ref,
+                        out_prefix=out_prefix,
+                        header_file=header_file
+
+                }
         }
-        call merge_vcf {
+        call merge_batch_t.merge_batch as merge_batch {
             input:
-                vcfs=run_imputation.outfile,
-                vcfs_index=run_imputation.outfile_index,
+                vcfs=processTR.outfile,
+                vcfs_index=processTR.outfile_index,
                 out_prefix=out_prefix
         }
-
-        
+     
         output {
-            File finalvcf = merge_vcf.outvcf 
-            File finalvcf_index = merge_vcf.outvcf_index
+            File finalvcf = merge_batch.outfile 
+            File finalvcf_index = merge_batch.outfile_index
         }
         meta {
-            description: "This workflow run imputation on batches of sample on a single chromosome with default parameters"
+            description: "This workflow run imputation on batches of sample, extract TRs and merge across a single chromosome with default parameters "
     }
             
         
 }
 
-task merge_vcf {
-    input {
-        Array[File] vcfs
-        Array[File] vcfs_index
-        String out_prefix
-    }
-
-    
-    command <<<
-        bcftools merge ~{sep=' ' vcfs} -O z -o ~{out_prefix}.merged.vcf.gz
-        tabix -p vcf ~{out_prefix}.merged.vcf.gz
-
-    >>>
-
-    runtime {
-        docker:"gcr.io/ucsd-medicine-cast/bcftools-gcs:latest"
-    }
-    
-    output {
-        File outvcf = "${out_prefix}.merged.vcf.gz"
-        File outvcf_index = "${out_prefix}.merged.vcf.gz.tbi"
-    }
-}

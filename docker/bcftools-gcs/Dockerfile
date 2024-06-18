@@ -19,7 +19,9 @@ RUN apt-get update && DEBIAN_FRONTEND="noninteractive" apt-get install -qqy \
 
 # copy bash script
 COPY subset_vcf.sh /usr/bin/
+COPY trtools_prep_beagle_vcf.sh /usr/bin/
 RUN chmod +x /usr/bin/subset_vcf.sh
+RUN chmod +x /usr/bin/trtools_prep_beagle_vcf.sh
 
 
 # Make sources directory

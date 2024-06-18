@@ -101,7 +101,7 @@ def ZipWDL(wdl_dependencies_file):
 	wdl_dependencies_fie : str
 	    Zip file to put other wdls in
 	"""
-	files = ["imputation.wdl"]
+	files = ["imputation.wdl","processTR.wdl","merge_batch.wdl"]
 	dirname = tempfile.mkdtemp()
 	for f in files:
 		shutil.copyfile("../wdl/%s"%f, dirname+"/"+f)
@@ -116,12 +116,14 @@ def main():
 	parser.add_argument("--mem", help="Specify run memory ", type=int, required=False, default=32)
 	parser.add_argument("--window", help="Specify window size for imputation ", type=int, required=False, default=20)
 	parser.add_argument("--samples", help="List of samples to process ", type=str, required=False, \
-					 default="gs://fc-secure-f6524c24-64d9-446e-8643-415440f52b46/tr_imputation/tr_imputation/sample/sample_manifest.txt")
+					 default="$bucket/tr_imputation/tr_imputation/sample/sample_manifest.txt")
 	parser.add_argument("--region", help="Name of chrom position  chr:xxx-xxx", type=str,required=False)
 	parser.add_argument("--beagle-region", help="Apply chrom for beagle", action="store_true",required=False)
 	parser.add_argument("--subset-region", help="Subsetting region for vcf file", action="store_true",required=False)
 	parser.add_argument("--dryrun", help="Don't actually run the workflow. Just set up", action="store_true")
 	parser.add_argument("--batch-num", help="Number of batches. Default: -1 (all)",type=int, required=False, default=-1)
+	parser.add_argument("--header-file", help="Add hipstr header",type=str, required=False, \
+					 default="$bucket/tr_imputation/tr_imputation/header_annotation.txt")
 	parser.add_argument("--cromwell", help="Run using cormwell as opposed to the default cromshell",
                             action="store_true", default=False)
 
@@ -184,6 +186,7 @@ def main():
 	json_dict["batch_imputation.region"] = args.region
 	json_dict["batch_imputation.subset_region"] = args.subset_region 
 	json_dict["batch_imputation.beagle_region"] =args.beagle_region
+	json_dict["batch_imputation.header_file"] =args.header_file
 
 
 
