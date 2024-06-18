@@ -76,7 +76,7 @@ task prep_beagle_vcf {
     >>>
 
     runtime {
-        docker:"gcr.io/ucsd-medicine-cast/vcfutils:latest"
+        docker:"gcr.io/ucsd-medicine-cast/bcftools-gcs:latest"
     }
 
     output {
