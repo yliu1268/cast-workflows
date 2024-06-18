@@ -41,7 +41,8 @@ workflow batch_imputation {
                         out_prefix=out_prefix+".BATCH"+i,
                         mem=mem,
                         window_size=window_size
-                }
+        
+                ## extract TR from batches of beagle output
                 call processTR_t.processTR as processTR {
                     input:
                         vcf=run_imputation.outfile,
@@ -52,7 +53,7 @@ workflow batch_imputation {
                         header_file=header_file
 
                 }
-
+                ## extract SNP from batches of beagle output
                 call processSNP_t.processSNP as processSNP {
                     input:
                         vcf=run_imputation.outfile,
@@ -61,6 +62,8 @@ workflow batch_imputation {
 
                 }
         }
+
+        ## use MergeSTR to merge TR
         call merge_batch_t.merge_batch as merge_batch {
             input:
                 vcfs=processTR.outfile,
@@ -68,6 +71,7 @@ workflow batch_imputation {
                 out_prefix=out_prefix
         }
 
+        ## use bcftools to merge SNP
         call merge_SNP {
             input:
                 vcfs=processSNP.outfile,
