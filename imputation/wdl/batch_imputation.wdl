@@ -2,7 +2,9 @@ version 1.0
 
 import "imputation.wdl" as imputation_t
 import "processTR.wdl" as processTR_t
+import "processSNP.wdl" as processSNP_t
 import "merge_batch.wdl" as merge_batch_t
+
 
 workflow batch_imputation {
         input {
@@ -50,6 +52,14 @@ workflow batch_imputation {
                         header_file=header_file
 
                 }
+
+                call processSNP_t.processSNP as processSNP {
+                    input:
+                        vcf=run_imputation.outfile,
+                        vcf_index=run_imputation.outfile_index,
+                        out_prefix=out_prefix
+
+                }
         }
         call merge_batch_t.merge_batch as merge_batch {
             input:
@@ -57,15 +67,45 @@ workflow batch_imputation {
                 vcfs_index=processTR.outfile_index,
                 out_prefix=out_prefix
         }
-     
+
+        call merge_SNP {
+            input:
+                vcfs=processSNP.outfile,
+                vcfs_index=processSNP.outfile_index,
+                out_prefix=out_prefix
+
+        }
+
         output {
-            File finalvcf = merge_batch.outfile 
-            File finalvcf_index = merge_batch.outfile_index
+            File trvcf = merge_batch.outfile 
+            File trvcf_index = merge_batch.outfile_index
+            File snpvcf = merge_SNP.outvcf 
+            File snpvcf_index = merge_SNP.outvcf_index
         }
         meta {
             description: "This workflow run imputation on batches of sample, extract TRs and merge across a single chromosome with default parameters "
     }
-            
-        
+                   
 }
 
+task merge_SNP {
+    input {
+        Array [File] vcfs
+        Array [File] vcfs_index
+        String out_prefix
+    }
+
+    command <<<
+        bcftools merge ~{sep=',' vcfs} -Oz -o ~{out_prefix}_merged_SNP.vcf.gz
+        tabix -p vcf ~{out_prefix}_merged_SNP.vcf.gz
+    >>>
+
+    runtime {
+        docker:"gcr.io/ucsd-medicine-cast/bcftools-gcs:latest"
+    }
+
+    output {
+        File outvcf = "${out_prefix}_merged_SNP.vcf.gz"
+        File outvcf_index = "${out_prefix}_merged_SNP.vcf.gz.tbi"
+    }
+}
