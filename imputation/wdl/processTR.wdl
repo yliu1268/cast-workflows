@@ -70,6 +70,7 @@ task prep_beagle_vcf {
         String vcf
         String vcf_index
         File ref
+        File ref_index
         String out_prefix
     }
     command <<<
