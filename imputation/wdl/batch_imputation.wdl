@@ -10,6 +10,7 @@ workflow batch_imputation {
                 String vcf_index 
                 File ref_panel
                 File ref
+                File ref_index
                 String out_prefix
                 String GOOGLE_PROJECT = ""
                 Int? mem 
@@ -44,6 +45,7 @@ workflow batch_imputation {
                         vcf=run_imputation.outfile,
                         vcf_index=run_imputation.outfile_index,
                         ref=ref,
+                        ref_index=ref_index,
                         out_prefix=out_prefix,
                         header_file=header_file
 

@@ -5,6 +5,7 @@ workflow processTR {
         String vcf
         String vcf_index
         File ref
+        File ref_index
         String out_prefix
         File header_file
 
@@ -25,6 +26,7 @@ workflow processTR {
             vcf=extract_TR.outvcf,
             vcf_index=extract_TR.outvcf_index,
             ref=ref,
+            ref_index=ref_index
             out_prefix=out_prefix
 
     }
