@@ -41,7 +41,7 @@ workflow batch_imputation {
                         out_prefix=out_prefix+".BATCH"+i,
                         mem=mem,
                         window_size=window_size
-        
+                }
                 ## extract TR from batches of beagle output
                 call processTR_t.processTR as processTR {
                     input:
