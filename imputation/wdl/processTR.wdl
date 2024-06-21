@@ -72,7 +72,7 @@ task prep_beagle_vcf {
         String out_prefix
     }
     command <<<
-        bash /usr/bin/trtools_prep_beagle_vcf.sh hipstr ~{ref} ~{vcf} ~{out_prefix}
+        bash /usr/bin/trtools_prep_beagle_vcf.sh hipstr ~{ref} ~{vcf} ~{out_prefix}_converted_TR.vcf.gz
 
     >>>
 
