@@ -102,7 +102,7 @@ def ZipWDL(wdl_dependencies_file):
 	wdl_dependencies_fie : str
 	    Zip file to put other wdls in
 	"""
-	files = ["imputation.wdl","processTR.wdl","processSNP.wdl","merge_batch.wdl"]
+	files = ["imputation.wdl","processTR.wdl","processSNP.wdl","merge_TR_batch.wdl","merge_SNP_batch.wdl"]
 	dirname = tempfile.mkdtemp()
 	for f in files:
 		shutil.copyfile("../wdl/%s"%f, dirname+"/"+f)
