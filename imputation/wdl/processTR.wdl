@@ -2,16 +2,14 @@ version 1.0
 
 workflow processTR {
     input {
-        String vcf
-        String vcf_index
+        File vcf
+        File vcf_index
         File ref
         File ref_index
         String out_prefix
         File header_file
 
     }
-
-
 
     call extract_TR {
         input:
@@ -44,8 +42,8 @@ workflow processTR {
 
 task extract_TR {
     input {
-        String vcf
-        String vcf_index
+        File vcf
+        File vcf_index
         String out_prefix
         File header_file
     }
@@ -67,8 +65,8 @@ task extract_TR {
 }
 task prep_beagle_vcf {
     input {
-        String vcf
-        String vcf_index
+        File vcf
+        File vcf_index
         File ref
         File ref_index
         String out_prefix

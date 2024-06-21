@@ -2,8 +2,8 @@ version 1.0
 
 workflow processSNP {
     input {
-        String vcf
-        String vcf_index
+        File vcf
+        File vcf_index
         String out_prefix
     }
 
@@ -27,8 +27,8 @@ workflow processSNP {
 
 task extract_SNP {
     input {
-        String vcf
-        String vcf_index
+        File vcf
+        File vcf_index
         String out_prefix
     }
 
