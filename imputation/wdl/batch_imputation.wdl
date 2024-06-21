@@ -80,11 +80,16 @@ workflow batch_imputation {
 
         }
 
+        call sort_index {
+            input:
+                vcf=merge_SNP.outfile
+        }
+
         output {
             File trvcf = merge_batch.outfile 
             File trvcf_index = merge_batch.outfile_index
-            File snpvcf = merge_SNP.outvcf 
-            File snpvcf_index = merge_SNP.outvcf_index
+            File snpvcf = sort_index.outvcf 
+            File snpvcf_index = sort_index.outvcf_index
         }
         meta {
             description: "This workflow run imputation on batches of sample, extract TRs and merge across a single chromosome with default parameters "
@@ -100,8 +105,7 @@ task merge_SNP {
     }
 
     command <<<
-        bcftools merge ~{sep=',' vcfs} -Oz -o ~{out_prefix}_merged_SNP.vcf.gz
-        tabix -p vcf ~{out_prefix}_merged_SNP.vcf.gz
+        bcftools merge ~{sep=',' vcfs} -o ~{out_prefix}_merged_SNP.vcf
     >>>
 
     runtime {
@@ -109,7 +113,27 @@ task merge_SNP {
     }
 
     output {
-        File outvcf = "${out_prefix}_merged_SNP.vcf.gz"
-        File outvcf_index = "${out_prefix}_merged_SNP.vcf.gz.tbi"
+        File outfile = "${out_prefix}_merged_SNP.vcf"
     }
+}
+
+task sort_index {
+	input {
+		File vcf
+	}
+
+	String basename = basename(vcf, ".vcf")
+
+	command <<<
+		vcf-sort ~{vcf} | bgzip -c > ~{basename}.sorted.vcf.gz && tabix -p vcf ~{basename}.sorted.vcf.gz
+	>>>
+
+	runtime {
+        docker:"gcr.io/ucsd-medicine-cast/vcfutils:latest"
+    }
+
+	output {
+		File outvcf = "${basename}.sorted.vcf.gz"
+		File outvcf_index = "${basename}.sorted.vcf.gz.tbi"
+	}
 }
