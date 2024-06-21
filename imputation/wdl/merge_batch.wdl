@@ -57,8 +57,7 @@ task index_vcf {
     String basename = basename(vcf, ".vcf")
 
     command <<<
-        bgzip ~{vcf} > ~{basename}.vcf.gz 
-        tabix -p vcf ~{basename}.vcf.gz
+        vcf-sort ~{vcf} | bgzip -c > ~{basename}.sorted.vcf.gz && tabix -p vcf ~{basename}.sorted.vcf.gz
       
     >>>
 
@@ -67,7 +66,7 @@ task index_vcf {
     }
 
     output {
-    File outvcf = "${basename}.vcf.gz"
-    File outvcf_index = "${basename}.vcf.gz.tbi"
+    File outvcf = "${basename}.sorted.vcf.gz"
+    File outvcf_index = "${basename}.sorted.vcf.gz.tbi"
   }
 }
