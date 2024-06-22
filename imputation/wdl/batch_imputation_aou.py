@@ -24,16 +24,24 @@ import tempfile
 import csv
 from utils import MSG, ERROR
 
-def GetFileBatches(sample_list, batch_num=-1):
-	sample_batch = []
-# Open txt file
-	with open(sample_list, "r") as f:
-		  # Read the first n lines
-		for _ in range(batch_num):
-			line = f.readline().strip()  # Read and strip newline character
-			if line:  # Check if the line is not empty
-				sample_batch.append(line)
-		return sample_batch
+def GetFileBatches(sample_list, batch_num=None):
+    sample_batch = []
+    
+    # Open txt file
+    with open(sample_list, "r") as f:
+        if batch_num is None:
+            # Read all lines if batch_num is None
+            sample_batch = f.readlines()
+        else:
+            # Read the first batch_num lines
+            for _ in range(batch_num):
+                line = f.readline().strip()  # Read and strip newline character
+                if line:  # Check if the line is not empty
+                    sample_batch.append(line)
+                else:
+                    break  # Exit the loop if there are no more lines
+    
+    return sample_batch
 
 def RunWorkflow(json_file, json_options_file, wdl_dependencies_file, cromwell, dryrun=False):
 	"""
@@ -124,7 +132,7 @@ def main():
 	parser.add_argument("--beagle-region", help="Apply chrom for beagle", action="store_true",required=False)
 	parser.add_argument("--subset-region", help="Subsetting region for vcf file", action="store_true",required=False)
 	parser.add_argument("--dryrun", help="Don't actually run the workflow. Just set up", action="store_true")
-	parser.add_argument("--batch-num", help="Number of batches. Default: -1 (all)",type=int, required=False, default=-1)
+	parser.add_argument("--batch-num", help="Number of batches. Default: -1 (all)",type=int, required=False, default=None)
 	parser.add_argument("--header-file", help="Add hipstr header",type=str, required=False, \
 					 default="gs://fc-secure-f6524c24-64d9-446e-8643-415440f52b46/tr_imputation/tr_imputation/header_annotation.txt")
 	parser.add_argument("--cromwell", help="Run using cormwell as opposed to the default cromshell",
