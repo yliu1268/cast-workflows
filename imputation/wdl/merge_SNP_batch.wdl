@@ -38,7 +38,7 @@ task mergeSNP  {
 
     command <<<
 
-        bcftools merge ~{sep=',' vcfs} -o ~{out_prefix}_merged_SNP.vcf
+        bcftools merge ~{sep=' ' vcfs} -o ~{out_prefix}_merged_SNP.vcf
     >>>
 
     runtime {
