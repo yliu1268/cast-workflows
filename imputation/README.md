@@ -74,7 +74,10 @@ cromshell list-outputs $JOBID
 --mem 100 \
 --ref $WORKSPACE_BUCKET/tr_imputation/tr_imputation/ref/chr21_final_SNP_merged_additional_TRs.vcf.gz 
 
-
 ```
 
-
+## To check on status on your run
+```
+cromshell logs -s ALL -des $JOBID (use -des for descriptive log info)
+cromshell logs -s Failed -des $JOBID
+```
