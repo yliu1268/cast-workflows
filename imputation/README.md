@@ -24,7 +24,8 @@ In all cases you'll have to run the following steps in the AoU workbench before 
 
 ```
 git clone https://github.com/cast-genomics/cast-workflows/
-cd cast-workflows/targetTR/launch_aou
+git checkout batch_imputation2
+cd cast-workflows/imputation
 ./configure-cromshell.py
 ```
 
