@@ -86,6 +86,8 @@ task subset_vcf {
 
     runtime {
         docker:"gcr.io/ucsd-medicine-cast/bcftools-gcs:latest"
+        maxRetries: 3
+        preemptible: 3
     }
 
     output {
@@ -107,6 +109,7 @@ task index_vcf {
 
     runtime {
         docker:"gcr.io/ucsd-medicine-cast/vcfutils:latest"
+
     }
 
     output {
@@ -152,8 +155,6 @@ task beagle {
     runtime {
         docker:"gcr.io/ucsd-medicine-cast/beagle:latest"
 	    memory: mem + "GB"
-        maxRetries: 3
-        preemptible: 3
     }
 
     output {
