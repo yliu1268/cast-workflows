@@ -66,8 +66,6 @@ cromshell list-outputs $JOBID
 
 ## Run a full job on all samples
 
-The above runs the test TR provided in `test.bed` all samples. You will need to change the `--tr-bed` file and `--name` options according to your run.
-
 ```
 ./batch_imputation_aou.py \
 --name batch2_test \
