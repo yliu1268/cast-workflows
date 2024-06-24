@@ -8,4 +8,4 @@ for i in {1..21}: do
     count_snp=$(bcftools view -i 'ID!="."' $vcf |grep -v "^#" | wc -l)
     count_tr=$(bcftools view -i 'ID="."' $vcf |grep -v "^#" | wc -l)
 
-    echo "${chr}\t${count_snp}\t${count_tr} >> ${ref}
+    echo -e "${chr}\t${count_snp}\t${count_tr} >> ${ref}
