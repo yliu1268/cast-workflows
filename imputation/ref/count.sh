@@ -2,8 +2,10 @@
 ref="ref_panel_summary.txt"
 echo "chr,snp,tr" | sed 's/,/\t/g' > ${ref}
 
-for chr in {chr1..chr22}; do
-    vcf="$chr_final_SNP_merged_additional_TRs.vcf.gz"
+
+for (( i=1; i<=22; i++ )); do
+    chr="chr$i"
+    vcf="${chr}_final_SNP_merged_additional_TRs.vcf.gz"
     count_snp=$(bcftools view -i 'ID!="."' $vcf |grep -v "^#" | wc -l)
     count_tr=$(bcftools view -i 'ID="."' $vcf |grep -v "^#" | wc -l)
 
