@@ -8,3 +8,5 @@ for chr in {chr1..chr22}; do
     count_tr=$(bcftools view -i 'ID="."' $vcf |grep -v "^#" | wc -l)
 
     echo -e "${chr}\t${count_snp}\t${count_tr}" >> ${ref}
+
+done
