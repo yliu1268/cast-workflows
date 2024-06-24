@@ -1,5 +1,6 @@
 #!/bin/bash
 
+#./download_vcf.sh chr1
 # Define the base URL where files are located
 url="https://ensemble-tr.s3.us-east-2.amazonaws.com/additional-phased-trs/"
 gcs="$WORKSPACE_BUCKET/tr_imputation/tr_imputation/ref/"
