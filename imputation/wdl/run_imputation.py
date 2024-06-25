@@ -3,17 +3,16 @@
 Script to launch AOU imputation use new ref panel 
 
 example code to impute 100 samples 
+
+
 ./run_imputation.py \
---name test_imputation 
+--name test_10_sample_region \
 --vcf gs://fc-aou-datasets-controlled/v7/wgs/short_read/snpindel/acaf_threshold_v7.1/vcf/acaf_threshold.chr21.vcf.bgz \
 --ref-panel $WORKSPACE_BUCKET/tr_imputation/tr_imputation/ref/chr21_final_SNP_merged_additional_TRs.bref3 \
---samples $WORKSPACE_BUCKET/tr_imputation/tr_imputation/subset_samples/aou_subset_samples_100.txt \
---region chr21:5101889-6101889
---subset_region
---mem 30
+--samples $WORKSPACE_BUCKET/tr_imputation/tr_imputation/subset_samples/aou_subset_samples_10.txt \
+--region chr21:5101889-5401889 --subset-region --mem 20
+
 """
-
-
 
 
 
