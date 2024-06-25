@@ -108,12 +108,12 @@ def main():
 		UploadGS(args.vcf + ".tbi", vcf_gcs)
 
 	# Upload subset sample file
-	if args.sample_file.startswith("gs://"):
-		sample_file = args.sample_file
+	if args.samples.startswith("gs://"):
+		sample_file = args.samples
 	else:
 				# Copying the exclude sample file
 		sample_file = output_bucket + "/" + args.name + "/"
-		UploadGS(args.sample_file, sample_file)
+		UploadGS(args.samples, sample_file)
 
 
 	if args.subset_region and args.region is None:
