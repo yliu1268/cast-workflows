@@ -88,6 +88,11 @@ workflow batch_imputation {
             File snpvcf = merge_SNP_batch.outfile
             File snpvcf_index = merge_SNP_batch.outfile_index
         }
+
+        runtime {
+            disks: "local-disk 20 SSD"
+        }
+
         meta {
             description: "This workflow run imputation on batches of sample, extract TRs and merge across a single chromosome with default parameters "
     }
