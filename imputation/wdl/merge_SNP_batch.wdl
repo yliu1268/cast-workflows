@@ -43,6 +43,8 @@ task mergeSNP  {
 
     runtime {
         docker:"gcr.io/ucsd-medicine-cast/bcftools-gcs:latest"
+        disks: "local-disk 20 SSD"
+
     }
 
     output {

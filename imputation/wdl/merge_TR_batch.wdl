@@ -43,6 +43,7 @@ task mergeSTR {
     
     runtime {
         docker: "gcr.io/ucsd-medicine-cast/trtools-6.0.1:latest"
+        disks: "local-disk 20 SSD"
     }
     output {
         File outfile = "${out_prefix}_merged.vcf"
