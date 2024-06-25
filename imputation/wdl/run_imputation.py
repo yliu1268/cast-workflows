@@ -3,7 +3,7 @@
 Script to launch AOU imputation use new ref panel 
 
 example code to impute 100 samples 
-./imputation_aou.py \
+./run_imputation.py \
 --name test_imputation 
 --vcf gs://fc-aou-datasets-controlled/v7/wgs/short_read/snpindel/acaf_threshold_v7.1/vcf/acaf_threshold.chr21.vcf.bgz \
 --ref-panel $WORKSPACE_BUCKET/tr_imputation/tr_imputation/ref/chr21_final_SNP_merged_additional_TRs.bref3 \
@@ -123,16 +123,16 @@ def main():
 
 	# Set up workflow JSON
 	json_dict = {}
-	json_dict["imputation.vcf"] = args.vcf
-	json_dict["imputation.vcf_index"]=args.vcf+".tbi"
-	json_dict["imputation.ref_panel"] = args.ref_panel
-	json_dict["imputation.out_prefix"] = args.name
-	json_dict["imputation.GOOGLE_PROJECT"] = project
-	json_dict["imputation.mem"] = args.mem
-	json_dict["imputation.window_size"] = args.window
-	json_dict["imputation.sample_file"] = args.sample_file 
-	json_dict["imputation.region"] = args.region
-	json_dict["imputation.subset_region"] = args.subset_region 
+	json_dict["run_imputation.vcf"] = args.vcf
+	json_dict["run_imputation.vcf_index"]=args.vcf+".tbi"
+	json_dict["run_imputation.ref_panel"] = args.ref_panel
+	json_dict["run_imputation.out_prefix"] = args.name
+	json_dict["run_imputation.GOOGLE_PROJECT"] = project
+	json_dict["run_imputation.mem"] = args.mem
+	json_dict["run_imputation.window_size"] = args.window
+	json_dict["run_imputation.sample_file"] = args.sample_file 
+	json_dict["run_imputation.region"] = args.region
+	json_dict["run_imputation.subset_region"] = args.subset_region 
 	
 
 
