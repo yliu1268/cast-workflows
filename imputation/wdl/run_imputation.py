@@ -7,7 +7,7 @@ example code to impute 100 samples
 --name test_imputation 
 --vcf gs://fc-aou-datasets-controlled/v7/wgs/short_read/snpindel/acaf_threshold_v7.1/vcf/acaf_threshold.chr21.vcf.bgz \
 --ref-panel $WORKSPACE_BUCKET/tr_imputation/tr_imputation/ref/chr21_final_SNP_merged_additional_TRs.bref3 \
---samples-file $WORKSPACE_BUCKET/tr_imputation/tr_imputation/subset_samples/aou_subset_samples_100.txt \
+--samples $WORKSPACE_BUCKET/tr_imputation/tr_imputation/subset_samples/aou_subset_samples_100.txt \
 --region chr21:5101889-6101889
 --subset_region
 --mem 30
@@ -75,7 +75,7 @@ def main():
 	parser.add_argument("--ref-panel", help="File id of ref genome", type=str)
 	parser.add_argument("--mem", help="Specify run memory ", type=int, required=False, default=32)
 	parser.add_argument("--window", help="Specify window size for imputation ", type=int, required=False, default=20)
-	parser.add_argument("--sample-file", help="Name of sub_samples file ", type=str, required=True)
+	parser.add_argument("--samples", help="Name of sub_samples file ", type=str, required=True)
 	parser.add_argument("--region", help="Name of chrom position  chr:xxx-xxx", type=str,required=False)
 	parser.add_argument("--beagle-region", help="Apply chrom for beagle", action="store_true",required=False)
 	parser.add_argument("--subset-region", help="Subsetting region for vcf file", action="store_true",required=False)
@@ -130,7 +130,7 @@ def main():
 	json_dict["run_imputation.GOOGLE_PROJECT"] = project
 	json_dict["run_imputation.mem"] = args.mem
 	json_dict["run_imputation.window_size"] = args.window
-	json_dict["run_imputation.sample_file"] = args.sample_file 
+	json_dict["run_imputation.sample"] = args.samples
 	json_dict["run_imputation.region"] = args.region
 	json_dict["run_imputation.subset_region"] = args.subset_region 
 	
