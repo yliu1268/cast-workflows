@@ -14,14 +14,14 @@ workflow merge_batch {
             out_prefix=out_prefix
     }
 
-   # call index_vcf {
-   #     input:
-   #         vcf=mergeSTR.outfile
-   # }
+    call index_vcf {
+        input:
+            vcf=mergeSTR.outfile
+    }
 
     output {
-        File outfile = mergeSTR.outvcf 
-        File outfile_index = mergeSTR.outvcf_index
+        File outfile = index_vcf.outvcf 
+        File outfile_index = index_vcf.outvcf_index
     }
 
     meta {
@@ -38,7 +38,7 @@ task mergeSTR {
 
     command <<<
         mergeSTR --vcfs ~{sep=',' vcfs} --out ~{out_prefix}_merged --vcftype hipstr
-        vcf-sort ~{out_prefix}_merged.vcf | bgzip -c > ~{out_prefix}_merged.vcf.gz && tabix -p vcf ~{out_prefix}_merged.vcf.gz
+        
     >>>
     
     runtime {
@@ -46,29 +46,28 @@ task mergeSTR {
         disks: "local-disk 20 SSD"
     }
     output {
-        File outvcf = "${out_prefix}_merged.vcf.gz"
-        File outvcf_index = "${out_prefix}_merged.vcf.gz.tbi"
+        File outvcf = "${out_prefix}_merged.vcf"
     }
 
 }
 
-#task index_vcf {
-#    input {
-#      File vcf
-#    }
-#    String basename = basename(vcf, ".vcf")
-#
-#    command <<<
-#        vcf-sort ~{vcf} | bgzip -c > ~{basename}.sorted.vcf.gz && tabix -p vcf ~{basename}.sorted.vcf.gz
-#      
-#    >>>
-#
-#   runtime {
-#        docker:"gcr.io/ucsd-medicine-cast/vcfutils:latest"
-#    }
-#
-#   output {
-#    File outvcf = "${basename}.sorted.vcf.gz"
-#    File outvcf_index = "${basename}.sorted.vcf.gz.tbi"
-#  }
-#}
+task index_vcf {
+    input {
+      File vcf
+    }
+    String basename = basename(vcf, ".vcf")
+
+    command <<<
+        vcf-sort ~{vcf} | bgzip -c > ~{basename}.sorted.vcf.gz && tabix -p vcf ~{basename}.sorted.vcf.gz
+      
+    >>>
+
+   runtime {
+        docker:"gcr.io/ucsd-medicine-cast/vcfutils:latest"
+    }
+
+   output {
+    File outvcf = "${basename}.sorted.vcf.gz"
+    File outvcf_index = "${basename}.sorted.vcf.gz.tbi"
+  }
+}
