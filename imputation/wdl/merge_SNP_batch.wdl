@@ -14,14 +14,14 @@ workflow merge_SNP_batch {
             out_prefix=out_prefix
     }
 
-    call index_vcf {
-        input:
-            vcf=mergeSNP.outfile
-    }
+    #call index_vcf {
+    #    input:
+    #        vcf=mergeSNP.outfile
+    #}
 
     output {
-        File outfile = index_vcf.outvcf 
-        File outfile_index = index_vcf.outvcf_index
+        File outfile = mergeSNP.outvcf 
+        File outfile_index = mergeSNP.outvcf_index
     }
 
     meta {
@@ -38,7 +38,8 @@ task mergeSNP  {
 
     command <<<
 
-        bcftools merge ~{sep=' ' vcfs} -o ~{out_prefix}_merged_SNP.vcf
+        bcftools merge ~{sep=' ' vcfs} -Oz -o ~{out_prefix}_merged_SNP.vcf
+        tabix -p vcf ~{out_prefix}_merged_SNP.vcf
     >>>
 
     runtime {
@@ -48,28 +49,29 @@ task mergeSNP  {
     }
 
     output {
-        File outfile = "${out_prefix}_merged_SNP.vcf"
+        File outvcf = "${out_prefix}_merged_SNP.vcf.gz"
+        File outvcf_index = "${out_prefix}_merged_SNP.vcf.gz.tbi"
     }
 
 }
 
-task index_vcf {
-    input {
-      File vcf
-    }
-    String basename = basename(vcf, ".vcf")
-
-    command <<<
-        vcf-sort ~{vcf} | bgzip -c > ~{basename}.sorted.vcf.gz && tabix -p vcf ~{basename}.sorted.vcf.gz
-      
-    >>>
-
-    runtime {
-        docker:"gcr.io/ucsd-medicine-cast/vcfutils:latest"
-    }
-
-    output {
-    File outvcf = "${basename}.sorted.vcf.gz"
-    File outvcf_index = "${basename}.sorted.vcf.gz.tbi"
-  }
-}
+#task index_vcf {
+#    input {
+#      File vcf
+#    }
+#    String basename = basename(vcf, ".vcf")
+#
+#    command <<<
+#        vcf-sort ~{vcf} | bgzip -c > ~{basename}.sorted.vcf.gz && tabix -p vcf ~{basename}.sorted.vcf.gz
+#      
+#    >>>
+#
+#    runtime {
+#        docker:"gcr.io/ucsd-medicine-cast/vcfutils:latest"
+#    }
+#
+#    output {
+#    File outvcf = "${basename}.sorted.vcf.gz"
+#    File outvcf_index = "${basename}.sorted.vcf.gz.tbi"
+#  }
+#}
