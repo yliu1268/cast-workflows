@@ -38,8 +38,8 @@ task mergeSNP  {
 
     command <<<
 
-        bcftools merge ~{sep=' ' vcfs} -Oz -o ~{out_prefix}_merged_SNP.vcf
-        tabix -p vcf ~{out_prefix}_merged_SNP.vcf
+        bcftools merge ~{sep=' ' vcfs} -Oz -o ~{out_prefix}_merged_SNP.vcf.gz
+        tabix -p vcf ~{out_prefix}_merged_SNP.vcf.gz
     >>>
 
     runtime {
