@@ -62,12 +62,12 @@ task index_vcf {
       
     >>>
 
-   runtime {
+    runtime {
         docker:"gcr.io/ucsd-medicine-cast/vcfutils:latest"
     }
 
-   output {
+    output {
     File outvcf = "${basename}.sorted.vcf.gz"
     File outvcf_index = "${basename}.sorted.vcf.gz.tbi"
-  }
+    }
 }
