@@ -46,7 +46,7 @@ task mergeSTR {
         disks: "local-disk 20 SSD"
     }
     output {
-        File outvcf = "${out_prefix}_merged.vcf"
+        File outfile = "${out_prefix}_merged.vcf"
     }
 
 }
