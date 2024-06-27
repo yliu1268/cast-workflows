@@ -140,6 +140,7 @@ task beagle {
             gt=~{vcf} \
             ref=~{ref_panel} \
             window=~{window_size} \
+            ap=true \
             out=~{out_prefix}_output
         else
             java -Xmx~{mem}g -jar /beagle.jar \
@@ -147,6 +148,7 @@ task beagle {
             ref=~{ref_panel} \
             window=~{window_size} \
             chrom=~{region} \
+            ap=true \
             out=~{out_prefix}_output
         fi
     >>>
