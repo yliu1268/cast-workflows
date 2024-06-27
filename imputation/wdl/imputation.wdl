@@ -27,15 +27,15 @@ workflow run_imputation {
             out_prefix=out_prefix
             }
 
-    call index_vcf {
-        input:
-            vcf=subset_vcf.outfile
-    }
+    #call index_vcf {
+    #    input:
+    #        vcf=subset_vcf.outfile
+    #}
     
     call beagle {
         input : 
-          vcf=index_vcf.outvcf, 
-          vcf_index=index_vcf.outvcf_index,
+          vcf=subset_vcf.outvcf, 
+          vcf_index=subset_vcf.outvcf_index,
           ref_panel=ref_panel, 
           out_prefix=out_prefix,
           GOOGLE_PROJECT=GOOGLE_PROJECT,
@@ -80,8 +80,10 @@ task subset_vcf {
         bash /usr/bin/subset_vcf.sh ~{vcf} ~{sample} ~{out_prefix} ~{GOOGLE_PROJECT} || exit 1
 
         else 
-            bcftools view -r ~{region} -S ~{sample} ~{vcf} > ~{out_prefix}.vcf
-        fi 
+            bcftools view -r ~{region} -S ~{sample} ~{vcf} -Oz -o ~{out_prefix}.vcf.gz
+        fi
+        
+        tabix -p vcf ~{out_prefix}.vcf.gz
     >>>
 
     runtime {
@@ -91,32 +93,34 @@ task subset_vcf {
     }
 
     output {
-        File outfile = "${out_prefix}.vcf"
+        File outvcf = "${out_prefix}.vcf.gz"
+        File outvcf_index = "${out_prefix}.vcf.gz.tbi"
+        
     }    
 }
 
 
-task index_vcf {
-    input {
-      File vcf
-    }
-
-    String basename = basename(vcf, ".vcf")
-
-    command <<<
-        bgzip -c ~{vcf}> ~{basename}.vcf.gz && tabix -p vcf ~{basename}.vcf.gz
-    >>>
-
-    runtime {
-        docker:"gcr.io/ucsd-medicine-cast/vcfutils:latest"
-
-    }
-
-    output {
-        File outvcf = "${basename}.vcf.gz"
-        File outvcf_index = "${basename}.vcf.gz.tbi"
-    }
-}
+#task index_vcf {
+#    input {
+#      File vcf
+#    }
+#
+#    String basename = basename(vcf, ".vcf")
+#
+#    command <<<
+#        bgzip -c ~{vcf}> ~{basename}.vcf.gz && tabix -p vcf ~{basename}.vcf.gz
+#    >>>
+#
+#    runtime {
+#        docker:"gcr.io/ucsd-medicine-cast/vcfutils:latest"
+#
+#    }
+#
+#    output {
+#        File outvcf = "${basename}.vcf.gz"
+#        File outvcf_index = "${basename}.vcf.gz.tbi"
+#    }
+#}
 
 task beagle {
     input {
@@ -173,8 +177,6 @@ task sort_index_beagle {
 
     command <<<
         zcat ~{vcf} | vcf-sort | bgzip -c > ~{basename}.sorted.vcf.gz && tabix -p vcf ~{basename}.sorted.vcf.gz
-        echo "Number of TRs in the genotyped file"
-        bcftools view -i 'ID="."' ~{basename}.sorted.vcf.gz | grep -v "^#" | wc -l
     >>>
 
     runtime {
