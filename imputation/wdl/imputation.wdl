@@ -184,6 +184,7 @@ task sort_index_beagle {
 
     runtime {
         docker:"gcr.io/ucsd-medicine-cast/vcfutils:latest"
+        disks: "local-disk 30 SSD"
     }
 
     output {
