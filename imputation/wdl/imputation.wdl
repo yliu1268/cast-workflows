@@ -78,14 +78,12 @@ task subset_vcf {
         if [[ "~{subset_region}" == false ]] ; then
             #bcftools view -S ~{sample} ~{vcf} > ~{out_prefix}.vcf
         bash /usr/bin/subset_vcf.sh ~{vcf} ~{sample} ~{out_prefix} ~{GOOGLE_PROJECT} || exit 1
-        bgzip -c ~{out_prefix}.vcf > ~{out_prefix}.vcf.gz && tabix -p vcf ~{out_prefix}.vcf.gz
-
+        
         else 
             bcftools view -r ~{region} -S ~{sample} ~{vcf} -Oz -o ~{out_prefix}.vcf.gz
-            tabix -p vcf ~{out_prefix}.vcf.gz
-
+            
         fi
-        
+        tabix -p vcf ~{out_prefix}.vcf.gz
         
     >>>
 
