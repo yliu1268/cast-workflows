@@ -76,7 +76,7 @@ task subset_vcf {
         # Subsetting region for each chromesome
 
         if [[ "~{subset_region}" == false ]] ; then
-            bcftools view -S ~{sample} -I ~{vcf} -Oz -o ~{out_prefix}.vcf
+            bcftools view -S ~{sample} -I ~{vcf} -Oz -o ~{out_prefix}.vcf.gz
         
         else 
             bcftools view -r ~{region} -S ~{sample} ~{vcf} -Oz -o ~{out_prefix}.vcf.gz
