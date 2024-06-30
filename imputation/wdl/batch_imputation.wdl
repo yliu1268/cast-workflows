@@ -50,7 +50,7 @@ workflow batch_imputation {
                         vcf_index=run_imputation.outfile_index,
                         ref=ref,
                         ref_index=ref_index,
-                        out_prefix=out_prefix,
+                        out_prefix=out_prefix+".BATCH"+i,
                         header_file=header_file
 
                 }
@@ -59,7 +59,7 @@ workflow batch_imputation {
                     input:
                         vcf=run_imputation.outfile,
                         vcf_index=run_imputation.outfile_index,
-                        out_prefix=out_prefix
+                        out_prefix=out_prefix+".BATCH"+i
 
                 }
         }
@@ -84,7 +84,7 @@ workflow batch_imputation {
 
         output {
             File trvcf = merge_TR_batch.outfile 
-            File trvcf_index = merge_TR_batch.outfile_index
+            #File trvcf_index = merge_TR_batch.outfile_index
             File snpvcf = merge_SNP_batch.outfile
             File snpvcf_index = merge_SNP_batch.outfile_index
         }
