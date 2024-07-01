@@ -5,13 +5,15 @@ workflow merge_batch {
         Array[File] vcfs
         Array[File] vcfs_index
         String out_prefix
+        Int? disk
     }
 
     call mergeSTR {
         input:
             vcfs=vcfs,
             vcfs_index=vcfs_index,
-            out_prefix=out_prefix
+            out_prefix=out_prefix,
+            disk=disk
     }
 
     #call index_vcf {
@@ -34,6 +36,7 @@ task mergeSTR {
         Array[File] vcfs
         Array[File] vcfs_index
         String out_prefix
+        Int? disk
         }
 
     command <<<
@@ -43,7 +46,8 @@ task mergeSTR {
     
     runtime {
         docker: "gcr.io/ucsd-medicine-cast/trtools-6.0.1:latest"
-        disks: "local-disk 20 SSD"
+        #disks: "local-disk 20 SSD"
+        disks: "local-disk ${disk} SSD"
     }
     output {
         File outfile = "${out_prefix}_TR_merged.vcf"

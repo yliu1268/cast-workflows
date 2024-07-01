@@ -13,6 +13,7 @@ workflow run_imputation {
         File sample
         Boolean subset_region = false
         Boolean beagle_region = false
+        Int? disk
     }
 
        
@@ -46,7 +47,8 @@ workflow run_imputation {
     }
     call sort_index_beagle {
         input :
-            vcf=beagle.outfile
+            vcf=beagle.outfile,
+            disk=disk
     }
     output {
         File outfile = sort_index_beagle.outvcf 
@@ -66,7 +68,8 @@ task subset_vcf {
 	    String? region
         String GOOGLE_PROJECT = ""
         String out_prefix=out_prefix
-        Boolean subset_region = false   
+        Boolean subset_region = false
+           
     }
 
     command <<<
@@ -171,6 +174,7 @@ task beagle {
 task sort_index_beagle {
     input {
       File vcf
+      Int? disk
     }
 
     String basename = basename(vcf, ".vcf.gz")
@@ -181,7 +185,8 @@ task sort_index_beagle {
 
     runtime {
         docker:"gcr.io/ucsd-medicine-cast/vcfutils:latest"
-        disks: "local-disk 30 SSD"
+        #disks: "local-disk 30 SSD"
+        disks: "local-disk ${disk} SSD"
     }
 
     output {
