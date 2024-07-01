@@ -2,9 +2,9 @@ version 1.0
 
 import "imputation.wdl" as imputation_t
 import "processTR.wdl" as processTR_t
-import "processSNP.wdl" as processSNP_t
+#import "processSNP.wdl" as processSNP_t
 import "merge_TR_batch.wdl" as merge_TR_batch_t
-import "merge_SNP_batch.wdl" as merge_SNP_batch_t
+#import "merge_SNP_batch.wdl" as merge_SNP_batch_t
 
 
 workflow batch_imputation {
@@ -55,13 +55,13 @@ workflow batch_imputation {
 
                 }
                 ## extract SNP from batches of beagle output
-                call processSNP_t.processSNP as processSNP {
-                    input:
-                        vcf=run_imputation.outfile,
-                        vcf_index=run_imputation.outfile_index,
-                        out_prefix=out_prefix+".BATCH"+i
+                #call processSNP_t.processSNP as processSNP {
+                #    input:
+                #        vcf=run_imputation.outfile,
+                #        vcf_index=run_imputation.outfile_index,
+                #        out_prefix=out_prefix+".BATCH"+i
 
-                }
+                #}
         }
 
         ## use MergeSTR to merge TR
@@ -73,20 +73,22 @@ workflow batch_imputation {
         }
 
         ## use bcftools to merge SNP
-        call merge_SNP_batch_t.merge_SNP_batch as merge_SNP_batch {
-            input:
-                vcfs=processSNP.outfile,
-                vcfs_index=processSNP.outfile_index,
-                out_prefix=out_prefix
+        #call merge_SNP_batch_t.merge_SNP_batch as merge_SNP_batch {
+        #    input:
+        #        vcfs=processSNP.outfile,
+        #        vcfs_index=processSNP.outfile_index,
+        #        out_prefix=out_prefix
 
-        }
+        #}
 
 
         output {
-            File trvcf = merge_TR_batch.outfile 
+            File trvcf = merge_TR_batch.outfile
+            Array[File] outvcf = run_imputation.outvcf
+            Array[File] outvcf_index = run_imputation.outvcf_index
             #File trvcf_index = merge_TR_batch.outfile_index
-            File snpvcf = merge_SNP_batch.outfile
-            File snpvcf_index = merge_SNP_batch.outfile_index
+            #File snpvcf = merge_SNP_batch.outfile
+            #File snpvcf_index = merge_SNP_batch.outfile_index
         }
 
         meta {
