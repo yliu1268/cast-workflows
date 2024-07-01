@@ -84,8 +84,8 @@ workflow batch_imputation {
 
         output {
             File trvcf = merge_TR_batch.outfile
-            Array[File] outvcf = run_imputation.outvcf
-            Array[File] outvcf_index = run_imputation.outvcf_index
+            Array[File] outvcf = run_imputation.outfile
+            Array[File] outvcf_index = run_imputation.outfile_index
             #File trvcf_index = merge_TR_batch.outfile_index
             #File snpvcf = merge_SNP_batch.outfile
             #File snpvcf_index = merge_SNP_batch.outfile_index
