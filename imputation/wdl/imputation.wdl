@@ -14,6 +14,9 @@ workflow run_imputation {
         Boolean subset_region = false
         Boolean beagle_region = false
         Int? disk
+        Int? overlap
+        File map
+        
     }
 
        
@@ -43,7 +46,9 @@ workflow run_imputation {
           mem=mem,
           window_size=window_size,
           beagle_region=beagle_region,
-          region=region
+          region=region,
+          overlap=overlap,
+          map=map
     }
     call sort_index_beagle {
         input :
@@ -136,6 +141,8 @@ task beagle {
         Int? window_size
         Boolean beagle_region = false
         String? region
+        Int? overlap
+        File map
     } 
 
     command <<<
@@ -148,7 +155,9 @@ task beagle {
             ref=~{ref_panel} \
             window=~{window_size} \
             ap=true \
-            out=~{out_prefix}_output
+            overlap=~{overlap} \
+            out=~{out_prefix}_output \
+            map=~{map}
         else
             java -Xmx~{mem}g -jar /beagle.jar \
             gt=~{vcf} \
@@ -156,7 +165,9 @@ task beagle {
             window=~{window_size} \
             chrom=~{region} \
             ap=true \
-            out=~{out_prefix}_output
+            overlap=~{overlap} \
+            out=~{out_prefix}_output \
+            map=~{map}
         fi
     >>>
     
