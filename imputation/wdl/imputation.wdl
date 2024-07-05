@@ -48,16 +48,17 @@ workflow run_imputation {
           beagle_region=beagle_region,
           region=region,
           overlap=overlap,
-          map=map
+          map=map,
+          disk=disk
     }
-    call sort_index_beagle {
-        input :
-            vcf=beagle.outfile,
-            disk=disk
-    }
+    #call sort_index_beagle {
+    #    input :
+    #       vcf=beagle.outfile,
+    #        disk=disk
+    #}
     output {
-        File outfile = sort_index_beagle.outvcf 
-        File outfile_index = sort_index_beagle.outvcf_index
+        File outfile = beagle.outvcf 
+        File outfile_index = beagle.outvcf_index
     }
     meta {
       description: "Run Beagle on a subset of samples on a single chromesome with default parameters"
@@ -143,6 +144,7 @@ task beagle {
         String? region
         Int? overlap
         File map
+        Int? disk
     } 
 
     command <<<
@@ -169,39 +171,45 @@ task beagle {
             out=~{out_prefix}_output \
             map=~{map}
         fi
+
+        tabix -p vcf ~{out_prefix}_output.vcf.gz
+        gsutil cp ~{out_prefix}_output.vcf.gz ~{out_prefix}_output.vcf.gz.tbi $WORKSPACE_BUCKET/imputation_result/~{out_prefix}
+        
     >>>
     
     #file upto 300mb use mem=25
     runtime {
         docker:"gcr.io/ucsd-medicine-cast/beagle:latest"
 	    memory: mem + "GB"
-    }
-
-    output {
-       File outfile = "${out_prefix}_output.vcf.gz"
-    }
-}
-
-task sort_index_beagle {
-    input {
-      File vcf
-      Int? disk
-    }
-
-    String basename = basename(vcf, ".vcf.gz")
-
-    command <<<
-        zcat ~{vcf} | vcf-sort | bgzip -c > ~{basename}.sorted.vcf.gz && tabix -p vcf ~{basename}.sorted.vcf.gz
-    >>>
-
-    runtime {
-        docker:"gcr.io/ucsd-medicine-cast/vcfutils:latest"
-        #disks: "local-disk 30 SSD"
         disks: "local-disk ${disk} SSD"
     }
 
     output {
-    File outvcf = "${basename}.sorted.vcf.gz"
-    File outvcf_index = "${basename}.sorted.vcf.gz.tbi"
-  }
+       File outvcf = "${out_prefix}_output.vcf.gz"
+       File outvcf_index = "${out_prefix}_output.vcf.gz.tbi"
+    }
 }
+
+#task sort_index_beagle {
+#    input {
+#      File vcf
+#      Int? disk
+#    }
+#
+#    String basename = basename(vcf, ".vcf.gz")
+#
+#    command <<<
+#        zcat ~{vcf} | vcf-sort | bgzip -c > ~{basename}.sorted.vcf.gz && tabix -p vcf ~{basename}.sorted.vcf.gz
+#    >>>
+#
+#    runtime {
+#        docker:"gcr.io/ucsd-medicine-cast/vcfutils:latest"
+#        #disks: "local-disk 30 SSD"
+#        disks: "local-disk ${disk} SSD"
+#    }
+#
+#    output {
+#    File outvcf = "${basename}.sorted.vcf.gz"
+#    File outvcf_index = "${basename}.sorted.vcf.gz.tbi"
+#  }
+#}

@@ -37,7 +37,7 @@ task mergeSTR {
         Array[File] vcfs_index
         String out_prefix
         Int? disk
-        }
+    }
 
     command <<<
         mergeSTR --vcfs ~{sep=',' vcfs} --out ~{out_prefix}_TR_merged --vcftype hipstr
