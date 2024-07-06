@@ -173,7 +173,7 @@ task beagle {
         fi
 
         tabix -p vcf ~{out_prefix}_output.vcf.gz
-        gsutil cp ~{out_prefix}_output.vcf.gz ~{out_prefix}_output.vcf.gz.tbi $WORKSPACE_BUCKET/imputation_result/~{out_prefix}
+        gsutil cp ~{out_prefix}_output.vcf.gz ~{out_prefix}_output.vcf.gz.tbi ~{GOOGLE_PROJECT}/imputation_result/~{out_prefix}
         
     >>>
     
