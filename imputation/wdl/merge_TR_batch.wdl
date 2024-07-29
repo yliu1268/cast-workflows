@@ -40,7 +40,7 @@ task mergeSTR {
     }
 
     command <<<
-        mergeSTR --vcfs ~{sep=',' vcfs} --out ~{out_prefix}_TR_merged --vcftype hipstr --verbose
+        mergeSTR --vcfs ~{sep=',' vcfs} --out ~{out_prefix}_TR_merged --vcftype hipstr 
         
     >>>
     
