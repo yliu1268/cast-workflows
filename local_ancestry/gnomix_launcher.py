@@ -12,6 +12,7 @@ chrom=21; ./gnomix_launcher.py \
 """
 
 import argparse
+from glob import glob
 import json
 import os
 import sys
@@ -38,7 +39,7 @@ def main():
 	args = parser.parse_args()
 
 	# Get list of sample files
-	sample_file_list = os.listdir(args.sample_batches)
+	sample_file_list = glob.glob(args.sample_batches + "*/")
 	if args.max_batches > -1 and len(sample_file_list) > args.max_batches:
 		sample_file_list = sample_file_list[:args.max_batches]
 
