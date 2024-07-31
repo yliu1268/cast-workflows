@@ -14,15 +14,12 @@ RUN apt-get update && DEBIAN_FRONTEND="noninteractive" apt-get install -qqy \
     libncurses5 libncurses5-dev \
     libcurl4-gnutls-dev \
     libnss3-dev \
-    libssl-dev 
-
+    libssl-dev \
+    unzip
 
 # copy bash script
-COPY subset_vcf.sh /usr/bin/
 COPY trtools_prep_beagle_vcf.sh /usr/bin/
-RUN chmod +x /usr/bin/subset_vcf.sh
 RUN chmod +x /usr/bin/trtools_prep_beagle_vcf.sh
-
 
 # Make sources directory
 RUN mkdir /sources
@@ -34,7 +31,6 @@ RUN mkdir -p /usr/local/gcloud \
   && /usr/local/gcloud/google-cloud-sdk/install.sh
 ENV PATH $PATH:/usr/local/gcloud/google-cloud-sdk/bin
 
-
 # Install htslib 1.20
 WORKDIR /sources
 RUN wget -O htslib-1.20.tar.bz2 https://github.com/samtools/htslib/releases/download/1.20/htslib-1.20.tar.bz2
@@ -44,15 +40,21 @@ RUN ./configure
 RUN make
 RUN make install
 
-
-#Install bcftools 1.20
+# Install bcftools 1.20
 WORKDIR /sources
 RUN wget -O bcftools-1.20.tar.bz2 https://github.com/samtools/bcftools/releases/download/1.20/bcftools-1.20.tar.bz2
 RUN tar -xjvf bcftools-1.20.tar.bz2
 WORKDIR bcftools-1.20
 RUN ./configure --enable-gcs --enable-libcurl --enable-s3 
+RUN make
 RUN make install
 
+# Install liftover plugin
+#RUN wget https://software.broadinstitute.org/software/score/score_1.20-20240505.tar.gz
+#RUN tar -xzvf score_1.20-20240505.tar.gz
+RUN wget -P plugins https://raw.githubusercontent.com/freeseek/score/master/liftover.c
+RUN make
+ENV BCFTOOLS_PLUGINS /sources/bcftools-1.20/plugins
 
 
 
