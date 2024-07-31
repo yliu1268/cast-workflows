@@ -12,7 +12,7 @@ chrom=21; ./gnomix_launcher.py \
 """
 
 import argparse
-from glob import glob
+import glob
 import json
 import os
 import sys
