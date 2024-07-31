@@ -2,6 +2,7 @@
 
 ```
 git clone https://github.com/cast-genomics/cast-workflows
+cd cast-workflows/
 git checkout gnomix
-cd cast-workflows/local_ancestry
+cd local_ancestry
 ```
