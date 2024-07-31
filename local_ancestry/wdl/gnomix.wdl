@@ -51,8 +51,8 @@ task subset_vcf {
         File samples
         String out_prefix
         String GOOGLE_PROJECT = ""
-        File hg38_ref = "gs://genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.fasta"
-        File hg19_ref = "gs://gcp-public-data--broad-references/Homo_sapiens_assembly19_1000genomes_decoy/Homo_sapiens_assembly19_1000genomes_decoy.fasta"
+        String hg38_ref = "gs://genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.fasta"
+        String hg19_ref = "gs://gcp-public-data--broad-references/Homo_sapiens_assembly19_1000genomes_decoy/Homo_sapiens_assembly19_1000genomes_decoy.fasta"
     }
 
     command <<<
@@ -68,12 +68,13 @@ task subset_vcf {
         wget https://hgdownload.soe.ucsc.edu/goldenPath/hg38/liftOver/hg38ToHg19.over.chain.gz
         bcftools +liftover --no-version -Ou ~{out_prefix}.vcf.gz -- \
               -f ~{hg19_ref} \
-                -s ~{hg38_ref} \
+              -s ~{hg38_ref} \
               -c hg38ToHg19.over.chain.gz \
               --reject ~{out_prefix}.reject.bcf \
               --reject-type b \
-              --write-src | \
-              bcftools sort -o ~{out_prefix}_hg19.vcf.gz -Oz --write-index
+              --write-src --drop-tags FORMAT/AD | \
+              bcftools sort -o ~{out_prefix}_hg19.vcf.gz -Oz
+        tabix -p vcf ~{out_prefix}_hg19.vcf.gz
     >>>
 
     runtime {
