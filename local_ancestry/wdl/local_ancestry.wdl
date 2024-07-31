@@ -3,8 +3,11 @@ version 1.0
 import "gnomix.wdl" as gnomix_t
 
 # TODO
-# * do we need to give a reference panel to Beagle?
-# * Command to merge gnomix outputs
+# do we need to give a reference panel to Beagle?
+# Sigh the gnomix models are in hs37! Need to liftover...
+# At least can then use 1000G ref panel for Beagle
+# Need to unpack gnomix model
+# Command to merge gnomix outputs
 
 workflow local_ancestry {
     input {
