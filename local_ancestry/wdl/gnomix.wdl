@@ -61,7 +61,7 @@ task subset_vcf {
         export GCS_OAUTH_TOKEN=$(gcloud auth application-default print-access-token)
 
         # Extract subset
-        bcftools view -S ~{samples} -I ~{multi_sample_vcf} -Oz -o ~{out_prefix}.vcf.gz
+        bcftools view -S ~{samples} -I -m2 -M2 --min-af 0.01 ~{multi_sample_vcf} -Oz -o ~{out_prefix}.vcf.gz
         tabix -p vcf ~{out_prefix}.vcf.gz
 
         # Liftover to hg19
@@ -98,10 +98,13 @@ task beagle {
     }
 
     command <<<
-    wget https://bochet.gcc.biostat.washington.edu/beagle/1000_Genomes_phase3_v5a/b37.bref3/chr~{chrom}.1kg.phase3.v5a.b37.bref3
+    wget https://bochet.gcc.biostat.washington.edu/beagle/1000_Genomes_phase3_v5a/b37.vcf/chr~{chrom}.1kg.phase3.v5a.vcf.gz
+    bcftools view -r ~{chrom} ~{vcf} -Oz -o ~{out_prefix}.filtered.vcf.gz
+    tabix -p vcf ~{out_prefix}.filtered.vcf.gz
     java -Xmx25g -jar /beagle.jar \
-        gt=~{vcf} \
-        ref=chr~{chrom}.1kg.phase3.v5a.b37.bref3 \
+        gt=~{out_prefix}.filtered.vcf.gz \
+        ref=chr~{chrom}.1kg.phase3.v5a.vcf.gz \
+        impute=false \
         out=~{out_prefix}_phased
     tabix -p vcf ~{out_prefix}_phased.vcf.gz
     >>>
