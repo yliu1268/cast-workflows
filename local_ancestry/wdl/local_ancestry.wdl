@@ -55,6 +55,10 @@ task merge_gnomix {
         paste ~{gnomix_outputs_fb} > ~{out_prefix}.fb
     >>>
 
+    runtime {
+        docker: "gcr.io/ucsd-medicine-cast/bcftools-gcs:latest"
+    }
+    
     output {
         File msp_outfile = "~{out_prefix}.msp"
         File fb_outfile = "~{out_prefix}.fb"
