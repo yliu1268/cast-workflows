@@ -57,6 +57,9 @@ def main():
 	json_dict["local_ancestry.chrom"] = args.chrom
 	json_dict["local_ancestry.GOOGLE_PROJECT"] = os.environ.get("GOOGLE_PROJECT", "")
 	json_dict["local_ancestry.gnomix_model"] = args.gnomix_model
+	json_dict["local_ancestry.chainfile"] = os.environ.get("WORKSPACE_BUCKET") + "/gnomix/resources/hg38ToHg19.over.chain.gz"
+	json_dict["local_ancestry.refpanel"] = os.environ.get("WORKSPACE_BUCKET") + "/gnomix/resources/chr%s.1kg.phase3.v5a.vcf.gz"%args.chrom
+	json_dict["local_ancestry.refpanel_index"] = os.environ.get("WORKSPACE_BUCKET") + "/gnomix/resources/chr%s.1kg.phase3.v5a.vcf.gz.tbi"%args.chrom
 
 	# Convert to JSON and save to a file
 	json_file = args.name + ".aou.json"

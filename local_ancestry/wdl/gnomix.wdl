@@ -8,6 +8,9 @@ workflow run_gnomix {
         String chrom
         String out_prefix
         String GOOGLE_PROJECT = ""
+        File chainfile
+        File refpanel
+        File refpanel_index
     }
 
     call subset_vcf {
@@ -15,7 +18,8 @@ workflow run_gnomix {
             multi_sample_vcf=multi_sample_vcf,
             samples=samples,
             out_prefix=out_prefix,
-            GOOGLE_PROJECT=GOOGLE_PROJECT
+            GOOGLE_PROJECT=GOOGLE_PROJECT,
+            chainfile=chainfile
     }
 
     call beagle {
@@ -23,7 +27,9 @@ workflow run_gnomix {
             vcf=subset_vcf.outvcf,
             vcf_index=subset_vcf.outvcf_index,
             out_prefix=out_prefix,
-            chrom=chrom
+            chrom=chrom,
+            refpanel=refpanel,
+            refpanel_index=refpanel_index
     }
 
     call gnomix {
@@ -53,6 +59,7 @@ task subset_vcf {
         String GOOGLE_PROJECT = ""
         String hg38_ref = "gs://genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.fasta"
         String hg19_ref = "gs://gcp-public-data--broad-references/Homo_sapiens_assembly19_1000genomes_decoy/Homo_sapiens_assembly19_1000genomes_decoy.fasta"
+        File chainfile
     }
 
     command <<<
@@ -65,11 +72,10 @@ task subset_vcf {
         tabix -p vcf ~{out_prefix}.vcf.gz
 
         # Liftover to hg19
-        wget https://hgdownload.soe.ucsc.edu/goldenPath/hg38/liftOver/hg38ToHg19.over.chain.gz
         bcftools +liftover --no-version -Ou ~{out_prefix}.vcf.gz -- \
               -f ~{hg19_ref} \
               -s ~{hg38_ref} \
-              -c hg38ToHg19.over.chain.gz \
+              -c ~{chainfile} \
               --reject ~{out_prefix}.reject.bcf \
               --reject-type b \
               --write-src --drop-tags FORMAT/AD | \
@@ -95,15 +101,16 @@ task beagle {
         File vcf_index
         String out_prefix
         String chrom
+        File refpanel
+        File refpanel_index
     }
 
     command <<<
-    wget https://bochet.gcc.biostat.washington.edu/beagle/1000_Genomes_phase3_v5a/b37.vcf/chr~{chrom}.1kg.phase3.v5a.vcf.gz
     bcftools view -r ~{chrom} ~{vcf} -Oz -o ~{out_prefix}.filtered.vcf.gz
     tabix -p vcf ~{out_prefix}.filtered.vcf.gz
     java -Xmx25g -jar /beagle.jar \
         gt=~{out_prefix}.filtered.vcf.gz \
-        ref=chr~{chrom}.1kg.phase3.v5a.vcf.gz \
+        ref=~{refpanel} \
         impute=false \
         out=~{out_prefix}_phased
     tabix -p vcf ~{out_prefix}_phased.vcf.gz

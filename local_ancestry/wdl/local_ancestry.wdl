@@ -10,6 +10,9 @@ workflow local_ancestry {
         File gnomix_model
         String chrom
         String GOOGLE_PROJECT = ""
+        File chainfile
+        File refpanel
+        File refpanel_index
     }
 
     # Call Beagle/gnomix on batches
@@ -23,7 +26,10 @@ workflow local_ancestry {
                 model=gnomix_model,
                 chrom=chrom,
                 out_prefix=out_prefix+".BATCH"+i,
-                GOOGLE_PROJECT=GOOGLE_PROJECT
+                GOOGLE_PROJECT=GOOGLE_PROJECT,
+                chainfile=chainfile,
+                refpanel=refpanel,
+                refpanel_index=refpanel_index
         }
     }
 
@@ -58,7 +64,7 @@ task merge_gnomix {
     runtime {
         docker: "gcr.io/ucsd-medicine-cast/bcftools-gcs:latest"
     }
-    
+
     output {
         File msp_outfile = "~{out_prefix}.msp"
         File fb_outfile = "~{out_prefix}.fb"
