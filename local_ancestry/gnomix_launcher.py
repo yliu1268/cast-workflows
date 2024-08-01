@@ -38,16 +38,22 @@ def main():
 		type=int, default=-1)
 	args = parser.parse_args()
 
-	# Get list of sample files
+	# Get list of sample files and upload to GCS
+	gsprefix = os.getenv("WORKSPACE_BUCKET") + "/gnomix/" + args.name + "/batches"
 	sample_file_list = glob.glob(args.sample_batches + "/*")
 	if args.max_batches > -1 and len(sample_file_list) > args.max_batches:
 		sample_file_list = sample_file_list[:args.max_batches]
+	sample_file_list_gcs = []
+	for sf in sample_file_list:
+		sf_gcs = gsprefix + "/" + os.path.basename(sf)
+		UploadGS(sf, sf_gcs)
+		sample_file_list_gcs.append(sf_gcs)
 
 	# Set up workflow JSON
 	json_dict = {}
 	json_dict["local_ancestry.out_prefix"] = args.name
 	json_dict["local_ancestry.multi_sample_vcf"] = args.vcf
-	json_dict["local_ancestry.samples"] = sample_file_list
+	json_dict["local_ancestry.samples"] = sample_file_list_gcs
 	json_dict["local_ancestry.chrom"] = args.chrom
 	json_dict["local_ancestry.GOOGLE_PROJECT"] = os.environ.get("GOOGLE_PROJECT", "")
 	json_dict["local_ancestry.gnomix_model"] = args.gnomix_model

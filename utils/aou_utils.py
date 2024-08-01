@@ -48,3 +48,18 @@ def RunWorkflow(wdl_file, json_file, json_options_file, wdl_dependencies_file=""
 		return
 	output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
 	print(output.decode("utf-8"))
+
+def UploadGS(local_path, gcp_path):
+	"""
+	Upload a local file to GCP
+
+	Arguments
+	---------
+	local_path : str
+	   Local path
+	gcp_path : str
+	   GCP path to upload to
+	"""
+	cmd = "gsutil cp {src} {dest}".format(src=local_path, dest=gcp_path)
+	output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
+	print(output.decode("utf-8"))
