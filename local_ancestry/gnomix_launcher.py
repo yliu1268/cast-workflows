@@ -50,7 +50,7 @@ def main():
 	json_dict["local_ancestry.samples"] = sample_file_list
 	json_dict["local_ancestry.chrom"] = args.chrom
 	json_dict["local_ancestry.GOOGLE_PROJECT"] = os.environ.get("GOOGLE_PROJECT", "")
-	json_dict["local_ancestry.model"] = args.gnomix_model
+	json_dict["local_ancestry.gnomix_model"] = args.gnomix_model
 
 	# Convert to JSON and save to a file
 	json_file = args.name + ".aou.json"

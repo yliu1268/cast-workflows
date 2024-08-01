@@ -7,7 +7,7 @@ git clone https://github.com/cast-genomics/cast-workflows
 cd cast-workflows/
 git checkout gnomix
 cd local_ancestry
-../utils/configure_cromshell.py
+../utils/configure-cromshell.py
 ```
 
 # Set up sample batches of 1000 samples each
@@ -31,6 +31,5 @@ chrom=21; ./gnomix_launcher.py \
   --name test \
   --vcf ${WGS_ACAF_THRESHOLD_VCF_PATH}/acaf_threshold.chr${chrom}.vcf.bgz \
   --chrom ${chrom} \
-  --dryrun \
   --sample-batches batches/ --max-batches 2
 ```
