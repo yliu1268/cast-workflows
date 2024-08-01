@@ -46,7 +46,7 @@ def main():
 	sample_file_list_gcs = []
 	for sf in sample_file_list:
 		sf_gcs = gsprefix + "/" + os.path.basename(sf)
-		UploadGS(sf, sf_gcs)
+		aou_utils.UploadGS(sf, sf_gcs)
 		sample_file_list_gcs.append(sf_gcs)
 
 	# Set up workflow JSON
