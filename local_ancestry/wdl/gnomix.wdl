@@ -145,7 +145,10 @@ task gnomix {
         echo "debugging"
         ls # TODO remove. for debugging
         echo ${PWD}
-        python3 /gnomix/gnomix.py ~{vcf} . ~{chrom} False pretrained_gnomix_models/chr~{chrom}/model_chm_~{chrom}.pkl
+        cd /gnomix
+        echo ${PWD}
+        ls
+        python3 gnomix.py ~{vcf} . ~{chrom} False pretrained_gnomix_models/chr~{chrom}/model_chm_~{chrom}.pkl
         cp query_results.msp ~{out_prefix}.msp
         cp query_results.fb ~{out_prefix}.fb
     >>>
