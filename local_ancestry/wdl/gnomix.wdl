@@ -30,7 +30,6 @@ workflow run_gnomix {
             vcf=subset_vcf.outvcf,
             vcf_index=subset_vcf.outvcf_index,
             out_prefix=out_prefix,
-            chrom=chrom,
             refpanel=refpanel,
             refpanel_index=refpanel_index
     }
@@ -54,6 +53,7 @@ workflow run_gnomix {
     }
 }
 
+# TODO add back retries after debugging
 task subset_vcf {
     input {
         String multi_sample_vcf
