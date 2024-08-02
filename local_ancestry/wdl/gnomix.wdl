@@ -142,8 +142,10 @@ task gnomix {
 
     command <<<
         tar -xzvf ~{model}
+        echo "debugging"
         ls # TODO remove. for debugging
-        python3 gnomix.py ~{vcf} . ~{chrom} False pretrained_gnomix_models/chr~{chrom}/model_chm_~{chrom}.pkl
+        echo ${PWD}
+        python3 /gnomix/gnomix.py ~{vcf} . ~{chrom} False pretrained_gnomix_models/chr~{chrom}/model_chm_~{chrom}.pkl
         cp query_results.msp ~{out_prefix}.msp
         cp query_results.fb ~{out_prefix}.fb
     >>>
