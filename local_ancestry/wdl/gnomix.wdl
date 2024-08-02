@@ -75,6 +75,7 @@ task subset_vcf {
         tabix -p vcf ~{out_prefix}.vcf.gz
 
         # Liftover to hg19
+        export BCFTOOLS_PLUGINS=/sources/bcftools-1.20/plugins # TODO should have been set in Docker but not?
         bcftools +liftover --no-version -Ou ~{out_prefix}.vcf.gz -- \
               -f ~{hg19_ref} \
               -s ~{hg38_ref} \
