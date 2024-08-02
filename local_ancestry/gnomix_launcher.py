@@ -33,8 +33,8 @@ def main():
 		default=GNOMIXMODEL)
 	# For debugging
 	parser.add_argument("--dryrun", help="Set up job but don't launch", \
-	parser.add_argument("--extra-subset-args", help="Extra args to add to bcftools for debug", type=str, default="")
 		action="store_true")
+	parser.add_argument("--extra-subset-args", help="Extra args to add to bcftools for debug", type=str, default="")
 	parser.add_argument("--max-batches", help="Only run this many batches", \
 		type=int, default=-1)
 	args = parser.parse_args()
