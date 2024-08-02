@@ -27,9 +27,13 @@ done
 # Test
 
 ```
+mkdir batches-small/
+head -n 10 aou_sample_list.txt > batches-small/batch1
+head -n 20 aou_sample_list.txt | tail -n 10 > batches-small/batch2
 chrom=21; ./gnomix_launcher.py \
   --name test \
   --vcf ${WGS_ACAF_THRESHOLD_VCF_PATH}/acaf_threshold.chr${chrom}.vcf.bgz \
   --chrom ${chrom} \
-  --sample-batches batches/ --max-batches 2
+  --sample-batches batches-small/ --max-batches 2 --extra-subset-args "-r chr21:1-5252900"
 ```
+

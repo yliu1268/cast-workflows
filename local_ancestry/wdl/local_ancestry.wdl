@@ -13,6 +13,7 @@ workflow local_ancestry {
         File chainfile
         File refpanel
         File refpanel_index
+        String extra_subset_args
     }
 
     # Call Beagle/gnomix on batches
@@ -29,7 +30,8 @@ workflow local_ancestry {
                 GOOGLE_PROJECT=GOOGLE_PROJECT,
                 chainfile=chainfile,
                 refpanel=refpanel,
-                refpanel_index=refpanel_index
+                refpanel_index=refpanel_index,
+                extra_subset_args=extra_subset_args
         }
     }
 

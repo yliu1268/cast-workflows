@@ -11,6 +11,7 @@ workflow run_gnomix {
         File chainfile
         File refpanel
         File refpanel_index
+        String extra_subset_args
     }
 
     call subset_vcf {
@@ -19,7 +20,8 @@ workflow run_gnomix {
             samples=samples,
             out_prefix=out_prefix,
             GOOGLE_PROJECT=GOOGLE_PROJECT,
-            chainfile=chainfile
+            chainfile=chainfile,
+            extra_subset_args=extra_subset_args
     }
 
     call beagle {
@@ -60,6 +62,7 @@ task subset_vcf {
         String hg38_ref = "gs://genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.fasta"
         String hg19_ref = "gs://gcp-public-data--broad-references/Homo_sapiens_assembly19_1000genomes_decoy/Homo_sapiens_assembly19_1000genomes_decoy.fasta"
         File chainfile
+        String extra_subset_args = ""
     }
 
     command <<<
@@ -68,7 +71,7 @@ task subset_vcf {
         export GCS_OAUTH_TOKEN=$(gcloud auth application-default print-access-token)
 
         # Extract subset
-        bcftools view -S ~{samples} -I -m2 -M2 --min-af 0.01 ~{multi_sample_vcf} -Oz -o ~{out_prefix}.vcf.gz
+        bcftools view ~{extra_subset_args} -S ~{samples} -I -m2 -M2 --min-af 0.01 ~{multi_sample_vcf} -Oz -o ~{out_prefix}.vcf.gz
         tabix -p vcf ~{out_prefix}.vcf.gz
 
         # Liftover to hg19
@@ -85,8 +88,6 @@ task subset_vcf {
 
     runtime {
         docker: "gcr.io/ucsd-medicine-cast/bcftools-gcs:latest"
-        maxRetries: 3
-        preemptible: 3
     }
 
     output {

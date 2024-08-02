@@ -33,6 +33,7 @@ def main():
 		default=GNOMIXMODEL)
 	# For debugging
 	parser.add_argument("--dryrun", help="Set up job but don't launch", \
+	parser.add_argument("--extra-subset-args", help="Extra args to add to bcftools for debug", type=str, default="")
 		action="store_true")
 	parser.add_argument("--max-batches", help="Only run this many batches", \
 		type=int, default=-1)
@@ -60,6 +61,7 @@ def main():
 	json_dict["local_ancestry.chainfile"] = os.environ.get("WORKSPACE_BUCKET") + "/gnomix/resources/hg38ToHg19.over.chain.gz"
 	json_dict["local_ancestry.refpanel"] = os.environ.get("WORKSPACE_BUCKET") + "/gnomix/resources/chr%s.1kg.phase3.v5a.vcf.gz"%args.chrom
 	json_dict["local_ancestry.refpanel_index"] = os.environ.get("WORKSPACE_BUCKET") + "/gnomix/resources/chr%s.1kg.phase3.v5a.vcf.gz.tbi"%args.chrom
+	json_dict["local_ancestry.extra_subset_args"] = args.extra_subset_args
 
 	# Convert to JSON and save to a file
 	json_file = args.name + ".aou.json"
