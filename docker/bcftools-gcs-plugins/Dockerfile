@@ -26,6 +26,15 @@ RUN mkdir -p /usr/local/gcloud \
   && /usr/local/gcloud/google-cloud-sdk/install.sh
 ENV PATH $PATH:/usr/local/gcloud/google-cloud-sdk/bin
 
+# Install htslib 1.20
+WORKDIR /sources
+RUN wget -O htslib-1.20.tar.bz2 https://github.com/samtools/htslib/releases/download/1.20/htslib-1.20.tar.bz2
+RUN tar -xjvf htslib-1.20.tar.bz2
+WORKDIR htslib-1.20/
+RUN ./configure
+RUN make
+RUN make install
+
 # Install bcftools 1.20
 WORKDIR /sources
 RUN wget -O bcftools-1.20.tar.bz2 https://github.com/samtools/bcftools/releases/download/1.20/bcftools-1.20.tar.bz2

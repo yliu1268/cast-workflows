@@ -75,7 +75,6 @@ task subset_vcf {
         tabix -p vcf ~{out_prefix}.vcf.gz
 
         # Liftover to hg19
-        ls /sources/bcftools-1.20/plugins/liftover.so # debugging
         bcftools +liftover --no-version -Ou ~{out_prefix}.vcf.gz -- \
               -f ~{hg19_ref} \
               -s ~{hg38_ref} \
