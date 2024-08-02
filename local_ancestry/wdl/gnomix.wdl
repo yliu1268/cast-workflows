@@ -21,7 +21,8 @@ workflow run_gnomix {
             out_prefix=out_prefix,
             GOOGLE_PROJECT=GOOGLE_PROJECT,
             chainfile=chainfile,
-            extra_subset_args=extra_subset_args
+            extra_subset_args=extra_subset_args,
+            chrom=chrom
     }
 
     call beagle {
@@ -63,6 +64,7 @@ task subset_vcf {
         String hg19_ref = "gs://gcp-public-data--broad-references/Homo_sapiens_assembly19_1000genomes_decoy/Homo_sapiens_assembly19_1000genomes_decoy.fasta"
         File chainfile
         String extra_subset_args = ""
+        String chrom
     }
 
     command <<<        
@@ -84,6 +86,10 @@ task subset_vcf {
               --write-src --drop-tags FORMAT/AD | \
               bcftools sort -o ~{out_prefix}_hg19.vcf.gz -Oz
         tabix -p vcf ~{out_prefix}_hg19.vcf.gz
+
+        # Restrict to target chromosome
+        bcftools view -r ~{chrom} ~{out_prefix}_hg19.vcf.gz -Oz -o ~{out_prefix}.filtered.vcf.gz
+        tabix -p vcf ~{out_prefix}.filtered.vcf.gz
     >>>
 
     runtime {
@@ -91,8 +97,8 @@ task subset_vcf {
     }
 
     output {
-        File outvcf = "${out_prefix}_hg19.vcf.gz"
-        File outvcf_index = "${out_prefix}_hg19.vcf.gz.tbi"
+        File outvcf = "${out_prefix}.filtered.vcf.gz"
+        File outvcf_index = "${out_prefix}.filtered.vcf.gz.tbi"
     }    
 }
 
@@ -101,16 +107,13 @@ task beagle {
         File vcf
         File vcf_index
         String out_prefix
-        String chrom
         File refpanel
         File refpanel_index
     }
 
     command <<<
-    bcftools view -r ~{chrom} ~{vcf} -Oz -o ~{out_prefix}.filtered.vcf.gz
-    tabix -p vcf ~{out_prefix}.filtered.vcf.gz
     java -Xmx25g -jar /beagle.jar \
-        gt=~{out_prefix}.filtered.vcf.gz \
+        gt=~{vcf} \
         ref=~{refpanel} \
         impute=false \
         out=~{out_prefix}_phased
@@ -123,8 +126,8 @@ task beagle {
     }
 
     output {
-       File outvcf = "${out_prefix}_output.vcf.gz"
-       File outvcf_index = "${out_prefix}_output.vcf.gz.tbi"
+       File outvcf = "${out_prefix}_phased.vcf.gz"
+       File outvcf_index = "${out_prefix}_phased.vcf.gz.tbi"
     }
 }
 
