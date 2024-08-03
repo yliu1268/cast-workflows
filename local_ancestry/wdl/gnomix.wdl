@@ -53,7 +53,6 @@ workflow run_gnomix {
     }
 }
 
-# TODO add back retries after debugging
 task subset_vcf {
     input {
         String multi_sample_vcf
@@ -94,6 +93,8 @@ task subset_vcf {
 
     runtime {
         docker: "gcr.io/ucsd-medicine-cast/bcftools-gcs-plugins:latest"
+        maxRetries: 3
+        preemptible: 3
     }
 
     output {
@@ -141,13 +142,8 @@ task gnomix {
     }
 
     command <<<
-        tar -xzvf ~{model}
-        echo "debugging"
-        ls # TODO remove. for debugging
-        echo ${PWD}
         cd /gnomix
-        echo ${PWD}
-        ls
+        tar -xzvf ~{model}
         python3 gnomix.py ~{vcf} . ~{chrom} False pretrained_gnomix_models/chr~{chrom}/model_chm_~{chrom}.pkl
         cp query_results.msp ~{out_prefix}.msp
         cp query_results.fb ~{out_prefix}.fb
