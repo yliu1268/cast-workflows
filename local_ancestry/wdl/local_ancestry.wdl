@@ -55,12 +55,29 @@ task merge_gnomix {
         Array[File] gnomix_outputs_msp
         Array[File] gnomix_outputs_fb
         String out_prefix
+        Int total = length(gnomix_outputs_msp)
     }
 
     command <<<
-        # TODO remove duplicate columns
-        paste ~{sep=' ' gnomix_outputs_msp} > ~{out_prefix}.msp
-        paste ~{sep=' ' gnomix_outputs_fb} > ~{out_prefix}.fb
+        # First merge msp files
+        MSPFILEARRAY=(~{sep=' ' gnomix_outputs_msp})
+        head -n 1 ${MSPFILEARRAY[0]} > ~{out_prefix}.msp
+        cat ${MSPFILEARRAY[0]} | grep -v "^#Subpopulation" | cut -f 1-6 -d$'\t'> fixedcols.msp
+        for (( c = 0; c < ~{total}; c++ ))
+        do
+            cat ${MSPFILEARRAY[$c]} | grep -v "^#Subpopulation" | cut -f 1-6 -d$'\t' --complement > data_${c}.msp
+        done
+        paste fixedcols.msp data*.msp >> ~{out_prefix}.msp
+
+        # Next merge fb files
+        FBFILEARRAY=(~{sep=' ' gnomix_outputs_fb})
+        head -n 1 ${FBFILEARRAY[0]} > ~{out_prefix}.fb
+        cat ${FBFILEARRAY[0]} | grep -v "^#" | cut -f 1-4 -d$'\t' > fixedcols.fb
+        for (( c = 0; c < ~{total}; c++ ))
+        do
+            cat ${FBFILEARRAY[$c]} | grep -v "^#" | cut -f 1-4 -d$'\t' --complement > data_${c}.fb
+        done
+        paste fixedcols.fb data*.fb >> ~{out_prefix}.fb
     >>>
 
     runtime {
