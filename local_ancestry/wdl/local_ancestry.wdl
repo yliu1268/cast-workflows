@@ -59,8 +59,8 @@ task merge_gnomix {
 
     command <<<
         # TODO remove duplicate columns
-        paste ~{gnomix_outputs_msp} > ~{out_prefix}.msp
-        paste ~{gnomix_outputs_fb} > ~{out_prefix}.fb
+        paste ~{sep=' ' gnomix_outputs_msp} > ~{out_prefix}.msp
+        paste ~{sep=' ' gnomix_outputs_fb} > ~{out_prefix}.fb
     >>>
 
     runtime {
