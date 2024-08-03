@@ -145,10 +145,9 @@ task gnomix {
         cd /gnomix
         tar -xzvf ~{model}
         python3 gnomix.py ~{vcf} . ~{chrom} False pretrained_gnomix_models/chr~{chrom}/model_chm_~{chrom}.pkl
-        ls
-        cp query_results.msp /~{out_prefix}.msp
-        cp query_results.fb /~{out_prefix}.fb
-        ls /
+        cp query_results.msp /cromwell_root/~{out_prefix}.msp
+        cp query_results.fb /cromwell_root/~{out_prefix}.fb
+
     >>>
 
     runtime {
