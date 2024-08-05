@@ -95,8 +95,9 @@ task subset_vcf {
 
     runtime {
         docker: "gcr.io/ucsd-medicine-cast/bcftools-gcs-plugins:latest"
-#        maxRetries: 3
-#        preemptible: 3
+        memory: "16GB"
+        maxRetries: 3
+        preemptible: 3
     }
 
     output {
