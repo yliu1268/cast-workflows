@@ -76,6 +76,8 @@ task subset_vcf {
         tabix -p vcf ~{out_prefix}.vcf.gz
 
         # Liftover to hg19
+        # First refresh credentials
+        export GCS_OAUTH_TOKEN=$(gcloud auth application-default print-access-token)
         bcftools +liftover --no-version -Ou ~{out_prefix}.vcf.gz -- \
               -f ~{hg19_ref} \
               -s ~{hg38_ref} \
@@ -93,8 +95,8 @@ task subset_vcf {
 
     runtime {
         docker: "gcr.io/ucsd-medicine-cast/bcftools-gcs-plugins:latest"
-        maxRetries: 3
-        preemptible: 3
+#        maxRetries: 3
+#        preemptible: 3
     }
 
     output {
