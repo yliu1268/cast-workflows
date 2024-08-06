@@ -12,15 +12,15 @@ workflow targetTR {
 		File genome
 		File genome_index
 		File tr_bed
-    	Boolean infer_samps_from_file = false
-    	Array[File] cram_file_batches_str = []
-    	String GOOGLE_PROJECT = ""
-    	String GCS_OAUTH_TOKEN = ""
-    	Float sleep_const = 0
-    	Boolean separate_hipstr_runs = false
-		Int hipstr_mem = hipstr_mem
-		Int merge_mem = merge_mem
-		String extra_hipstr_args = extra_hipstr_args
+		Boolean infer_samps_from_file = false
+		Array[File] cram_file_batches_str = []
+		String GOOGLE_PROJECT = ""
+		String GCS_OAUTH_TOKEN = ""
+		Float sleep_const = 0
+		Boolean separate_hipstr_runs = false
+		Int? hipstr_mem
+		Int? merge_mem
+		String? extra_hipstr_args
 	}
 
 	### Call HipSTR on batches of samples ###
@@ -45,12 +45,12 @@ workflow targetTR {
 				genome_index=genome_index,
 				str_ref=tr_bed,
 				out_prefix=outprefix+".BATCH"+i,
-        		infer_samps_from_file = infer_samps_from_file,
-        		using_batch_files = using_batch_files,
-        		bams_file = crams_file,
-        		GOOGLE_PROJECT = GOOGLE_PROJECT,
-        		GCS_OAUTH_TOKEN = GCS_OAUTH_TOKEN,
-        		sleep_seconds = sleep_seconds,
+				infer_samps_from_file = infer_samps_from_file,
+				using_batch_files = using_batch_files,
+				bams_file = crams_file,
+				GOOGLE_PROJECT = GOOGLE_PROJECT,
+				GCS_OAUTH_TOKEN = GCS_OAUTH_TOKEN,
+				sleep_seconds = sleep_seconds,
 				hipstr_mem = hipstr_mem,
 				separate_hipstr_runs = separate_hipstr_runs,
 				extra_hipstr_args = extra_hipstr_args
@@ -98,8 +98,8 @@ task sort_index {
 	>>>
 
 	runtime {
-        docker:"gcr.io/ucsd-medicine-cast/vcfutils:latest"
-    }
+		docker:"gcr.io/ucsd-medicine-cast/vcfutils:latest"
+	}
 
 	output {
 		File outvcf = "${basename}.sorted.vcf.gz"

@@ -31,7 +31,7 @@ task mergestr {
     Array[File] vcf_indexes
     String out_prefix
     Int total = length(vcfs)
-    Int? merge_mem = 4
+    Int merge_mem = 4
   }
 
   command <<<
