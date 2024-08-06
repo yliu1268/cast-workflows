@@ -119,7 +119,7 @@ task beagle {
     java -Xmx25g -jar /beagle.jar \
         gt=~{vcf} \
         ref=~{refpanel} \
-        impute=false \
+        impute=true \
         out=~{out_prefix}_phased
     tabix -p vcf ~{out_prefix}_phased.vcf.gz
     >>>
