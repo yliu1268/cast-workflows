@@ -59,8 +59,10 @@ def main():
 	json_dict["local_ancestry.GOOGLE_PROJECT"] = os.environ.get("GOOGLE_PROJECT", "")
 	json_dict["local_ancestry.gnomix_model"] = args.gnomix_model
 	json_dict["local_ancestry.chainfile"] = os.environ.get("WORKSPACE_BUCKET") + "/gnomix/resources/hg38ToHg19.over.chain.gz"
-	json_dict["local_ancestry.refpanel"] = os.environ.get("WORKSPACE_BUCKET") + "/gnomix/resources/chr%s.1kg.phase3.v5a.vcf.gz"%args.chrom
-	json_dict["local_ancestry.refpanel_index"] = os.environ.get("WORKSPACE_BUCKET") + "/gnomix/resources/chr%s.1kg.phase3.v5a.vcf.gz.tbi"%args.chrom
+	#json_dict["local_ancestry.refpanel"] = os.environ.get("WORKSPACE_BUCKET") + "/gnomix/resources/chr%s.1kg.phase3.v5a.vcf.gz"%args.chrom
+	#json_dict["local_ancestry.refpanel_index"] = os.environ.get("WORKSPACE_BUCKET") + "/gnomix/resources/chr%s.1kg.phase3.v5a.vcf.gz.tbi"%args.chrom
+	json_dict["local_ancestry.refpanel"] = "http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/ALL.chr%s.phase3_shapeit2_mvncall_integrated_v5b.20130502.genotypes.vcf.gz"%args.chrom
+	json_dict["local_ancestry.refpanel_index"] = "http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/ALL.chr%s.phase3_shapeit2_mvncall_integrated_v5b.20130502.genotypes.vcf.gz.tbi"%args.chrom
 	json_dict["local_ancestry.extra_subset_args"] = args.extra_subset_args
 
 	# Convert to JSON and save to a file
