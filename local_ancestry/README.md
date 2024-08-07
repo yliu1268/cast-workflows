@@ -19,7 +19,7 @@ split -l 1000 aou_sample_list.txt batches/batch
 counter=1
 for file in batches/batch*
 do
-    mv "$file" "batches/batch$counter"
+    mv "$file" "bathes/batch$counter"
     ((counter++))
 done
 ```
