@@ -72,23 +72,27 @@ task subset_vcf {
         export GCS_OAUTH_TOKEN=$(gcloud auth application-default print-access-token)
 
         # Extract subset
+        echo "Extract subset"
         bcftools view ~{extra_subset_args} -S ~{samples} -I -m2 -M2 --min-af 0.01 ~{multi_sample_vcf} -Oz -o ~{out_prefix}.vcf.gz
         tabix -p vcf ~{out_prefix}.vcf.gz
 
         # Liftover to hg19
         # First refresh credentials
         export GCS_OAUTH_TOKEN=$(gcloud auth application-default print-access-token)
+        echo "Liftover"
         bcftools +liftover --no-version -Ou ~{out_prefix}.vcf.gz -- \
               -f ~{hg19_ref} \
               -s ~{hg38_ref} \
               -c ~{chainfile} \
               --reject ~{out_prefix}.reject.bcf \
               --reject-type b \
-              --write-src --drop-tags FORMAT/AD | \
-              bcftools sort -o ~{out_prefix}_hg19.vcf.gz -Oz
+              --write-src --drop-tags FORMAT/AD > ~{out_prefix}_hg19.bcf
+        echo "sort"
+        bcftools sort -o ~{out_prefix}_hg19.vcf.gz -Oz ~{out_prefix}_hg19.bcf
         tabix -p vcf ~{out_prefix}_hg19.vcf.gz
 
         # Restrict to target chromosome
+        echo "restrict chromosome"
         bcftools view -r ~{chrom} ~{out_prefix}_hg19.vcf.gz -Oz -o ~{out_prefix}.filtered.vcf.gz
         tabix -p vcf ~{out_prefix}.filtered.vcf.gz
     >>>
