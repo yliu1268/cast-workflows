@@ -37,13 +37,13 @@ chrom=21; ./gnomix_launcher.py \
   --sample-batches batches-small/ --max-batches 2 --extra-subset-args "-r chr21:1-5252900"
 
 # another test
-head -n 10 AFR_BLACK.csv > batches-ancestry-small/batchAFR.txt
-head -n 10 EUR_WHITE.csv > batches-ancestry-small/batchEUR.txt
+head -n 11 AFR_BLACK.csv | tail -n 10 | cut -f 1 -d',' > batches-ancestry-small/batchAFR.txt
+head -n 11 EUR_WHITE.csv | tail -n 10 | cut -f 1 -d',' > batches-ancestry-small/batchEUR.txt
 chrom=1; ./gnomix_launcher.py \
   --name test-ancestry \
   --vcf ${WGS_ACAF_THRESHOLD_VCF_PATH}/acaf_threshold.chr${chrom}.vcf.bgz \
   --chrom ${chrom} \
-  --sample-batches batches-ancestry-small/ --max-batches 2 --extra-subset-args "-r chr1:1-64157423"
+  --sample-batches batches-ancestry-small/ --max-batches 2 --extra-subset-args "-r chr1:1-44157423"
 
 ```
 
