@@ -22,8 +22,8 @@ workflow merge_batch {
     #}
 
     output {
-        File outfile = mergeSTR.outfile
-        #File outfile_index = index_vcf.outvcf_index
+        File outfile = merge.outvcf 
+        File outfile_index = merge.outvcf_index
     }
 
     meta {
@@ -31,7 +31,7 @@ workflow merge_batch {
     }
 }
 
-task mergeSTR {
+task merge {
     input {
         Array[File] vcfs
         Array[File] vcfs_index
@@ -40,7 +40,9 @@ task mergeSTR {
     }
 
     command <<<
-        mergeSTR --vcfs ~{sep=',' vcfs} --out ~{out_prefix}_TR_merged --vcftype hipstr 
+        #mergeSTR --vcfs ~{sep=',' vcfs} --out ~{out_prefix}_TR_merged --vcftype hipstr
+        bcftools merge ~{sep=' ' vcfs} -Oz -o ~{out_prefix}_TR_merged.vcf.gz
+        tabix -p vcf ~{out_prefix}_TR_merged.vcf.gz
         
     >>>
     
@@ -50,7 +52,8 @@ task mergeSTR {
         disks: "local-disk ~{disk} SSD"
     }
     output {
-        File outfile = "${out_prefix}_TR_merged.vcf"
+        File outvcf = "${out_prefix}_TR_merged.vcf.gz"
+        File outvcf_index = "${out_prefix}_TR_merged.vcf.gz.tbi"
     }
 
 }
