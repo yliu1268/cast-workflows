@@ -66,7 +66,9 @@ task subset_vcf {
         String chrom
     }
 
-    command <<<        
+    command <<<
+        set -e # fail if anything doesn't succeed
+         
         # Set up credentials
         export GCS_REQUESTER_PAYS_PROJECT=~{GOOGLE_PROJECT}
         export GCS_OAUTH_TOKEN=$(gcloud auth application-default print-access-token)
