@@ -8,7 +8,7 @@ workflow merge_batch {
         Int? disk
     }
 
-    call mergeSTR {
+    call merge{
         input:
             vcfs=vcfs,
             vcfs_index=vcfs_index,
