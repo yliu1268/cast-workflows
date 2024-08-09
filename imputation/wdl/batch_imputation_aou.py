@@ -118,6 +118,16 @@ def ZipWDL(wdl_dependencies_file):
 
 
 def main():
+	# Get token
+	token_fetch_command = subprocess.run(['gcloud', 'auth', 'application-default', 'print-access-token'], \
+		capture_output=True, check=True, encoding='utf-8')
+	token = str.strip(token_fetch_command.stdout)
+
+	# Set up output bucket
+	bucket = os.getenv("WORKSPACE_BUCKET")
+	project = os.getenv("GOOGLE_PROJECT")
+	output_bucket = bucket + "/" + args.name
+	
 	parser = argparse.ArgumentParser(__doc__)
 	parser.add_argument("--name", help="Name of the TR job", required=True, type=str)
 	parser.add_argument("--vcf", help="Name of the genotype vcf file", required=True, type=str)
@@ -143,16 +153,6 @@ def main():
 
 	args = parser.parse_args()
 
-	
-	# Get token
-	token_fetch_command = subprocess.run(['gcloud', 'auth', 'application-default', 'print-access-token'], \
-		capture_output=True, check=True, encoding='utf-8')
-	token = str.strip(token_fetch_command.stdout)
-
-	# Set up output bucket
-	bucket = os.getenv("WORKSPACE_BUCKET")
-	project = os.getenv("GOOGLE_PROJECT")
-	output_bucket = bucket + "/" + args.name
 
 	#Set up sample file list
 	if args.samples.startswith("gs://"):
