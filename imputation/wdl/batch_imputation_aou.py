@@ -128,7 +128,7 @@ def main():
 	parser.add_argument("--disk", help="Specify disk memory ", type=int, required=False, default=25)
 	parser.add_argument("--window", help="Specify window size for imputation ", type=int, required=False, default=20)
 	parser.add_argument("--samples", help="List of samples to process ", type=str, required=False, \
-					 default="$WORKSPACE_BUCKET/tr_imputation/tr_imputation/sample/sample_manifest.txt")
+					 default=f"{bucket}/tr_imputation/tr_imputation/sample/sample_manifest.txt")
 	parser.add_argument("--region", help="Name of chrom position  chr:xxx-xxx", type=str,required=False)
 	parser.add_argument("--beagle-region", help="Apply chrom for beagle", action="store_true",required=False)
 	parser.add_argument("--subset-region", help="Subsetting region for vcf file", action="store_true",required=False)
@@ -137,7 +137,7 @@ def main():
 	parser.add_argument("--overlap", help="Specify overlap size for imputation ", type=int, required=False, default=2)
 	parser.add_argument("--map", help="Specify genetic map for imputation ", type=str, required=True)					
 	parser.add_argument("--header-file", help="Add hipstr header",type=str, required=False, \
-					 default="$WORKSPACE_BUCKET/tr_imputation/tr_imputation/header_annotation.txt")
+					 default=f"{bucket}/tr_imputation/tr_imputation/header_annotation.txt")
 	parser.add_argument("--cromwell", help="Run using cormwell as opposed to the default cromshell",
                             action="store_true", default=False)
 
