@@ -27,23 +27,26 @@ done
 # Test
 
 ```
-mkdir batches-small/
-head -n 10 aou_sample_list.txt > batches-small/batch1
-head -n 20 aou_sample_list.txt | tail -n 10 > batches-small/batch2
-chrom=21; ./gnomix_launcher.py \
-  --name test \
-  --vcf ${WGS_ACAF_THRESHOLD_VCF_PATH}/acaf_threshold.chr${chrom}.vcf.bgz \
-  --chrom ${chrom} \
-  --sample-batches batches-small/ --max-batches 2 --extra-subset-args "-r chr21:1-5252900"
-
-# another test
+mkdir batches-ancestry-small
+gsutil cp ${WORKSPACE_BUCKET}/samples/AFR_BLACK.csv .
+gsutil cp ${WORKSPACE_BUCKET}/samples/EUR_WHITE.csv .
 head -n 11 AFR_BLACK.csv | tail -n 10 | cut -f 1 -d',' > batches-ancestry-small/batchAFR.txt
 head -n 11 EUR_WHITE.csv | tail -n 10 | cut -f 1 -d',' > batches-ancestry-small/batchEUR.txt
-chrom=1; ./gnomix_launcher.py \
-  --name test-ancestry \
+
+chrom=21; ./gnomix_launcher.py \
+  --name test-chr21 \
   --vcf ${WGS_ACAF_THRESHOLD_VCF_PATH}/acaf_threshold.chr${chrom}.vcf.bgz \
   --chrom ${chrom} \
-  --sample-batches batches-ancestry-small/ --max-batches 2 --extra-subset-args "-r chr1:1-44157423"
+  --sample-batches batches-ancestry-small/ --max-batches 2 #--extra-subset-args "-r chr21:1-5252900"
 
+# Bigger test
+mkdir batches-ancestry-big
+head -n 1001 AFR_BLACK.csv | tail -n 1000 | cut -f 1 -d',' > batches-ancestry-big/batchAFR.txt
+head -n 1001 EUR_WHITE.csv | tail -n 1000 | cut -f 1 -d',' > batches-ancestry-big/batchEUR.txt
+chrom=21; ./gnomix_launcher.py \
+  --name test-chr21-big \
+  --vcf ${WGS_ACAF_THRESHOLD_VCF_PATH}/acaf_threshold.chr${chrom}.vcf.bgz \
+  --chrom ${chrom} \
+  --sample-batches batches-ancestry-big/ --max-batches 2
 ```
 

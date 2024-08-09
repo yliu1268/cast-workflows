@@ -68,7 +68,7 @@ task subset_vcf {
 
     command <<<
         set -e # fail if anything doesn't succeed
-         
+
         # Set up credentials
         export GCS_REQUESTER_PAYS_PROJECT=~{GOOGLE_PROJECT}
         export GCS_OAUTH_TOKEN=$(gcloud auth application-default print-access-token)
@@ -160,7 +160,7 @@ task gnomix {
 
     runtime {
         docker: "gcr.io/ucsd-medicine-cast/gnomix:latest"
-        memory: "25GB"
+        memory: "50GB"
     }
 
     output {
