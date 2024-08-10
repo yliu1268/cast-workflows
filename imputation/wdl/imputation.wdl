@@ -96,7 +96,7 @@ task subset_vcf {
     >>>
 
     runtime {
-        docker:"gcr.io/ucsd-medicine-cast/bcftools-gcs:latest-native"
+        docker:"gcr.io/ucsd-medicine-cast/bcftools-gcs:latest"
         maxRetries: 3
         preemptible: 3
     }

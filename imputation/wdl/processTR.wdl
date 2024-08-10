@@ -54,7 +54,7 @@ task extract_TR {
     >>>
 
     runtime {
-        docker:"gcr.io/ucsd-medicine-cast/bcftools-gcs:latest-native"
+        docker:"gcr.io/ucsd-medicine-cast/bcftools-gcs:latest"
     }
 
     output {
@@ -77,7 +77,7 @@ task prep_beagle_vcf {
     >>>
 
     runtime {
-        docker:"gcr.io/ucsd-medicine-cast/bcftools-gcs:latest-native"
+        docker:"gcr.io/ucsd-medicine-cast/bcftools-gcs:latest"
     }
 
     output {

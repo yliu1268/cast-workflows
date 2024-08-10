@@ -47,7 +47,7 @@ task merge {
     >>>
     
     runtime {
-        docker: "gcr.io/ucsd-medicine-cast/trtools-6.0.1:latest"
+        docker: "gcr.io/ucsd-medicine-cast/bcftools-gcs:latest"
         #disks: "local-disk 20 SSD"
         disks: "local-disk ~{disk} SSD"
     }
