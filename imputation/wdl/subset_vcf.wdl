@@ -7,12 +7,12 @@ workflow run_subset{
         String out_prefix
         String GOOGLE_PROJECT = ""
         Array[File] samples = []
-        File sample
-        
+        File ? sample 
     }
 
         ### Call subsetting samples with batches ###
     Int num_batches = length(samples)
+    
     scatter (i in range(num_batches)) {
             File sample_batch = samples[i]  
 
