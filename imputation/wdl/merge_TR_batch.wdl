@@ -2,8 +2,8 @@ version 1.0
 
 workflow merge_batch {
     input {
-        Array[File] vcfs
-        Array[File] vcfs_index
+        Array[String] vcfs
+        Array[String] vcfs_index
         String out_prefix
         Int? disk
     }
@@ -33,17 +33,16 @@ workflow merge_batch {
 
 task merge {
     input {
-        Array[File] vcfs
-        Array[File] vcfs_index
+        Array[String] vcfs
+        Array[String] vcfs_index
         String out_prefix
         Int? disk
     }
 
     command <<<
         #mergeSTR --vcfs ~{sep=',' vcfs} --out ~{out_prefix}_TR_merged --vcftype hipstr
-        bcftools merge ~{sep=' ' vcfs} -Oz -o ~{out_prefix}_TR_merged.vcf.gz
-        tabix -p vcf ~{out_prefix}_TR_merged.vcf.gz
-        
+        bcftools merge ~{sep=' ' vcfs} -Oz -o ~{out_prefix}_TR_merged.vcf.gz && tabix -p vcf ~{out_prefix}_TR_merged.vcf.gz
+          
     >>>
     
     runtime {

@@ -1,7 +1,7 @@
 version 1.0
 
 import "imputation.wdl" as imputation_t
-import "processTR.wdl" as processTR_t
+#import "processTR.wdl" as processTR_t
 #import "processSNP.wdl" as processSNP_t
 import "merge_TR_batch.wdl" as merge_TR_batch_t
 #import "merge_SNP_batch.wdl" as merge_SNP_batch_t
@@ -12,8 +12,8 @@ workflow batch_imputation {
                 String vcf 
                 String vcf_index 
                 File ref_panel
-                File ref
-                File ref_index
+                #File ref
+                #File ref_index
                 String out_prefix
                 String GOOGLE_PROJECT = ""
                 Int? mem 
@@ -22,7 +22,7 @@ workflow batch_imputation {
                 Boolean subset_region = false
                 Boolean beagle_region = false
                 Array[File] samples = []
-                File header_file
+                #File header_file
                 Int? disk
                 Int? overlap
                 File map
@@ -54,10 +54,10 @@ workflow batch_imputation {
                     input:
                         vcf=run_imputation.outfile,
                         vcf_index=run_imputation.outfile_index,
-                        ref=ref,
-                        ref_index=ref_index,
-                        out_prefix=out_prefix+".BATCH"+i,
-                        header_file=header_file
+                        #ref=ref,
+                        #ref_index=ref_index,
+                        out_prefix=out_prefix+".BATCH"+i
+                        #header_file=header_file
 
                 }
                 ## extract SNP from batches of beagle output
@@ -105,3 +105,38 @@ workflow batch_imputation {
                    
 }
 
+
+#task annotaTR
+#    input {
+#        File vcf 
+#        File vcf_index
+##        File ref_panel
+#        File ref_index
+#        String out
+#        String outtype
+#    }
+#    
+#    command <<<
+#        annotaTR --vcf chr11_2batch_merged_noheader.vcf.gz \
+#                --ref-panel ensembletr_refpanel_v3_chr11.vcf.gz \
+#                --out chr11_2batch_merged_annotated \
+#                --vcftype hipstr \
+#                --outtype vcf pgen \
+#                --dosages beagleap_norm \
+#                --ignore-duplicates \
+#                --match-refpanel-on locid
+#
+#    >>>
+#
+#    runtime {
+#        docker:"gcr.io/ucsd-medicine-cast/trtools-6.0.2:latest"
+#    }
+#
+#    output {
+#        File outvcf
+#        File outvcf_index = 
+#        File pgen = 
+#        File psam = 
+#        File pvar = 
+#    }
+#    """

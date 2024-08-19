@@ -138,11 +138,11 @@ def main():
 
 	# Set up workflow JSON
 	json_dict = {}
-	json_dict["subset_vcf.vcf"] = args.vcf
-	json_dict["subset_vcf.vcf_index"]=args.vcf+".tbi"
-	json_dict["subset_vcf.out_prefix"] = args.name
-	json_dict["subset_vcf.GOOGLE_PROJECT"] = project
-	json_dict["subset_vcf.samples"] = sample_batch 
+	json_dict["run_subset.vcf"] = args.vcf
+	json_dict["run_subset.vcf_index"]=args.vcf+".tbi"
+	json_dict["run_subset.out_prefix"] = args.name
+	json_dict["run_subset.GOOGLE_PROJECT"] = project
+	json_dict["run_subset.samples"] = sample_batch 
 	
 
 	# Convert to json and save as a file

@@ -1,11 +1,12 @@
 version 1.0
 
-workflow run_imputation {
+workflow run_subset{
     input {
         String vcf 
         String vcf_index 
         String out_prefix
         String GOOGLE_PROJECT = ""
+        Array[File] samples = []
         File sample
         
     }
@@ -21,13 +22,13 @@ workflow run_imputation {
                     vcf_index=vcf_index,
                     sample=sample_batch,
                     GOOGLE_PROJECT=GOOGLE_PROJECT,
-                    out_prefix=out_prefix
-                    }
+                    out_prefix=out_prefix+".BATCH"+i
+            }       
     }
     output {
-            File outfile = subset_vcf.outvcf 
-            File outfile_index = subset_vcf.outvcf_index
-        }
+            Array[File] outfile = subset_vcf.outvcf 
+            Array[File] outfile_index = subset_vcf.outvcf_index
+    }
     meta {
         description: "Run Beagle on a subset of samples on a single chromesome with default parameters"
     }
