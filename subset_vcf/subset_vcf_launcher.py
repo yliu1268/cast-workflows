@@ -25,7 +25,7 @@ def main():
 	json_dict["subset_vcf.GOOGLE_PROJECT"] = os.environ.get("GOOGLE_PROJECT", "")
 	if args.test:
 		json_dict["subset_vcf.sample_groups"] = os.environ["WORKSPACE_BUCKET"] + "/subset_vcf/metadata/aou_sample_groups_test.txt"
-		json_dict["subset_vcf.regions"] = ["chr11:119206339-119308149"]
+		json_dict["subset_vcf.regions"] = ["chr11:119206339-119308149", "chr11:119308149-119318149"]
 	else:
 		json_dict["subset_vcf.sample_groups"] = os.environ["WORKSPACE_BUCKET"] + "/subset_vcf/metadata/aou_sample_groups.txt"
 		json_dict["subset_vcf.regions"] = GetRegions(args.chrom)
