@@ -29,7 +29,12 @@ gsutil cp aou_sample_groups_test.txt ${WORKSPACE_BUCKET}/subset_vcf/metadata/aou
 
 ## Set up region batches
 ```
-# TODO - precompute regions per chromosome once we figure out a good size
+bedtools makewindows -g hg38.txt -w 10000000 > genome_windows.bed
+for chrom in $(seq 1 22)
+do
+	cat genome_windows.bed | grep -w "chr"${chrom} | awk '{print $1 ":" $2 "-"$3}' > regions_chr${chrom}.txt
+	#gsutil cp regions_chr${chrom}.txt ${WORKSPACE_BUCKET}/subset_vcf/metadata/regions_chr${chrom}.txt
+done
 ```
 
 ## Launch jobs
