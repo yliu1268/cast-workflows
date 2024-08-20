@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """
 Script to luanch jobs to subset AOU VCFs
+
+To run a small test:
+./subset_vcf_launcher.py --test --chrom 11
 """
 
 import argparse
@@ -18,8 +21,9 @@ def main():
 	parser = argparse.ArgumentParser(__doc__)
 	parser.add_argument("--chrom", help="Which chromosome to process. Ignored if testing", type=str, required=True)
 	parser.add_argument("--test", help="Whether to run on small test sets", action="store_true")
+	parser.add_argument("--name", help="Name prefix for intermediate files", type=str, default="test")
 	args = parser.parse_args()
-	
+
 	# Set up workflow JSON
 	json_dict = {}
 	json_dict["subset_vcf.multi_sample_vcf"] = os.environ["WGS_ACAF_THRESHOLD_VCF_PATH"] + "/acaf_threshold.chr%s.vcf.bgz"%args.chrom
