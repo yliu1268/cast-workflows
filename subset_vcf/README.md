@@ -1,5 +1,13 @@
 # Pre-compute batches of ACAF VCF files for use in future workflows
 
+This workflow precomputes small subsets of the ACAF VCF files. The steps below:
+
+* Break up samples into batches of 1000
+* Sets up the "groups" file needed for subsetting with bcftools split (`aou_sample_groups.txt`) 
+* Sets up 10Mb regions to run on one at a time
+* Launch a WDL that creates 1 smaller VCF per sample batch per region
+* Oragnize all the subset VCF files per batch in a single folder in our workspace for future use
+
 ## Set up group batches
 
 ```
