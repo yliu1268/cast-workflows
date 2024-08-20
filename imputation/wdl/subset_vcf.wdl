@@ -6,13 +6,12 @@ workflow run_subset{
         String vcf_index 
         String out_prefix
         String GOOGLE_PROJECT = ""
-        Array[File] samples = []
-        File ? sample 
+        Array[File] samples = [] 
     }
 
         ### Call subsetting samples with batches ###
     Int num_batches = length(samples)
-    
+
     scatter (i in range(num_batches)) {
             File sample_batch = samples[i]  
 
@@ -45,7 +44,7 @@ task subset_vcf {
     }
 
     command <<<
-        set -e 
+        #set -e 
         export GCS_REQUESTER_PAYS_PROJECT=~{GOOGLE_PROJECT}
         export GCS_OAUTH_TOKEN=$(gcloud auth application-default print-access-token)
 
