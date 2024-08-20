@@ -33,8 +33,25 @@ bedtools makewindows -g hg38.txt -w 10000000 > genome_windows.bed
 for chrom in $(seq 1 22)
 do
 	cat genome_windows.bed | grep -w "chr"${chrom} | awk '{print $1 ":" $2 "-"$3}' > regions_chr${chrom}.txt
-	#gsutil cp regions_chr${chrom}.txt ${WORKSPACE_BUCKET}/subset_vcf/metadata/regions_chr${chrom}.txt
+	gsutil cp regions_chr${chrom}.txt ${WORKSPACE_BUCKET}/subset_vcf/metadata/regions_chr${chrom}.txt
 done
 ```
 
 ## Launch jobs
+
+```
+# Test
+./subset_vcf_launcher.py --test --chrom 11
+```
+
+```
+# Full jobs
+for chrom in $(seq 1 22)
+do
+	./subset_vcf_launcher.py --chrom ${chrom} --name chr${chrom}
+done
+```
+
+## Organize files for each batch - TODO
+
+Might keep in separate regions per batch, jobs can concatenate them downstream?
