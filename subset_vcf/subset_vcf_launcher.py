@@ -18,7 +18,8 @@ def main():
 	parser = argparse.ArgumentParser(__doc__)
 	parser.add_argument("--chrom", help="Which chromosome to process. Ignored if testing", type=str, required=True)
 	parser.add_argument("--test", help="Whether to run on small test sets", action="store_true")
-
+	args = parser.parse_args()
+	
 	# Set up workflow JSON
 	json_dict = {}
 	json_dict["subset_vcf.multi_sample_vcf"] = os.environ["WGS_ACAF_THRESHOLD_VCF_PATH"] + "/acaf_threshold.chr%s.vcf.bgz"%args.chrom
