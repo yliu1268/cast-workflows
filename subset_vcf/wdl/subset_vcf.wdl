@@ -58,7 +58,7 @@ task subset_region_batches {
 
     runtime {
         docker: "gcr.io/ucsd-medicine-cast/bcftools-gcs:latest"
-        disks: "local-disk 100 SSD"
+        disks: "local-disk 50 SSD"
     }
 
     output {

@@ -8,6 +8,9 @@ This workflow precomputes small subsets of the ACAF VCF files. The steps below:
 * Launch a WDL that creates 1 smaller VCF per sample batch per region
 * Oragnize all the subset VCF files per batch in a single folder in our workspace for future use
 
+TODO:
+* maybe can reduce disk space, based on output vcf size * num batches (~70Mx246 batches=~17GB? so maybe need closer to 25GB?)
+
 ## Set up group batches
 
 ```
