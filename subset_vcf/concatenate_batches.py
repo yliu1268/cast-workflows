@@ -4,9 +4,9 @@ Usage:
 
 ./concanate_batches.py <cromshell_job_output.json> <outprefix> <bcftools_path>
 
-# TODO
-# Upload results to workspace bucket
 """
+
+DEBUG = True
 
 import json
 import os
@@ -48,28 +48,27 @@ for batch in batch_files.keys():
 	index_files = batch_files[batch]["index"]
 	output_fname = "%s-%s.vcf.gz"%(outprefix, batch)
 	print("##### Processing %s ######"%batch)
+
+	cmds = []
+	# Run the bcftools concat command
 	cmd = "%s concat %s -Oz -o %s"%(bcftools_path, " ".join(SortByCoordinate(vcf_files)), output_fname)
 	cmd += " && tabix -p vcf %s"%(output_fname)
-	print(cmd)
-
-	# Uncomment when done debugging
-	# Run the bcftools concat command
-	#output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
-	#print(output.decode("utf-8"))
+	cmds.append(cmd)
 
 	# Upload to our workspace bucket
 	cmd = "gsutil cp %s ${WORKSPACE_BUCKET}/acaf_batches/%s/%s"%(output_fname, outprefix, output_fname)
-	print(cmd)
-	#output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
-	#print(output.decode("utf-8"))
+	cmds.append(cmd)
 
 	cmd = "gsutil cp %s.tbi ${WORKSPACE_BUCKET}/acaf_batches/%s/%s.tbi"%(output_fname, outprefix, output_fname)
-	print(cmd)
-	#output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
-	#print(output.decode("utf-8"))
+	cmds.append(cmd)
 
 	# Remove this batch before we move on
 	cmd = "rm %s; rm %s.tbi"%(output_fname, output_fname)
-	print(cmd)
-	#output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
-	#print(output.decode("utf-8"))
+	cmds.append(cmd)
+
+	if DEBUG:
+		print(cmds)
+	else:
+		for cmd in cmds:
+			output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
+			print(output.decode("utf-8"))
