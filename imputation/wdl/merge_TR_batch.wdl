@@ -40,14 +40,12 @@ task merge {
     }
 
     command <<<
-        #mergeSTR --vcfs ~{sep=',' vcfs} --out ~{out_prefix}_TR_merged --vcftype hipstr
         bcftools merge ~{sep=' ' vcfs} -Oz -o ~{out_prefix}_TR_merged.vcf.gz && tabix -p vcf ~{out_prefix}_TR_merged.vcf.gz
           
     >>>
     
     runtime {
         docker: "gcr.io/ucsd-medicine-cast/bcftools-gcs:latest"
-        #disks: "local-disk 20 SSD"
         disks: "local-disk ~{disk} SSD"
     }
     output {

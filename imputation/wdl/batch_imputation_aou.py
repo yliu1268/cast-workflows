@@ -13,7 +13,7 @@ example code to impute 10 samples at CBL region
 --batch-num 2
 """
 
-
+# need to change GetFileBatches
 import argparse
 import json
 import os
@@ -43,7 +43,7 @@ def GetFileBatches(sample_list, batch_num=None):
     
     return sample_batch
 
-def RunWorkflow(json_file, json_options_file, wdl_dependencies_file, cromwell, dryrun=False):
+def RunWorkflow(json_file, json_options_file, wdl_dependencies_file, dryrun=False):
 	"""
 	Run workflow on AoU
 
@@ -57,13 +57,9 @@ def RunWorkflow(json_file, json_options_file, wdl_dependencies_file, cromwell, d
 	dryrun : bool
 		Just print the command, don't actually run cromshell
 	"""
-	if cromwell is False:
-		cmd = "cromshell submit ../wdl/batch_imputation.wdl {json} -op {options}".format(json=json_file, options=json_options_file)
-	else:
-		cmd = "java -jar -Dconfig.file={} ".format("/home/jupyter/cromwell.conf") + \
-	  			"cromwell-87.jar run imputation.wdl " + \
-	  			"--inputs {} --options {}".format(json_file, json_options_file)
-		
+
+	cmd = "cromshell submit ../wdl/batch_imputation.wdl {json} -op {options}".format(json=json_file, options=json_options_file)
+	
 	if wdl_dependencies_file.strip() != "":
 		cmd += " -d {otherwdl}".format(otherwdl=wdl_dependencies_file)
 	if dryrun:
@@ -110,7 +106,7 @@ def ZipWDL(wdl_dependencies_file):
 	wdl_dependencies_fie : str
 	    Zip file to put other wdls in
 	"""
-	files = ["imputation.wdl","processTR.wdl","processSNP.wdl","merge_TR_batch.wdl","merge_SNP_batch.wdl"]
+	files = ["beagle.wdl","processTR.wdl","merge_TR_batch.wdl"]
 	dirname = tempfile.mkdtemp()
 	for f in files:
 		shutil.copyfile("../wdl/%s"%f, dirname+"/"+f)
@@ -137,19 +133,20 @@ def main():
 	parser.add_argument("--mem", help="Specify run memory ", type=int, required=False, default=50)
 	parser.add_argument("--disk", help="Specify disk memory ", type=int, required=False, default=25)
 	parser.add_argument("--window", help="Specify window size for imputation ", type=int, required=False, default=20)
-	parser.add_argument("--samples", help="List of samples to process ", type=str, required=False, \
+	#need to change path
+	parser.add_argument("--sample-batches", help="List of batches samples to process ", type=str, required=False, \
 					 default=f"{bucket}/tr_imputation/tr_imputation/sample/sample_manifest.txt")
 	parser.add_argument("--region", help="Name of chrom position  chr:xxx-xxx", type=str,required=False)
 	parser.add_argument("--beagle-region", help="Apply chrom for beagle", action="store_true",required=False)
-	parser.add_argument("--subset-region", help="Subsetting region for vcf file", action="store_true",required=False)
+	#parser.add_argument("--subset-region", help="Subsetting region for vcf file", action="store_true",required=False)
 	parser.add_argument("--dryrun", help="Don't actually run the workflow. Just set up", action="store_true")
 	parser.add_argument("--batch-num", help="Number of batches. Default: -1 (all)",type=int, required=False, default=None)
 	parser.add_argument("--overlap", help="Specify overlap size for imputation ", type=int, required=False, default=2)
 	parser.add_argument("--map", help="Specify genetic map for imputation ", type=str, required=True)					
-	parser.add_argument("--header-file", help="Add hipstr header",type=str, required=False, \
-					 default=f"{bucket}/tr_imputation/tr_imputation/header_annotation.txt")
-	parser.add_argument("--cromwell", help="Run using cormwell as opposed to the default cromshell",
-                            action="store_true", default=False)
+	#parser.add_argument("--header-file", help="Add hipstr header",type=str, required=False, \
+	#				 default=f"{bucket}/tr_imputation/tr_imputation/header_annotation.txt")
+	#parser.add_argument("--cromwell", help="Run using cormwell as opposed to the default cromshell",
+    #                        action="store_true", default=False)
 
 	args = parser.parse_args()
 
@@ -183,8 +180,8 @@ def main():
 	#	UploadGS(args.samples, sample_file)
 
 
-	if args.subset_region and args.region is None:
-		ERROR("Must specify --region for --subset-region")
+	if args.beagle_region and args.region is None:
+		ERROR("Must specify --region for --beagle-region")
 
 
 
@@ -198,11 +195,11 @@ def main():
 	json_dict["batch_imputation.mem"] = args.mem
 	json_dict["batch_imputation.disk"] = args.disk
 	json_dict["batch_imputation.window_size"] = args.window
-	json_dict["batch_imputation.samples"] = sample_batch 
+	json_dict["batch_imputation.sample_batches"] = sample_batch 
 	json_dict["batch_imputation.region"] = args.region
-	json_dict["batch_imputation.subset_region"] = args.subset_region 
+	#json_dict["batch_imputation.subset_region"] = args.subset_region 
 	json_dict["batch_imputation.beagle_region"] =args.beagle_region
-	json_dict["batch_imputation.header_file"] =args.header_file
+	#json_dict["batch_imputation.header_file"] =args.header_file
 	json_dict["batch_imputation.ref"] =args.ref
 	json_dict["batch_imputation.ref_index"] =args.ref + ".tbi"
 	json_dict["batch_imputation.overlap"] =args.overlap
@@ -232,7 +229,7 @@ def main():
 
 
 	# Run workflow on AoU using cromwell
-	RunWorkflow(json_file, json_options_file, wdl_dependencies_file,args.cromwell, dryrun=args.dryrun)
+	RunWorkflow(json_file, json_options_file, wdl_dependencies_file, dryrun=args.dryrun)
 
 
 if __name__ == "__main__":

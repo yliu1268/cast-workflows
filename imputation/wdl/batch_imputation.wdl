@@ -1,7 +1,7 @@
 version 1.0
 
-import "imputation.wdl" as imputation_t
-#import "processTR.wdl" as processTR_t
+import "beagle.wdl" as imputation_t
+import "processTR.wdl" as processTR_t
 #import "processSNP.wdl" as processSNP_t
 import "merge_TR_batch.wdl" as merge_TR_batch_t
 #import "merge_SNP_batch.wdl" as merge_SNP_batch_t
@@ -12,35 +12,31 @@ workflow batch_imputation {
                 String vcf 
                 String vcf_index 
                 File ref_panel
-                #File ref
-                #File ref_index
                 String out_prefix
                 String GOOGLE_PROJECT = ""
                 Int? mem 
                 Int? window_size 
                 String? region
-                Boolean subset_region = false
                 Boolean beagle_region = false
-                Array[File] samples = []
-                #File header_file
+                Array[File] sample_batches = []
                 Int? disk
                 Int? overlap
                 File map
+                
 
         }
     ### Call subsetting samples with batches ###
-        Int num_batches = length(samples)
+        
+        Int num_batches = length(sample_batches)
         scatter (i in range(num_batches)) {
-                File sample_batch = samples[i]
-                call imputation_t.run_imputation as run_imputation {
+                File batch = sample_batches[i]
+                call imputation_t.beagle as run_imputation {
                     input:
-                        sample=sample_batch,
-                        vcf=vcf,
+                        vcf=batch,
                         vcf_index=vcf_index,
                         ref_panel=ref_panel,
                         region=region,
                         GOOGLE_PROJECT=GOOGLE_PROJECT,
-                        subset_region=subset_region,
                         beagle_region=beagle_region,
                         out_prefix=out_prefix+".BATCH"+i,
                         mem=mem,
@@ -54,11 +50,8 @@ workflow batch_imputation {
                     input:
                         vcf=run_imputation.outfile,
                         vcf_index=run_imputation.outfile_index,
-                        #ref=ref,
-                        #ref_index=ref_index,
                         out_prefix=out_prefix+".BATCH"+i
-                        #header_file=header_file
-
+     
                 }
                 ## extract SNP from batches of beagle output
                 #call processSNP_t.processSNP as processSNP {
