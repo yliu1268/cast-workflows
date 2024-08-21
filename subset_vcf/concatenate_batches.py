@@ -52,7 +52,7 @@ for batch in batch_files.keys():
 	cmds = []
 
 	# Refresh credentials each time because they expire
-	cmds.append("export GCS_REQUESTER_PAYS_PROJECT=${GOOGLE_PROJECT}")
+	cmds.append("export GCS_REQUESTER_PAYS_PROJECT=%s"%os.environ["GOOGLE_PROJECT"])
 	cmds.append("export GCS_OAUTH_TOKEN=$(gcloud auth application-default print-access-token)")
 
 	# Run the bcftools concat command
