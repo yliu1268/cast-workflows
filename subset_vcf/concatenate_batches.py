@@ -10,6 +10,7 @@ import os
 import sys
 
 jobdata = json.load(open(sys.argv[1], "r"))
+outprefix = sys.argv[2]
 
 # Gather files for each batch
 batch_files = {} # batchname -> {"vcf": [], "index": []}
