@@ -68,3 +68,8 @@ for batch in batch_files.keys():
 	#output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
 	#print(output.decode("utf-8"))
 
+	# Remove this batch before we move on
+	cmd = "rm %s; rm %s.tbi"%(output_fname, output_fname)
+	print(cmd)
+	#output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
+	#print(output.decode("utf-8"))
