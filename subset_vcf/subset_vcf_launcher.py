@@ -29,7 +29,7 @@ def main():
 	json_dict["subset_vcf.multi_sample_vcf"] = os.environ["WGS_ACAF_THRESHOLD_VCF_PATH"] + "/acaf_threshold.chr%s.vcf.bgz"%args.chrom
 	json_dict["subset_vcf.GOOGLE_PROJECT"] = os.environ.get("GOOGLE_PROJECT", "")
 	if args.test:
-		json_dict["subset_vcf.sample_groups"] = os.environ["WORKSPACE_BUCKET"] + "/subset_vcf/metadata/aou_sample_groups_test.txt"
+		json_dict["subset_vcf.sample_groups"] = os.environ["WORKSPACE_BUCKET"] + "/subset_vcf/metadata/aou_sample_groups.txt"
 		json_dict["subset_vcf.regions"] = ["chr11:40000000-50000000", "chr11:50000000-60000000"]
 	else:
 		json_dict["subset_vcf.sample_groups"] = os.environ["WORKSPACE_BUCKET"] + "/subset_vcf/metadata/aou_sample_groups.txt"
