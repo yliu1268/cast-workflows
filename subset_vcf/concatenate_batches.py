@@ -49,7 +49,7 @@ for batch in batch_files.keys():
 	output_fname = "%s-%s.vcf.gz"%(outprefix, batch)
 	print("##### Processing %s ######"%batch)
 	cmd = "%s concat %s -Oz -o %s"%(bcftools_path, " ".join(SortByCoordinate(vcf_files)), output_fname)
-	cmd += " && tabix -p vcf "%(output_fname)
+	cmd += " && tabix -p vcf %s"%(output_fname)
 	print(cmd)
 
 	# Uncomment when done debugging
