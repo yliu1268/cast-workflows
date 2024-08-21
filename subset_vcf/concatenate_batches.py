@@ -42,6 +42,7 @@ for region in jobdata["subset_vcf.vcf_index_array"]:
 		batchname = os.path.basename(f).split("-")[0]
 		batch_files[batchname]["index"].append(f)
 
+os.environ["GCS_REQUESTER_PAYS_PROJECT"] = os.environ["GOOGLE_PROJECT"]
 # Process one batch at a time
 for batch in batch_files.keys():
 	vcf_files = batch_files[batch]["vcf"]
@@ -50,10 +51,6 @@ for batch in batch_files.keys():
 	print("##### Processing %s ######"%batch)
 
 	cmds = []
-
-	# Refresh credentials each time because they expire
-	cmds.append("export GCS_REQUESTER_PAYS_PROJECT=%s"%os.environ["GOOGLE_PROJECT"])
-	cmds.append("export GCS_OAUTH_TOKEN=$(gcloud auth application-default print-access-token)")
 
 	# Run the bcftools concat command
 	cmd = "%s concat %s -Oz -o %s"%(bcftools_path, " ".join(SortByCoordinate(vcf_files)), output_fname)
@@ -74,6 +71,12 @@ for batch in batch_files.keys():
 	if DEBUG:
 		print(cmds)
 	else:
+		# Refresh credentials
+		token_fetch_command = subprocess.run(['gcloud', 'auth', 'application-default', 'print-access-token'], \
+			cmdcapture_output=True, check=True, encoding='utf-8')
+		token = str.strip(token_fetch_command.stdout)
+		os.environ["GCS_OAUTH_TOKEN"] = token
+
 		for cmd in cmds:
 			output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
 			print(output.decode("utf-8"))
