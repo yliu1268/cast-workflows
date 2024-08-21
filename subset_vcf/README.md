@@ -65,7 +65,7 @@ done
 
 ## Organize files for each batch
 
-TODO - changing this to wdl instead
+TODO - changing this to wdl instead (see concate_batches_v2.py - in progress)
 
 Note assumes we compiled bcftools with ability to read from gcs:
 ```
