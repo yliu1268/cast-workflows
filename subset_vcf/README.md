@@ -72,6 +72,6 @@ want: one folder per batch, within that one file per chrom per batch
 # Notes for doing this for test on chr11
 chrom=11
 cromshell --machine_processable  list-outputs -j $jobid > chr${chrom}.json
-./concatenate_batches.py chr${chrom}.json chr${chrom}
+./concatenate_batches.py chr${chrom}.json chr${chrom} ~/bcftools-1.20/bcftools
 ```
 

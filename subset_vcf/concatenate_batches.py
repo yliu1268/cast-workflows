@@ -2,7 +2,7 @@
 """
 Usage:
 
-./concanate_batches.py <cromshell_job_output.json> <fileprefix>
+./concanate_batches.py <cromshell_job_output.json> <fileprefix> <bcftools_path>
 """
 
 import json
@@ -11,6 +11,7 @@ import sys
 
 jobdata = json.load(open(sys.argv[1], "r"))
 outprefix = sys.argv[2]
+bcftools_path = sys.argv[3]
 
 # Gather files for each batch
 batch_files = {} # batchname -> {"vcf": [], "index": []}
@@ -32,5 +33,6 @@ for batch in batch_files.keys():
 	vcf_files = batch_files[batch]["vcf"]
 	index_files = batch_files[batch]["index"]
 	print("##### Processing %s ######"%batch)
-	print(vcf_files)
-	print(index_files)
+	cmd = "%s %s -Oz -o %s-%s.vcf.gz"%(bcftools_path, " ".join(vcf_files), outprefix, batch)
+	cmd += " && tabix -p vcf %s-%s.vcf.gz"%(outprefix, batch)
+	print(cmd)
