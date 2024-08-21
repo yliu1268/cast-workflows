@@ -14,7 +14,7 @@ import subprocess
 def GetRegions(chrom):
 	regions_file = os.environ["WORKSPACE_BUCKET"] + "/subset_vcf/metadata/regions_chr%s.txt"%chrom
 	os.system("gsutil cp %s ."%regions_file)
-	regions = [item.strip() for item in open(regions_file, "r").readlines()]
+	regions = [item.strip() for item in open(os.path.basename(regions_file), "r").readlines()]
 	return regions
 
 def main():
