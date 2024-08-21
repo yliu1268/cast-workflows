@@ -22,7 +22,7 @@ for region in jobdata["subset_vcf.vcf_output_array"]:
 			batch_files[batchname]["vcf"] = []
 			batch_files[batchname]["index"] = []
 		batch_files[batchname]["vcf"].append(f)
-for region in jobdata["subset_vcf.vcf_index_array'"]:
+for region in jobdata["subset_vcf.vcf_index_array"]:
 	for f in region:
 		batchname = os.path.basename(f).split("-")[0]
 		batch_files[batchname]["index"].append(f)
