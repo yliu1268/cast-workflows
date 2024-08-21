@@ -25,7 +25,7 @@ def SortByCoordinate(vcf_files):
 		coord = int(os.path.basename(f).split("-")[2])
 		files.append((coord, f))
 	files = sorted(files, key = lambda x: x[0])
-	return files
+	return [item[1] for item in files]
 
 # Gather files for each batch
 batch_files = {} # batchname -> {"vcf": [], "index": []}
