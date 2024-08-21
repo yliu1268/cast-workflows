@@ -73,7 +73,7 @@ for batch in batch_files.keys():
 	else:
 		# Refresh credentials
 		token_fetch_command = subprocess.run(['gcloud', 'auth', 'application-default', 'print-access-token'], \
-			cmdcapture_output=True, check=True, encoding='utf-8')
+			capture_output=True, check=True, encoding='utf-8')
 		token = str.strip(token_fetch_command.stdout)
 		os.environ["GCS_OAUTH_TOKEN"] = token
 
