@@ -63,7 +63,9 @@ do
 done
 ```
 
-## Organize files for each batch - TODO
+## Organize files for each batch
+
+TODO - changing this to wdl instead
 
 Note assumes we compiled bcftools with ability to read from gcs:
 ```
