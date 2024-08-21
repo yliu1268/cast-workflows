@@ -33,6 +33,6 @@ for batch in batch_files.keys():
 	vcf_files = batch_files[batch]["vcf"]
 	index_files = batch_files[batch]["index"]
 	print("##### Processing %s ######"%batch)
-	cmd = "%s %s -Oz -o %s-%s.vcf.gz"%(bcftools_path, " ".join(vcf_files), outprefix, batch)
+	cmd = "%s concat %s -Oz -o %s-%s.vcf.gz"%(bcftools_path, " ".join(vcf_files), outprefix, batch)
 	cmd += " && tabix -p vcf %s-%s.vcf.gz"%(outprefix, batch)
 	print(cmd)
