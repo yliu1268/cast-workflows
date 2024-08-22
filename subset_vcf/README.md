@@ -13,7 +13,9 @@ Workflows launched with cromshell:
 * `subset_vcf.wdl`: Launch a WDL that creates 1 smaller VCF per sample batch per region
 * `concatenate_batch_vcfs.wdl`: Oragnize all the subset VCF files per batch in a single folder in our workspace for future use
 
-## Setup: Set up group batches
+## Setup
+
+### Set up group batches
 
 ```
 # Set up groups file for batches of 1000
@@ -40,7 +42,7 @@ cat aou_sample_groups.txt | awk '($3=="batch1" || $3=="batch2")' > aou_sample_gr
 gsutil cp aou_sample_groups_test.txt ${WORKSPACE_BUCKET}/subset_vcf/metadata/aou_sample_groups_test.txt
 ```
 
-## Set up: Set up region batches
+### Set up region batches
 ```
 bedtools makewindows -g hg38.txt -w 10000000 > genome_windows.bed
 for chrom in $(seq 1 22)
@@ -54,6 +56,7 @@ done
 
 ```
 # Full jobs
+# Keep track of the job ID of each chromosome, needed for next steps below
 for chrom in $(seq 1 22)
 do
 	./subset_vcf_launcher.py --chrom ${chrom} --name chr${chrom}
