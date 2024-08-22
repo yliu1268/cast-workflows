@@ -26,7 +26,7 @@ def SortByCoordinate(vcf_files):
 	return [item[1] for item in files]
 
 # Load jobdata
-jobdata_fetch_command = subprocess.run(['cromshell', '-mc', 'list-outputs', '-j', cromshell_job_id], \
+jobdata_fetch_command = subprocess.run(['cromshell', '-t', '200', '-mc', 'list-outputs', '-j', cromshell_job_id], \
 			capture_output=True, check=True, encoding='utf-8')
 jobdata = json.loads(str.strip(jobdata_fetch_command.stdout))
 
@@ -59,8 +59,7 @@ with open(options_file, "w") as f:
 
 # Run workflow
 cmd = "cromshell submit {wdl} {json} -op {options}".format(wdl="wdl/concatenate_batch_vcfs.wdl", json=json_file, options=options_file)
-print(cmd)
-#output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
-#print(output.decode("utf-8"))	
+output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
+print(output.decode("utf-8"))	
 
 
