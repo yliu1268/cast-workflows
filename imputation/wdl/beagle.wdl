@@ -29,6 +29,7 @@ workflow beagle {
           beagle_region=beagle_region,
           region=region,
           map=map,
+          overlap=overlap,
           disk=disk
     }
 
