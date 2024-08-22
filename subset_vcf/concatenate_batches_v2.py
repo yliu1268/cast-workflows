@@ -60,7 +60,8 @@ with open(options_file, "w") as f:
 
 # Run workflow
 cmd = "cromshell submit {wdl} {json} -op {options}".format(wdl="wdl/concatenate_batch_vcfs.wdl", json=json_file, options=options_file)
-output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
-print(output.decode("utf-8"))	
+print(cmd)
+#output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
+#print(output.decode("utf-8"))	
 
 
