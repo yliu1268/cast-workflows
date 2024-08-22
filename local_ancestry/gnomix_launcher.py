@@ -4,7 +4,7 @@ Script to launch AOU Gnomix for local ancestry inference
 
 Dryrun:
 chrom=11; ./gnomix_launcher.py \
-  --name test-chr11 \
+  --name test-chr${chrom} \
   --vcfdir ${WORKSPACE_BUCKET}/acaf_batches/chr${chrom} \
   --chrom ${chrom} \
   --max-batches 2 \
@@ -24,7 +24,7 @@ import aou_utils
 GNOMIXMODEL = "gs://artifacts.ucsd-medicine-cast.appspot.com/resources/pretrained_gnomix_models.tar.gz"
 
 def GetBatchVCFFiles(vcfdir, max_batches):
-	cmd = "gsutil ls %s/acaf_batches/chr%s/*.vcf.gz"%(os.environ["WORKSPACE_BUCKET"], chrom)
+	cmd = "gsutil ls %s/*.vcf.gz"%(vcfdir)
 	output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read().decode("utf-8")
 	batch_files = [item.strip() for item in output.split()]
 	if max_batches > -1 and max_batches <= len(batch_files):

@@ -14,7 +14,7 @@ cd local_ancestry
 
 ```
 chrom=11; ./gnomix_launcher.py \
-  --name test-chr11 \
+  --name test-chr${chrom} \
   --vcfdir ${WORKSPACE_BUCKET}/acaf_batches/chr${chrom} \
   --chrom ${chrom} \
   --max-batches 2 
