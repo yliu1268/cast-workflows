@@ -38,7 +38,7 @@ for region in jobdata["subset_vcf.vcf_output_array"]:
 		if batchname not in batch_files.keys():
 			batch_files[batchname] = []
 		batch_files[batchname].append(f)
-batch_names = batch_files.keys()
+batch_names = list(batch_files.keys())
 
 # Set up workflow json
 json_dict = {}
