@@ -88,7 +88,7 @@ task liftover_vcf {
     runtime {
         docker: "gcr.io/ucsd-medicine-cast/bcftools-gcs-plugins:latest"
         memory: "25GB"
-        disks: "local-disk 25 SSD"
+        disks: "local-disk 50 SSD"
     }
 
     output {
