@@ -28,7 +28,7 @@ def SortByCoordinate(vcf_files):
 # Load jobdata
 jobdata_fetch_command = subprocess.run(['cromshell', '-mc', 'list-outputs', '-j', cromshell_job_id], \
 			capture_output=True, check=True, encoding='utf-8')
-jobdata = json.load(str.strip(jobdata_fetch_command.stdout))
+jobdata = json.loads(str.strip(jobdata_fetch_command.stdout))
 
 # Gather files for each batch
 batch_files = {} # batchname -> [list of files]
