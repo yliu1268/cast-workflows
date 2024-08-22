@@ -9,8 +9,8 @@ import "merge_TR_batch.wdl" as merge_TR_batch_t
 
 workflow batch_imputation {
         input {
-                String vcf 
-                String vcf_index 
+                #String vcf 
+                #String vcf_index 
                 File ref_panel
                 String out_prefix
                 String GOOGLE_PROJECT = ""
@@ -19,7 +19,6 @@ workflow batch_imputation {
                 String? region
                 Boolean beagle_region = false
                 Array[File] sample_batches = []
-                Array[File] sample_index_batches = []
                 Int? disk
                 Int? overlap
                 File map
@@ -31,7 +30,7 @@ workflow batch_imputation {
         Int num_batches = length(sample_batches)
         scatter (i in range(num_batches)) {
                 File batch = sample_batches[i]
-                File batch_index = sample_index_batches[i]
+                File batch_index = sample_batches[i]+".tbi"
                 call imputation_t.beagle as run_imputation {
                     input:
                         vcf=batch,
