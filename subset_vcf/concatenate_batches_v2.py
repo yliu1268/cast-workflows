@@ -47,7 +47,6 @@ json_dict["concatenate_batch_vcfs.GOOGLE_PROJECT"] = os.environ.get("GOOGLE_PROJ
 json_dict["concatenate_batch_vcfs.batch_names"] = batch_names
 json_dict["concatenate_batch_vcfs.batch_vcf_files"] = [batch_files[bn] for bn in batch_names]
 json_file = chrom + "concat.aou.json"
-print(json_dict)
 with open(json_file, "w") as f:
 	json.dump(json_dict, f, indent=4)
 
