@@ -2,7 +2,7 @@
 """
 Usage:
 
-./concanate_batches.py <cromshell_job_id> <chrom>
+./concanate_batches_v2.py <cromshell_job_id> <chrom>
 """
 
 DEBUG = True

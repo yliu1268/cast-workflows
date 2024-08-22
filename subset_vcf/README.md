@@ -1,17 +1,19 @@
 # Pre-compute batches of ACAF VCF files for use in future workflows
 
-This workflow precomputes small subsets of the ACAF VCF files. The steps below:
+This set of workflows precomputes small subsets of the ACAF VCF files. The steps below:
+
+Setup work on the terminal:
 
 * Break up samples into batches of 1000
 * Sets up the "groups" file needed for subsetting with bcftools split (`aou_sample_groups.txt`) 
 * Sets up 10Mb regions to run on one at a time
-* Launch a WDL that creates 1 smaller VCF per sample batch per region
-* Oragnize all the subset VCF files per batch in a single folder in our workspace for future use
 
-TODO:
-* maybe can reduce disk space, based on output vcf size * num batches (~70Mx246 batches=~17GB? so maybe need closer to 25GB?)
+Workflows launched with cromshell:
 
-## Set up group batches
+* `subset_vcf.wdl`: Launch a WDL that creates 1 smaller VCF per sample batch per region
+* `concatenate_batch_vcfs.wdl`: Oragnize all the subset VCF files per batch in a single folder in our workspace for future use
+
+## Setup: Set up group batches
 
 ```
 # Set up groups file for batches of 1000
@@ -38,7 +40,7 @@ cat aou_sample_groups.txt | awk '($3=="batch1" || $3=="batch2")' > aou_sample_gr
 gsutil cp aou_sample_groups_test.txt ${WORKSPACE_BUCKET}/subset_vcf/metadata/aou_sample_groups_test.txt
 ```
 
-## Set up region batches
+## Set up: Set up region batches
 ```
 bedtools makewindows -g hg38.txt -w 10000000 > genome_windows.bed
 for chrom in $(seq 1 22)
@@ -48,7 +50,7 @@ do
 done
 ```
 
-## Launch jobs
+## Subset VCF: Launch jobs
 
 ```
 # Test
@@ -63,7 +65,13 @@ do
 done
 ```
 
-## Organize files for each batch
+## Concatenation: Organize files for each batch
+
+```
+./concanate_batches_v2.py $jobid test
+
+./concanate_batches_v2.py $jobid chr11
+```
 
 TODO - changing this to wdl instead (see concate_batches_v2.py - in progress)
 
