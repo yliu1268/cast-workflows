@@ -68,9 +68,7 @@ done
 ## Concatenation: Organize files for each batch
 
 ```
-./concanate_batches_v2.py $jobid test
-
-./concanate_batches_v2.py $jobid chr11
+./concatenate_batches_v2.py $jobid chr11
 ```
 
 TODO - changing this to wdl instead (see concate_batches_v2.py - in progress)
