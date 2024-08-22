@@ -128,8 +128,8 @@ def main():
 
 	parser = argparse.ArgumentParser(__doc__)
 	parser.add_argument("--name", help="Name of the TR job", required=True, type=str)
-	parser.add_argument("--vcf", help="Name of the genotype vcf file", required=True, type=str)
-	parser.add_argument("--ref-panel", help="File id of ref genome", type=str)
+	#parser.add_argument("--vcf", help="Name of the genotype vcf file", required=True, type=str)
+	#parser.add_argument("--ref-panel", help="File id of ref genome", type=str)
 	parser.add_argument("--ref", help="File of ref genome", type=str,required=True)
 	parser.add_argument("--ref-index", help="File of ref index genome", type=str,required=False)
 	parser.add_argument("--mem", help="Specify run memory ", type=int, required=False, default=50)
