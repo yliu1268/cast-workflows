@@ -19,6 +19,7 @@ workflow batch_imputation {
                 String? region
                 Boolean beagle_region = false
                 Array[File] sample_batches = []
+                Array[File] sample_index_batches = []
                 Int? disk
                 Int? overlap
                 File map
@@ -30,10 +31,11 @@ workflow batch_imputation {
         Int num_batches = length(sample_batches)
         scatter (i in range(num_batches)) {
                 File batch = sample_batches[i]
+                File batch_index = sample_index_batches[i]
                 call imputation_t.beagle as run_imputation {
                     input:
                         vcf=batch,
-                        vcf_index=vcf_index,
+                        vcf_index= batch_index,
                         ref_panel=ref_panel,
                         region=region,
                         GOOGLE_PROJECT=GOOGLE_PROJECT,

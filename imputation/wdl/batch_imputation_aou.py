@@ -134,8 +134,10 @@ def main():
 	parser.add_argument("--disk", help="Specify disk memory ", type=int, required=False, default=25)
 	parser.add_argument("--window", help="Specify window size for imputation ", type=int, required=False, default=20)
 	#need to change path
+	#parser.add_argument("--sample-batches", help="List of batches samples to process ", type=str, required=False, \
+	#				 default=f"{bucket}/tr_imputation/tr_imputation/sample/sample_manifest.txt")
 	parser.add_argument("--sample-batches", help="List of batches samples to process ", type=str, required=False, \
-					 default=f"{bucket}/tr_imputation/tr_imputation/sample/sample_manifest.txt")
+					 default=f"{bucket}/acaf_batches/manifest/chr11_acaf_manifest.txt")
 	parser.add_argument("--region", help="Name of chrom position  chr:xxx-xxx", type=str,required=False)
 	parser.add_argument("--beagle-region", help="Apply chrom for beagle", action="store_true",required=False)
 	#parser.add_argument("--subset-region", help="Subsetting region for vcf file", action="store_true",required=False)
