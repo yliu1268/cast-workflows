@@ -55,7 +55,7 @@ options_file = chrom + "concat.aou.options.json"
 json_options_dict = {}
 json_options_dict["final_workflow_outputs_dir"] = os.environ["WORKSPACE_BUCKET"] + "/acaf_batches/" + chrom
 with open(options_file, "w") as f:
-	json.dump(options_dict, f, indent=4)
+	json.dump(json_options_dict, f, indent=4)
 
 # Run workflow
 cmd = "cromshell submit {wdl} {json} -op {options}".format(wdl="wdl/concatenate_batch_vcfs.wdl", json=json_file, options=options_file)
