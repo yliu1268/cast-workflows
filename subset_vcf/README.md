@@ -53,11 +53,6 @@ done
 ## Subset VCF: Launch jobs
 
 ```
-# Test
-./subset_vcf_launcher.py --test --chrom 11
-```
-
-```
 # Full jobs
 for chrom in $(seq 1 22)
 do
@@ -68,33 +63,15 @@ done
 ## Concatenation: Organize files for each batch
 
 ```
-./concatenate_batches_v2.py $jobid chr11
+# Launch concatenation wdl ( example on chr11)
+chrom=chr11
+jobid=<jobid from the subset_vcf job for this chromosome>
+./concatenate_batches_v2.py ${jobid} ${chrom}
+
+# After completion, rename job outputs to be in ${WORKSPACE_BUCKET}/acaf_batches/${chrom}
+# cromshell buries them in ${WORKSPACE_BUCKET}/acaf_batches/${chrom}/concatenate_batch_vcfs/
+concatjobid=<job id from concatenation>
+cromshell -mc list-outputs -j ${concatjobid} | \
+	python -c "import json, sys; data=json.load(sys.stdin); [sys.stdout.write(item+'\n') for item in data['concatenate_batch_vcfs.vcf_outputs']+data['concatenate_batch_vcfs.vcf_indices']]" | \
+	xargs -n1 -I% -P1 sh -c "gsutil mv % ${WORKSPACE_BUCKET}/acaf_batches/${chrom}/"
 ```
-
-TODO - changing this to wdl instead (see concate_batches_v2.py - in progress)
-
-Note assumes we compiled bcftools with ability to read from gcs:
-```
-# install bcftools
-wget -O bcftools-1.20.tar.bz2 https://github.com/samtools/bcftools/releases/download/1.20/bcftools-1.20.tar.bz2
-tar -xjvf bcftools-1.20.tar.bz2
-cd bcftools-1.20
-./configure --enable-gcs --enable-libcurl --enable-s3
-make install
-make -j
-
-# Set env variables
-export GCS_REQUESTER_PAYS_PROJECT=${GOOGLE_PROJECT}
-export GCS_OAUTH_TOKEN=$(gcloud auth application-default print-access-token)
-```
-
-```
-
-# Notes for doing this for test on chr11
-# But ugh this is kind of slow should we move this to wdl to parallelize?
-# Also will need to keep track of the jobid for each chrom from subset_vcf_launcher.py above
-chrom=11
-cromshell --machine_processable list-outputs -j $jobid > chr${chrom}.json
-./concatenate_batches.py chr${chrom}.json chr${chrom} ~/bcftools-1.20/bcftools
-```
-
