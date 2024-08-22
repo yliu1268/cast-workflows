@@ -5,33 +5,29 @@ import "gnomix.wdl" as gnomix_t
 workflow local_ancestry {
     input {
         String out_prefix
-        String multi_sample_vcf 
-        Array[File] samples
+        Array[File] batch_vcf_files
         File gnomix_model
         String chrom
         String GOOGLE_PROJECT = ""
         File chainfile
         File refpanel
         File refpanel_index
-        String extra_subset_args
     }
 
     # Call Beagle/gnomix on batches
-    Int num_batches = length(samples)
+    Int num_batches = length(batch_vcf_files)
     scatter (i in range(num_batches)) {
-        File sample_batch = samples[i]
+        File batch_vcf = batch_vcf_files[i]
         call gnomix_t.run_gnomix as run_gnomix {
             input:
-                samples=sample_batch,
-                multi_sample_vcf=multi_sample_vcf,
+                vcf=batch_vcf,
                 model=gnomix_model,
                 chrom=chrom,
                 out_prefix=out_prefix+".BATCH"+i,
                 GOOGLE_PROJECT=GOOGLE_PROJECT,
                 chainfile=chainfile,
                 refpanel=refpanel,
-                refpanel_index=refpanel_index,
-                extra_subset_args=extra_subset_args
+                refpanel_index=refpanel_index
         }
     }
 

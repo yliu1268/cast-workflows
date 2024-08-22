@@ -2,8 +2,7 @@ version 1.0
 
 workflow run_gnomix {
     input {
-        File samples
-        String multi_sample_vcf
+        File vcf
         File model
         String chrom
         String out_prefix
@@ -11,24 +10,21 @@ workflow run_gnomix {
         File chainfile
         File refpanel
         File refpanel_index
-        String extra_subset_args
     }
 
-    call subset_vcf {
+    call liftover_vcf {
         input:
-            multi_sample_vcf=multi_sample_vcf,
-            samples=samples,
+            vcf=vcf,
             out_prefix=out_prefix,
             GOOGLE_PROJECT=GOOGLE_PROJECT,
             chainfile=chainfile,
-            extra_subset_args=extra_subset_args,
             chrom=chrom
     }
 
     call beagle {
         input:
-            vcf=subset_vcf.outvcf,
-            vcf_index=subset_vcf.outvcf_index,
+            vcf=liftover_vcf.outvcf,
+            vcf_index=liftover_vcf.outvcf_index,
             out_prefix=out_prefix,
             refpanel=refpanel,
             refpanel_index=refpanel_index
@@ -53,36 +49,26 @@ workflow run_gnomix {
     }
 }
 
-task subset_vcf {
+task liftover_vcf {
     input {
-        String multi_sample_vcf
-        File samples
+        File vcf
         String out_prefix
         String GOOGLE_PROJECT = ""
         String hg38_ref = "gs://genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.fasta"
         String hg19_ref = "gs://gcp-public-data--broad-references/Homo_sapiens_assembly19_1000genomes_decoy/Homo_sapiens_assembly19_1000genomes_decoy.fasta"
         File chainfile
-        String extra_subset_args = ""
         String chrom
     }
 
     command <<<
         set -e # fail if anything doesn't succeed
 
-        # Set up credentials
-        export GCS_REQUESTER_PAYS_PROJECT=~{GOOGLE_PROJECT}
-        export GCS_OAUTH_TOKEN=$(gcloud auth application-default print-access-token)
-
-        # Extract subset
-        echo "Extract subset"
-        bcftools view ~{extra_subset_args} -S ~{samples} -I -m2 -M2 --min-af 0.01 ~{multi_sample_vcf} -Oz -o ~{out_prefix}.vcf.gz
-        tabix -p vcf ~{out_prefix}.vcf.gz
-
         # Liftover to hg19
         # First refresh credentials
+        export GCS_REQUESTER_PAYS_PROJECT=~{GOOGLE_PROJECT}
         export GCS_OAUTH_TOKEN=$(gcloud auth application-default print-access-token)
         echo "Liftover"
-        bcftools +liftover --no-version -Ou ~{out_prefix}.vcf.gz -- \
+        bcftools +liftover --no-version -Ou ~{vcf} -- \
               -f ~{hg19_ref} \
               -s ~{hg38_ref} \
               -c ~{chainfile} \

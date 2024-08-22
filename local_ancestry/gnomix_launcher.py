@@ -3,18 +3,19 @@
 Script to launch AOU Gnomix for local ancestry inference
 
 Dryrun:
-chrom=21; ./gnomix_launcher.py \
-  --name test \
-  --vcf ${WGS_ACAF_THRESHOLD_VCF_PATH}/acaf_threshold.chr${chrom}.vcf.bgz \
+chrom=11; ./gnomix_launcher.py \
+  --name test-chr11 \
+  --vcfdir ${WORKSPACE_BUCKET}/acaf_batches/chr${chrom} \
   --chrom ${chrom} \
-  --dryrun \
-  --sample-batches ./tests/dummy_sample_batches
+  --max-batches 2 \
+  --dryrun
 """
 
 import argparse
 import glob
 import json
 import os
+import subprocess
 import sys
 
 sys.path.append("../utils")
@@ -22,48 +23,41 @@ import aou_utils
 
 GNOMIXMODEL = "gs://artifacts.ucsd-medicine-cast.appspot.com/resources/pretrained_gnomix_models.tar.gz"
 
+def GetBatchVCFFiles(vcfdir, max_batches):
+	cmd = "gsutil ls %s/acaf_batches/chr%s/*.vcf.gz"%(os.environ["WORKSPACE_BUCKET"], chrom)
+	output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read().decode("utf-8")
+	batch_files = [item.strip() for item in output.split()]
+	if max_batches > -1 and max_batches <= len(batch_files):
+		batch_files = batch_files[0:max_batches]
+	return batch_files
+
 def main():
 	parser = argparse.ArgumentParser(__doc__)
-	parser.add_argument("--sample-batches", help="Directory with sample batches", \
+	parser.add_argument("--vcfdir", help="GCP bucket with batch VCF files", \
 		type=str, required=True)
 	parser.add_argument("--name", help="Name of the run", type=str, required=True)
-	parser.add_argument("--vcf", help="GCP path to the AoU SNP VCF", type=str, required=True)
 	parser.add_argument("--chrom", help="Which chromosome to process", type=str, required=True)
 	parser.add_argument("--gnomix-model", help="GCP path to pretrained model", type=str, \
 		default=GNOMIXMODEL)
 	# For debugging
 	parser.add_argument("--dryrun", help="Set up job but don't launch", \
 		action="store_true")
-	parser.add_argument("--extra-subset-args", help="Extra args to add to bcftools for debug", type=str, default="")
 	parser.add_argument("--max-batches", help="Only run this many batches", \
 		type=int, default=-1)
 	args = parser.parse_args()
 
-	# Get list of sample files and upload to GCS
-	gsprefix = os.getenv("WORKSPACE_BUCKET") + "/gnomix/" + args.name + "/batches"
-	sample_file_list = glob.glob(args.sample_batches + "/*")
-	if args.max_batches > -1 and len(sample_file_list) > args.max_batches:
-		sample_file_list = sample_file_list[:args.max_batches]
-	sample_file_list_gcs = []
-	for sf in sample_file_list:
-		sf_gcs = gsprefix + "/" + os.path.basename(sf)
-		aou_utils.UploadGS(sf, sf_gcs)
-		sample_file_list_gcs.append(sf_gcs)
+	batch_vcf_files = GetBatchVCFFiles(args.vcfdir, args.max_batches)
 
 	# Set up workflow JSON
 	json_dict = {}
 	json_dict["local_ancestry.out_prefix"] = args.name
-	json_dict["local_ancestry.multi_sample_vcf"] = args.vcf
-	json_dict["local_ancestry.samples"] = sample_file_list_gcs
+	json_dict["local_ancestry.batch_vcf_files"] = batch_vcf_files
 	json_dict["local_ancestry.chrom"] = args.chrom
 	json_dict["local_ancestry.GOOGLE_PROJECT"] = os.environ.get("GOOGLE_PROJECT", "")
 	json_dict["local_ancestry.gnomix_model"] = args.gnomix_model
 	json_dict["local_ancestry.chainfile"] = os.environ.get("WORKSPACE_BUCKET") + "/gnomix/resources/hg38ToHg19.over.chain.gz"
-	#json_dict["local_ancestry.refpanel"] = os.environ.get("WORKSPACE_BUCKET") + "/gnomix/resources/chr%s.1kg.phase3.v5a.vcf.gz"%args.chrom
-	#json_dict["local_ancestry.refpanel_index"] = os.environ.get("WORKSPACE_BUCKET") + "/gnomix/resources/chr%s.1kg.phase3.v5a.vcf.gz.tbi"%args.chrom
 	json_dict["local_ancestry.refpanel"] = os.environ.get("WORKSPACE_BUCKET") + "/gnomix/resources/ALL.chr%s.phase3_shapeit2_mvncall_integrated_v5b.20130502.genotypes.vcf.gz"%args.chrom
 	json_dict["local_ancestry.refpanel_index"] = os.environ.get("WORKSPACE_BUCKET") + "/gnomix/resources/ALL.chr%s.phase3_shapeit2_mvncall_integrated_v5b.20130502.genotypes.vcf.gz.tbi"%args.chrom
-	json_dict["local_ancestry.extra_subset_args"] = args.extra_subset_args
 
 	# Convert to JSON and save to a file
 	json_file = args.name + ".aou.json"
