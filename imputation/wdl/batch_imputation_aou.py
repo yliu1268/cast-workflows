@@ -130,8 +130,8 @@ def main():
 	parser.add_argument("--name", help="Name of the TR job", required=True, type=str)
 	#parser.add_argument("--vcf", help="Name of the genotype vcf file", required=True, type=str)
 	parser.add_argument("--ref-panel", help="File id of ref genome", type=str)
-	parser.add_argument("--ref", help="File of ref genome", type=str,required=True)
-	parser.add_argument("--ref-index", help="File of ref index genome", type=str,required=False)
+	#parser.add_argument("--ref", help="File of ref genome", type=str,required=True)
+	#parser.add_argument("--ref-index", help="File of ref index genome", type=str,required=False)
 	parser.add_argument("--mem", help="Specify run memory ", type=int, required=False, default=50)
 	parser.add_argument("--disk", help="Specify disk memory ", type=int, required=False, default=25)
 	parser.add_argument("--window", help="Specify window size for imputation ", type=int, required=False, default=20)
@@ -204,8 +204,8 @@ def main():
 	#json_dict["batch_imputation.subset_region"] = args.subset_region 
 	json_dict["batch_imputation.beagle_region"] =args.beagle_region
 	#json_dict["batch_imputation.header_file"] =args.header_file
-	json_dict["batch_imputation.ref"] =args.ref
-	json_dict["batch_imputation.ref_index"] =args.ref + ".tbi"
+	#json_dict["batch_imputation.ref"] =args.ref
+	#json_dict["batch_imputation.ref_index"] =args.ref + ".tbi"
 	json_dict["batch_imputation.overlap"] =args.overlap
 	json_dict["batch_imputation.map"] =args.map
 
