@@ -37,7 +37,6 @@ for region in jobdata["subset_vcf.vcf_output_array"]:
 		batchname = os.path.basename(f).split("-")[0]
 		if batchname not in batch_files.keys():
 			batch_files[batchname] = []
-			batch_files[batchname]["index"] = []
 		batch_files[batchname].append(f)
 batch_names = batch_files.keys()
 
