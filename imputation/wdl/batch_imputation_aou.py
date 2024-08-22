@@ -6,11 +6,13 @@ example code to impute 10 samples at CBL region
 
 ./batch_imputation_aou.py \
 --name batch_test 
---vcf gs://fc-aou-datasets-controlled/v7/wgs/short_read/snpindel/acaf_threshold_v7.1/vcf/acaf_threshold.chr21.vcf.bgz \
---ref-panel $WORKSPACE_BUCKET/tr_imputation/tr_imputation/ref/chr21_final_SNP_merged_additional_TRs.bref3 \
---ref $WORKSPACE_BUCKET/tr_imputation/tr_imputation/ref/chr21_final_SNP_merged_additional_TRs.vcf.gz \
---mem 120 \
+#--samples-batch $WORKSPACE_BUCKETacaf_batches/manifest/chr11_acaf_manifest.txt \
+--ref-panel $WORKSPACE_BUCKET/tr_imputation/tr_imputation/ref/chr11_final_SNP_merged_additional_TRs.bref3 \
+--ref $WORKSPACE_BUCKET/tr_imputation/tr_imputation/ref/chr11_final_SNP_merged_additional_TRs.vcf.gz \
+--mem 40 \
 --batch-num 2
+--map $WORKSPACE_BUCKET/tr_imputation/tr_imputation/genetic_map/beagle_chr11_b38.map \
+--disk 50 \
 """
 
 # need to change GetFileBatches
@@ -189,8 +191,8 @@ def main():
 
 	# Set up workflow JSON
 	json_dict = {}
-	json_dict["batch_imputation.vcf"] = args.vcf
-	json_dict["batch_imputation.vcf_index"]=args.vcf+".tbi"
+	#json_dict["batch_imputation.vcf"] = args.vcf
+	#json_dict["batch_imputation.vcf_index"]=args.vcf+".tbi"
 	json_dict["batch_imputation.ref_panel"] = args.ref_panel
 	json_dict["batch_imputation.out_prefix"] = args.name
 	json_dict["batch_imputation.GOOGLE_PROJECT"] = project
