@@ -157,20 +157,20 @@ def main():
 	output_bucket = bucket + "/" + args.name
 
 	#Set up sample file list
-	if args.samples.startswith("gs://"):
-		DownloadGS(args.samples)
-		sample_list = os.path.basename(args.samples)
-	else: sample_list = args.samples
+	if args.sample_batches.startswith("gs://"):
+		DownloadGS(args.sample_batches)
+		sample_list = os.path.basename(args.sample_batches)
+	else: sample_list = args.sample_batches
 
 	# Upload vcf file
-	if args.vcf.startswith("gs://"):
-		vcf_gcs = args.vcf
-	else:
-				# Copying the vcf file
-		vcf_gcs = output_bucket + "/" + args.name + "/"
-		UploadGS(args.vcf, vcf_gcs)
-				# Copying the index file
-		UploadGS(args.vcf + ".tbi", vcf_gcs)
+	#if args.vcf.startswith("gs://"):
+	#	vcf_gcs = args.vcf
+	#else:
+	#			# Copying the vcf file
+	##	vcf_gcs = output_bucket + "/" + args.name + "/"
+	#	UploadGS(args.vcf, vcf_gcs)
+	#			# Copying the index file
+	#	UploadGS(args.vcf + ".tbi", vcf_gcs)
 
 	# set up batches of file
 	sample_batch = GetFileBatches(sample_list,args.batch_num)
