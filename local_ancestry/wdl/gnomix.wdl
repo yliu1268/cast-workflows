@@ -54,8 +54,8 @@ task liftover_vcf {
         File vcf
         String out_prefix
         String GOOGLE_PROJECT = ""
-        String hg38_ref = "gs://genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.fasta"
-        String hg19_ref = "gs://gcp-public-data--broad-references/Homo_sapiens_assembly19_1000genomes_decoy/Homo_sapiens_assembly19_1000genomes_decoy.fasta"
+        File hg38_ref = "gs://genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.fasta"
+        File hg19_ref = "gs://gcp-public-data--broad-references/Homo_sapiens_assembly19_1000genomes_decoy/Homo_sapiens_assembly19_1000genomes_decoy.fasta"
         File chainfile
         String chrom
     }
@@ -65,8 +65,8 @@ task liftover_vcf {
 
         # Liftover to hg19
         # First refresh credentials
-        export GCS_REQUESTER_PAYS_PROJECT=~{GOOGLE_PROJECT}
-        export GCS_OAUTH_TOKEN=$(gcloud auth application-default print-access-token)
+#        export GCS_REQUESTER_PAYS_PROJECT=~{GOOGLE_PROJECT}
+#        export GCS_OAUTH_TOKEN=$(gcloud auth application-default print-access-token)
         echo "Liftover"
         bcftools +liftover --no-version -Ou ~{vcf} -- \
               -f ~{hg19_ref} \
@@ -88,8 +88,7 @@ task liftover_vcf {
     runtime {
         docker: "gcr.io/ucsd-medicine-cast/bcftools-gcs-plugins:latest"
         memory: "25GB"
-        maxRetries: 3
-        preemptible: 3
+        disks: "local-disk 25 SSD"
     }
 
     output {
