@@ -9,6 +9,7 @@ workflow run_gnomix {
         File chainfile
         File refpanel
         File refpanel_index
+        File snp_list
     }
 
     call liftover_vcf {
@@ -28,18 +29,33 @@ workflow run_gnomix {
             refpanel_index=refpanel_index
     }
 
-    call gnomix {
+    call filter_and_split_vcf {
         input:
             vcf=beagle.outvcf,
             vcf_index=beagle.outvcf_index,
+            snp_list=snp_list,
+            out_prefix=out_prefix
+    }
+
+    call gnomix {
+        input:
+            vcf_array=filter_and_split_vcf.outvcf_array,
+            vcf_index_array=filter_and_split_vcf.outvcf_index_array,
             model=model,
             chrom=chrom,
             out_prefix=out_prefix
     }
 
+    call merge_gnomix {
+        input:
+            gnomix_outputs_msp=gnomix.msp_outfile_array,
+            gnomix_outputs_fb=gnomix.fb_outfile_array,
+            out_prefix=out_prefix
+    }
+
     output {
-        File msp_outfile = gnomix.msp_outfile
-        File fb_outfile = gnomix.fb_outfile
+        File msp_outfile = merge_gnomix.msp_outfile
+        File fb_outfile = merge_gnomix.fb_outfile
     }
 
     meta {
@@ -120,23 +136,77 @@ task beagle {
     }
 }
 
-task gnomix {
+task filter_and_split_vcf {
     input {
         File vcf
         File vcf_index
-        File model
-        String chrom
+        File snp_list
         String out_prefix
+        Int batch_size = 200 # smaller files to gnomix doesn't explode
     }
 
     command <<<
-        # TODO - restrict to SNPs in model
-        # TODO - run in batches since running out of memory for 1000 samples?
+        set -e
+
+        # Extract only SNPs in gnomix model
+        bcftools view -i ID=@~{snp_list} ~{vcf} -Oz -o ~{out_prefix}_phased_filtered.vcf.gz
+        tabix -p vcf ~{out_prefix}_phased_filtered.vcf.gz
+
+        # Split by batch_size
+        bcftools query -l ~{out_prefix}_phased_filtered.vcf.gz > sample_list.txt
+        mkdir batches
+        split -l ~{batch_size} sample_list.txt batches/batch
+
+        # Make group set
+        for file in batches/batch*
+        do
+            batchname=$(basename $file)
+            cat $file | awk -v"prefix=$batchname" '{print $1 "\t-\t"prefix}'
+        done > sample_groups.txt
+
+        # Run bcftools split and index files
+        bcftools plugin split ~{out_prefix}_phased_filtered.vcf.gz \
+             -G sample_groups.txt -Oz -o .
+        for f in batch*.vcf.gz
+        do
+            tabix -p vcf $f
+        done
+    >>>
+
+    runtime {
+        docker: "gcr.io/ucsd-medicine-cast/bcftools-gcs-plugins:latest"
+        memory: "25GB"
+    }
+
+    output {
+       Array[File] outvcf_array = "batch*.vcf.gz"
+       Array[File] outvcf_index_array = "batch*.vcf.gz.tbi"
+    }
+}
+
+task gnomix {
+    input {
+        Array[File] vcf_array
+        Array[File] vcf_index_array
+        File model
+        String chrom
+        String out_prefix
+        Int total = length(vcf_array)
+    }
+
+    command <<<
         cd /gnomix
         tar -xzvf ~{model}
-        python3 gnomix.py ~{vcf} . ~{chrom} False pretrained_gnomix_models/chr~{chrom}/model_chm_~{chrom}.pkl
-        cp query_results.msp /cromwell_root/~{out_prefix}.msp
-        cp query_results.fb /cromwell_root/~{out_prefix}.fb
+
+        VCFARRAY=(~{sep=" " vcf_array}) # Process one vcf file at a time. Trying to save memory...
+        for (( c = 0; c < ~{total}; c++ )) # bash array are 0-indexed ;)
+        do
+            vcf=${VCFARRAY[$c]}
+            echo "Processing $vcf..."
+            python3 gnomix.py ${vcf} . ~{chrom} False pretrained_gnomix_models/chr~{chrom}/model_chm_~{chrom}.pkl
+            cp query_results.msp /cromwell_root/~{out_prefix}_${c}.msp
+            cp query_results.fb /cromwell_root/~{out_prefix}_${c}.fb
+        done
     >>>
 
     runtime {
@@ -145,7 +215,47 @@ task gnomix {
     }
 
     output {
-       File msp_outfile = "~{out_prefix}.msp"
-       File fb_outfile = "~{out_prefix}.fb"
+       Array[File] msp_outfile_array = "${out_prefix}*.msp"
+       Array[File] fb_outfile_array = "${out_prefix}*.fb"
+    }
+}
+
+task merge_gnomix {
+    input {
+        Array[File] gnomix_outputs_msp
+        Array[File] gnomix_outputs_fb
+        String out_prefix
+        Int total = length(gnomix_outputs_msp)
+    }
+
+    command <<<
+        # First merge msp files
+        MSPFILEARRAY=(~{sep=' ' gnomix_outputs_msp})
+        head -n 1 ${MSPFILEARRAY[0]} > ~{out_prefix}.msp
+        cat ${MSPFILEARRAY[0]} | grep -v "^#Subpopulation" | cut -f 1-6 -d$'\t'> fixedcols.msp
+        for (( c = 0; c < ~{total}; c++ ))
+        do
+            cat ${MSPFILEARRAY[$c]} | grep -v "^#Subpopulation" | cut -f 1-6 -d$'\t' --complement > data_${c}.msp
+        done
+        paste fixedcols.msp data*.msp >> ~{out_prefix}.msp
+
+        # Next merge fb files
+        FBFILEARRAY=(~{sep=' ' gnomix_outputs_fb})
+        head -n 1 ${FBFILEARRAY[0]} > ~{out_prefix}.fb
+        cat ${FBFILEARRAY[0]} | grep -v "^#" | cut -f 1-4 -d$'\t' > fixedcols.fb
+        for (( c = 0; c < ~{total}; c++ ))
+        do
+            cat ${FBFILEARRAY[$c]} | grep -v "^#" | cut -f 1-4 -d$'\t' --complement > data_${c}.fb
+        done
+        paste fixedcols.fb data*.fb >> ~{out_prefix}.fb
+    >>>
+
+    runtime {
+        docker: "gcr.io/ucsd-medicine-cast/bcftools-gcs:latest"
+    }
+
+    output {
+        File msp_outfile = "~{out_prefix}.msp"
+        File fb_outfile = "~{out_prefix}.fb"
     }
 }

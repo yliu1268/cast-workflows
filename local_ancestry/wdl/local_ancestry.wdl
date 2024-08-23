@@ -11,6 +11,7 @@ workflow local_ancestry {
         File chainfile
         File refpanel
         File refpanel_index
+        File snp_list
     }
 
     # Call Beagle/gnomix on batches
@@ -25,12 +26,13 @@ workflow local_ancestry {
                 out_prefix=out_prefix+".BATCH"+i,
                 chainfile=chainfile,
                 refpanel=refpanel,
-                refpanel_index=refpanel_index
+                refpanel_index=refpanel_index,
+                snp_list=snp_list
         }
     }
 
     # Merge the output
-    call merge_gnomix {
+    call gnomix_t.merge_gnomix as merge_gnomix {
         input:
             gnomix_outputs_msp=run_gnomix.msp_outfile,
             gnomix_outputs_fb=run_gnomix.fb_outfile,
@@ -44,42 +46,3 @@ workflow local_ancestry {
     }
 }
 
-task merge_gnomix {
-    input {
-        Array[File] gnomix_outputs_msp
-        Array[File] gnomix_outputs_fb
-        String out_prefix
-        Int total = length(gnomix_outputs_msp)
-    }
-
-    command <<<
-        # First merge msp files
-        MSPFILEARRAY=(~{sep=' ' gnomix_outputs_msp})
-        head -n 1 ${MSPFILEARRAY[0]} > ~{out_prefix}.msp
-        cat ${MSPFILEARRAY[0]} | grep -v "^#Subpopulation" | cut -f 1-6 -d$'\t'> fixedcols.msp
-        for (( c = 0; c < ~{total}; c++ ))
-        do
-            cat ${MSPFILEARRAY[$c]} | grep -v "^#Subpopulation" | cut -f 1-6 -d$'\t' --complement > data_${c}.msp
-        done
-        paste fixedcols.msp data*.msp >> ~{out_prefix}.msp
-
-        # Next merge fb files
-        FBFILEARRAY=(~{sep=' ' gnomix_outputs_fb})
-        head -n 1 ${FBFILEARRAY[0]} > ~{out_prefix}.fb
-        cat ${FBFILEARRAY[0]} | grep -v "^#" | cut -f 1-4 -d$'\t' > fixedcols.fb
-        for (( c = 0; c < ~{total}; c++ ))
-        do
-            cat ${FBFILEARRAY[$c]} | grep -v "^#" | cut -f 1-4 -d$'\t' --complement > data_${c}.fb
-        done
-        paste fixedcols.fb data*.fb >> ~{out_prefix}.fb
-    >>>
-
-    runtime {
-        docker: "gcr.io/ucsd-medicine-cast/bcftools-gcs:latest"
-    }
-
-    output {
-        File msp_outfile = "~{out_prefix}.msp"
-        File fb_outfile = "~{out_prefix}.fb"
-    }
-}
