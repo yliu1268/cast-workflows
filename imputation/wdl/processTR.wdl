@@ -35,7 +35,7 @@ task extract_TR {
         String out_prefix
     }
     command <<<
-        bcftools view -i 'ID~"EnsTR"' ~{out_prefix}.vcf.gz -Oz -o ~{out_prefix}_TR.vcf.gz && tabix -p vcf ~{out_prefix}_TR.vcf.gz
+        bcftools view -i 'ID~"EnsTR"' ~{vcf} -Oz -o ~{out_prefix}_TR.vcf.gz && tabix -p vcf ~{out_prefix}_TR.vcf.gz
  
     >>>
 
