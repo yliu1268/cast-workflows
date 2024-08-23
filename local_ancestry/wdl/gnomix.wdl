@@ -64,9 +64,6 @@ task liftover_vcf {
         set -e # fail if anything doesn't succeed
 
         # Liftover to hg19
-        # First refresh credentials
-#        export GCS_REQUESTER_PAYS_PROJECT=~{GOOGLE_PROJECT}
-#        export GCS_OAUTH_TOKEN=$(gcloud auth application-default print-access-token)
         echo "Liftover"
         bcftools +liftover --no-version -Ou ~{vcf} -- \
               -f ~{hg19_ref} \
@@ -81,7 +78,7 @@ task liftover_vcf {
 
         # Restrict to target chromosome
         echo "restrict chromosome"
-        bcftools view -r ~{chrom} ~{out_prefix}_hg19.vcf.gz -Oz -o ~{out_prefix}.filtered.vcf.gz
+        bcftools view --min-af 0.05 -r ~{chrom} ~{out_prefix}_hg19.vcf.gz -Oz -o ~{out_prefix}.filtered.vcf.gz
         tabix -p vcf ~{out_prefix}.filtered.vcf.gz
     >>>
 
@@ -136,14 +133,9 @@ task gnomix {
     }
 
     command <<<
-        # First filter to remove rare variants and save memory
-        # TODO instead use exact SNPs used in gnomix?
-        bcftools view --min-af 0.05 ~{vcf} -Oz -o ~{out_prefix}.common.vcf.gz
-        tabix -p vcf ~{out_prefix}.common.vcf.gz
-
         cd /gnomix
         tar -xzvf ~{model}
-        python3 gnomix.py ~{out_prefix}.common.vcf.gz . ~{chrom} False pretrained_gnomix_models/chr~{chrom}/model_chm_~{chrom}.pkl
+        python3 gnomix.py ~{vcf} . ~{chrom} False pretrained_gnomix_models/chr~{chrom}/model_chm_~{chrom}.pkl
         cp query_results.msp /cromwell_root/~{out_prefix}.msp
         cp query_results.fb /cromwell_root/~{out_prefix}.fb
     >>>
