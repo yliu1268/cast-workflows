@@ -8,7 +8,6 @@ example code to impute 10 samples at CBL region
 --name batch_test 
 #--samples-batch $WORKSPACE_BUCKETacaf_batches/manifest/chr11_acaf_manifest.txt \
 --ref-panel $WORKSPACE_BUCKET/tr_imputation/tr_imputation/ref/chr11_final_SNP_merged_additional_TRs.bref3 \
---ref $WORKSPACE_BUCKET/tr_imputation/tr_imputation/ref/chr11_final_SNP_merged_additional_TRs.vcf.gz \
 --mem 40 \
 --batch-num 2
 --map $WORKSPACE_BUCKET/tr_imputation/tr_imputation/genetic_map/beagle_chr11_b38.map \
@@ -147,10 +146,6 @@ def main():
 	parser.add_argument("--batch-num", help="Number of batches. Default: -1 (all)",type=int, required=False, default=None)
 	parser.add_argument("--overlap", help="Specify overlap size for imputation ", type=int, required=False, default=2)
 	parser.add_argument("--map", help="Specify genetic map for imputation ", type=str, required=True)					
-	#parser.add_argument("--header-file", help="Add hipstr header",type=str, required=False, \
-	#				 default=f"{bucket}/tr_imputation/tr_imputation/header_annotation.txt")
-	#parser.add_argument("--cromwell", help="Run using cormwell as opposed to the default cromshell",
-    #                        action="store_true", default=False)
 
 	args = parser.parse_args()
 
