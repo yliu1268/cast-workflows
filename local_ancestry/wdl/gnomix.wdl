@@ -145,7 +145,7 @@ task gnomix {
 
     runtime {
         docker: "gcr.io/ucsd-medicine-cast/gnomix:latest"
-        memory: "50GB"
+        memory: "100GB"
     }
 
     output {
