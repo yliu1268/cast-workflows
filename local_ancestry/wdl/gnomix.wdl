@@ -136,16 +136,21 @@ task gnomix {
     }
 
     command <<<
+        # First filter to remove rare variants and save memory
+        # TODO instead use exact SNPs used in gnomix?
+        bcftools view --min-af 0.05 ~{vcf} -Oz -o ~{out_prefix}.common.vcf.gz
+        tabix -p vcf ~{out_prefix}.common.vcf.gz
+
         cd /gnomix
         tar -xzvf ~{model}
-        python3 gnomix.py ~{vcf} . ~{chrom} False pretrained_gnomix_models/chr~{chrom}/model_chm_~{chrom}.pkl
+        python3 gnomix.py ~{out_prefix}.common.vcf.gz . ~{chrom} False pretrained_gnomix_models/chr~{chrom}/model_chm_~{chrom}.pkl
         cp query_results.msp /cromwell_root/~{out_prefix}.msp
         cp query_results.fb /cromwell_root/~{out_prefix}.fb
     >>>
 
     runtime {
         docker: "gcr.io/ucsd-medicine-cast/gnomix:latest"
-        memory: "100GB"
+        memory: "50GB"
     }
 
     output {
