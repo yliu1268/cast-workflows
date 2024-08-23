@@ -53,7 +53,6 @@ def main():
 	json_dict["local_ancestry.out_prefix"] = args.name
 	json_dict["local_ancestry.batch_vcf_files"] = batch_vcf_files
 	json_dict["local_ancestry.chrom"] = args.chrom
-	json_dict["local_ancestry.GOOGLE_PROJECT"] = os.environ.get("GOOGLE_PROJECT", "")
 	json_dict["local_ancestry.gnomix_model"] = args.gnomix_model
 	json_dict["local_ancestry.chainfile"] = os.environ.get("WORKSPACE_BUCKET") + "/gnomix/resources/hg38ToHg19.over.chain.gz"
 	json_dict["local_ancestry.refpanel"] = os.environ.get("WORKSPACE_BUCKET") + "/gnomix/resources/ALL.chr%s.phase3_shapeit2_mvncall_integrated_v5b.20130502.genotypes.vcf.gz"%args.chrom

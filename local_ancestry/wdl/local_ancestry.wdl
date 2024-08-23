@@ -8,7 +8,6 @@ workflow local_ancestry {
         Array[File] batch_vcf_files
         File gnomix_model
         String chrom
-        String GOOGLE_PROJECT = ""
         File chainfile
         File refpanel
         File refpanel_index
@@ -24,7 +23,6 @@ workflow local_ancestry {
                 model=gnomix_model,
                 chrom=chrom,
                 out_prefix=out_prefix+".BATCH"+i,
-                GOOGLE_PROJECT=GOOGLE_PROJECT,
                 chainfile=chainfile,
                 refpanel=refpanel,
                 refpanel_index=refpanel_index

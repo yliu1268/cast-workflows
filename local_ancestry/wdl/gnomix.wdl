@@ -6,7 +6,6 @@ workflow run_gnomix {
         File model
         String chrom
         String out_prefix
-        String GOOGLE_PROJECT = ""
         File chainfile
         File refpanel
         File refpanel_index
@@ -16,7 +15,6 @@ workflow run_gnomix {
         input:
             vcf=vcf,
             out_prefix=out_prefix,
-            GOOGLE_PROJECT=GOOGLE_PROJECT,
             chainfile=chainfile,
             chrom=chrom
     }
@@ -53,7 +51,6 @@ task liftover_vcf {
     input {
         File vcf
         String out_prefix
-        String GOOGLE_PROJECT = ""
         File hg38_ref = "gs://genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.fasta"
         File hg19_ref = "gs://gcp-public-data--broad-references/Homo_sapiens_assembly19_1000genomes_decoy/Homo_sapiens_assembly19_1000genomes_decoy.fasta"
         File chainfile
@@ -78,7 +75,7 @@ task liftover_vcf {
 
         # Restrict to target chromosome
         echo "restrict chromosome"
-        bcftools view --min-af 0.05 -r ~{chrom} ~{out_prefix}_hg19.vcf.gz -Oz -o ~{out_prefix}.filtered.vcf.gz
+        bcftools view -r ~{chrom} ~{out_prefix}_hg19.vcf.gz -Oz -o ~{out_prefix}.filtered.vcf.gz
         tabix -p vcf ~{out_prefix}.filtered.vcf.gz
     >>>
 
@@ -133,6 +130,8 @@ task gnomix {
     }
 
     command <<<
+        # TODO - restrict to SNPs in model
+        # TODO - run in batches since running out of memory for 1000 samples?
         cd /gnomix
         tar -xzvf ~{model}
         python3 gnomix.py ~{vcf} . ~{chrom} False pretrained_gnomix_models/chr~{chrom}/model_chm_~{chrom}.pkl
