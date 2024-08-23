@@ -9,8 +9,8 @@ import "merge_TR_batch.wdl" as merge_TR_batch_t
 
 workflow batch_imputation {
         input {
-                #String vcf 
-                #String vcf_index 
+                String vcf 
+                String vcf_index 
                 File ref_panel
                 String out_prefix
                 String GOOGLE_PROJECT = ""
@@ -64,7 +64,7 @@ workflow batch_imputation {
                 #}
         }
 
-        ## use MergeSTR to merge TR
+        ## use bcftools to merge TR
         call merge_TR_batch_t.merge_batch as merge_TR_batch {
             input:
                 vcfs=processTR.outfile,
