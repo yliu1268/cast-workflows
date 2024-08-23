@@ -179,8 +179,8 @@ task filter_and_split_vcf {
     }
 
     output {
-       Array[File] outvcf_array = "batch*.vcf.gz"
-       Array[File] outvcf_index_array = "batch*.vcf.gz.tbi"
+       Array[File] outvcf_array = glob("batch*.vcf.gz")
+       Array[File] outvcf_index_array = glob("batch*.vcf.gz.tbi")
     }
 }
 
@@ -215,8 +215,8 @@ task gnomix {
     }
 
     output {
-       Array[File] msp_outfile_array = "${out_prefix}*.msp"
-       Array[File] fb_outfile_array = "${out_prefix}*.fb"
+       Array[File] msp_outfile_array = glob("*.msp")
+       Array[File] fb_outfile_array = glob("*.fb")
     }
 }
 
