@@ -149,8 +149,10 @@ task filter_and_split_vcf {
         set -e
 
         # Extract only SNPs in gnomix model
-        bcftools view -R ~{snp_list} ~{vcf} -Oz -o ~{out_prefix}_phased_filtered.vcf.gz
-        tabix -p vcf ~{out_prefix}_phased_filtered.vcf.gz
+        #bcftools view -R ~{snp_list} ~{vcf} -Oz -o ~{out_prefix}_phased_filtered.vcf.gz
+        #tabix -p vcf ~{out_prefix}_phased_filtered.vcf.gz
+        cp ~{vcf} ~{out_prefix}_phased_filtered.vcf.gz
+        cp ~{vcf_index} ~{out_prefix}_phased_filtered.vcf.gz.tbi
 
         # Split by batch_size
         bcftools query -l ~{out_prefix}_phased_filtered.vcf.gz > sample_list.txt
