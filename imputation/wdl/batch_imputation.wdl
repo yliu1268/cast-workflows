@@ -70,7 +70,8 @@ workflow batch_imputation {
                 vcfs=processTR.outfile,
                 vcfs_index=processTR.outfile_index,
                 out_prefix=out_prefix,
-                disk=disk
+                disk=disk,
+                GOOGLE_PROJECT=GOOGLE_PROJECT
         }
 
         ## use bcftools to merge SNP
