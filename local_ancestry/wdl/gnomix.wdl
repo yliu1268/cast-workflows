@@ -9,7 +9,6 @@ workflow run_gnomix {
         File chainfile
         File refpanel
         File refpanel_index
-        File snp_list
     }
 
     call liftover_vcf {
@@ -33,7 +32,6 @@ workflow run_gnomix {
         input:
             vcf=beagle.outvcf,
             vcf_index=beagle.outvcf_index,
-            snp_list=snp_list,
             out_prefix=out_prefix
     }
 
@@ -140,7 +138,6 @@ task filter_and_split_vcf {
     input {
         File vcf
         File vcf_index
-        File snp_list
         String out_prefix
         Int batch_size = 200 # smaller files to gnomix doesn't explode
     }
@@ -148,14 +145,8 @@ task filter_and_split_vcf {
     command <<<
         set -e
 
-        # Extract only SNPs in gnomix model
-        #bcftools view -R ~{snp_list} ~{vcf} -Oz -o ~{out_prefix}_phased_filtered.vcf.gz
-        #tabix -p vcf ~{out_prefix}_phased_filtered.vcf.gz
-        cp ~{vcf} ~{out_prefix}_phased_filtered.vcf.gz
-        cp ~{vcf_index} ~{out_prefix}_phased_filtered.vcf.gz.tbi
-
         # Split by batch_size
-        bcftools query -l ~{out_prefix}_phased_filtered.vcf.gz > sample_list.txt
+        bcftools query -l ~{vcf} > sample_list.txt
         mkdir batches
         split -l ~{batch_size} sample_list.txt batches/batch
 
@@ -167,7 +158,7 @@ task filter_and_split_vcf {
         done > sample_groups.txt
 
         # Run bcftools split and index files
-        bcftools plugin split ~{out_prefix}_phased_filtered.vcf.gz \
+        bcftools plugin split ~{vcf} \
              -G sample_groups.txt -Oz -o .
         for f in batch*.vcf.gz
         do
@@ -177,7 +168,6 @@ task filter_and_split_vcf {
 
     runtime {
         docker: "gcr.io/ucsd-medicine-cast/bcftools-gcs-plugins:latest"
-        memory: "25GB"
     }
 
     output {
@@ -213,7 +203,7 @@ task gnomix {
 
     runtime {
         docker: "gcr.io/ucsd-medicine-cast/gnomix:latest"
-        memory: "50GB"
+        memory: "25GB"
     }
 
     output {

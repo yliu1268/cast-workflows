@@ -11,7 +11,6 @@ workflow local_ancestry {
         File chainfile
         File refpanel
         File refpanel_index
-        File snp_list
     }
 
     # Call Beagle/gnomix on batches
@@ -26,8 +25,7 @@ workflow local_ancestry {
                 out_prefix=out_prefix+".BATCH"+i,
                 chainfile=chainfile,
                 refpanel=refpanel,
-                refpanel_index=refpanel_index,
-                snp_list=snp_list
+                refpanel_index=refpanel_index
         }
     }
 
