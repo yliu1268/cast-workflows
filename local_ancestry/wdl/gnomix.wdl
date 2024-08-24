@@ -148,8 +148,9 @@ task filter_and_split_vcf {
     command <<<
         set -e
 
-        # Extract only SNPs in gnomix model
-        bcftools view -i ID=@~{snp_list} ~{vcf} -Oz -o ~{out_prefix}_phased_filtered.vcf.gz
+        # Extract only SNPs in gnomix model - TODO beagle output doesn't have IDs
+        #bcftools view -i ID=@~{snp_list} ~{vcf} -Oz -o ~{out_prefix}_phased_filtered.vcf.gz
+        bcftools view --min-af 0.01 ~{vcf} -Oz -o ~{out_prefix}_phased_filtered.vcf.gz
         tabix -p vcf ~{out_prefix}_phased_filtered.vcf.gz
 
         # Split by batch_size
