@@ -15,7 +15,7 @@ Get list of SNPs for each chrom
 ```
 for chrom in $(seq 1 22)
 do
-  cat pretrained_gnomix_models/chr${chrom}/chr${chrom}.bim | cut -f 2 > snplist_chr${chrom}.txt
+  cat pretrained_gnomix_models/chr${chrom}/chr${chrom}.bim | awk '{print $1 "\t" $4-1 "\t" $4}' > snplist_chr${chrom}.txt
   gsutil cp snplist_chr${chrom}.txt ${WORKSPACE_BUCKET}/gnomix/resources/snplist_chr${chrom}.txt
 done
 ```
