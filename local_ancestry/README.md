@@ -20,3 +20,11 @@ chrom=11; ./gnomix_launcher.py \
   --max-batches 2 
 ```
 
+# Full chromosome
+
+```
+chrom=11; ./gnomix_launcher.py \
+  --name gnomix-chr${chrom} \
+  --vcfdir ${WORKSPACE_BUCKET}/acaf_batches/chr${chrom} \
+  --chrom ${chrom}
+```
