@@ -6,7 +6,6 @@ workflow merge_batch {
         Array[String] vcfs_index
         String out_prefix
         Int? disk
-        String GOOGLE_PROJECT = ""
     }
 
     call merge{
@@ -14,8 +13,7 @@ workflow merge_batch {
             vcfs=vcfs,
             vcfs_index=vcfs_index,
             out_prefix=out_prefix,
-            disk=disk,
-            GOOGLE_PROJECT=GOOGLE_PROJECT
+            disk=disk
     }
 
     #call index_vcf {
@@ -39,13 +37,11 @@ task merge {
         Array[String] vcfs_index
         String out_prefix
         Int? disk
-        String GOOGLE_PROJECT = ""
     }
 
     command <<<
-        export GCS_REQUESTER_PAYS_PROJECT=~{GOOGLE_PROJECT}
-        export GCS_OAUTH_TOKEN=$(gcloud auth application-default print-access-token)
-        bcftools merge ~{sep=' ' vcfs} -Oz -o ~{out_prefix}_TR_merged.vcf.gz && tabix -p vcf ~{out_prefix}_TR_merged.vcf.gz
+        bcftools merge ~{sep=' ' vcfs} -Oz -o ~{out_prefix}_TR_merged.vcf.gz 
+        tabix -p vcf ~{out_prefix}_TR_merged.vcf.gz
           
     >>>
     
