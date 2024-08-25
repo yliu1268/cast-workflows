@@ -2,8 +2,8 @@ version 1.0
 
 workflow merge_batch {
     input {
-        Array[String] vcfs
-        Array[String] vcfs_index
+        Array[File] vcfs
+        Array[File] vcfs_index
         String out_prefix
         Int? disk
     }
@@ -33,8 +33,8 @@ workflow merge_batch {
 
 task merge {
     input {
-        Array[String] vcfs
-        Array[String] vcfs_index
+        Array[File] vcfs
+        Array[File] vcfs_index
         String out_prefix
         Int? disk
     }
