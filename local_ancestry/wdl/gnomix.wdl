@@ -244,7 +244,7 @@ task merge_gnomix {
 
     runtime {
         docker: "gcr.io/ucsd-medicine-cast/bcftools-gcs:latest"
-        disks: "local-disk 100 SSD"
+        disks: "local-disk 200 SSD"
     }
 
     output {
