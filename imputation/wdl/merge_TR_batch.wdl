@@ -6,6 +6,7 @@ workflow merge_batch {
         Array[File] vcfs_index
         String out_prefix
         Int? disk
+        Int? mem
     }
 
     call merge{
@@ -13,7 +14,8 @@ workflow merge_batch {
             vcfs=vcfs,
             vcfs_index=vcfs_index,
             out_prefix=out_prefix,
-            disk=disk
+            disk=disk,
+            mem=mem
     }
 
     #call index_vcf {
@@ -37,17 +39,19 @@ task merge {
         Array[File] vcfs_index
         String out_prefix
         Int? disk
+        Int? mem
     }
 
     command <<<
         bcftools merge ~{sep=' ' vcfs} -Oz -o ~{out_prefix}_TR_merged.vcf.gz 
-        tabix -p vcf ~{out_prefix}_TR_merged.vcf.gz
+        #tabix -p vcf ~{out_prefix}_TR_merged.vcf.gz
           
     >>>
     
     runtime {
         docker: "gcr.io/ucsd-medicine-cast/bcftools-gcs:latest"
         disks: "local-disk ~{disk} SSD"
+        memory: mem + "GB"
     }
     output {
         File outvcf = "${out_prefix}_TR_merged.vcf.gz"
