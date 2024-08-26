@@ -218,6 +218,7 @@ task merge_gnomix {
         Array[File] gnomix_outputs_fb
         String out_prefix
         Int total = length(gnomix_outputs_msp)
+        Int? disk = 10
     }
 
     command <<<
@@ -244,7 +245,7 @@ task merge_gnomix {
 
     runtime {
         docker: "gcr.io/ucsd-medicine-cast/bcftools-gcs:latest"
-        disks: "local-disk 200 SSD"
+        disks: "local-disk ~{disk} SSD"
     }
 
     output {

@@ -34,7 +34,8 @@ workflow local_ancestry {
         input:
             gnomix_outputs_msp=run_gnomix.msp_outfile,
             gnomix_outputs_fb=run_gnomix.fb_outfile,
-            out_prefix=out_prefix
+            out_prefix=out_prefix,
+            disk=200
     }
 
     ### Output files ####
