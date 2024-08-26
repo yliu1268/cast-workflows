@@ -44,7 +44,7 @@ task merge {
 
     command <<<
         bcftools merge ~{sep=' ' vcfs} -Oz -o ~{out_prefix}_TR_merged.vcf.gz 
-        #tabix -p vcf ~{out_prefix}_TR_merged.vcf.gz
+        tabix -p vcf ~{out_prefix}_TR_merged.vcf.gz
           
     >>>
     
