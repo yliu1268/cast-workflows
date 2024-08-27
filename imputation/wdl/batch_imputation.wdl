@@ -15,6 +15,7 @@ workflow batch_imputation {
                 String out_prefix
                 String GOOGLE_PROJECT = ""
                 Int? mem 
+                Int? merge_mem
                 Int? window_size 
                 String? region
                 Boolean beagle_region = false
@@ -71,7 +72,7 @@ workflow batch_imputation {
                 vcfs_index=processTR.outfile_index,
                 out_prefix=out_prefix,
                 disk=disk,
-                mem=mem
+                merge_mem=merge_mem
         }
 
         ## use bcftools to merge SNP

@@ -131,7 +131,8 @@ def main():
 	parser.add_argument("--ref-panel", help="File id of ref genome", type=str)
 	#parser.add_argument("--ref", help="File of ref genome", type=str,required=True)
 	#parser.add_argument("--ref-index", help="File of ref index genome", type=str,required=False)
-	parser.add_argument("--mem", help="Specify run memory ", type=int, required=False, default=50)
+	parser.add_argument("--mem", help="Specify run memory for beagle ", type=int, required=False, default=50)
+	parser.add_argument("--merge-mem", help="Specify run memory for bcftools merge ", type=int, required=False, default=50)
 	parser.add_argument("--disk", help="Specify disk memory ", type=int, required=False, default=25)
 	parser.add_argument("--window", help="Specify window size for imputation ", type=int, required=False, default=20)
 	#need to change path
@@ -192,6 +193,7 @@ def main():
 	json_dict["batch_imputation.out_prefix"] = args.name
 	json_dict["batch_imputation.GOOGLE_PROJECT"] = project
 	json_dict["batch_imputation.mem"] = args.mem
+	json_dict["batch_imputation.merge_mem"] = args.merge_mem
 	json_dict["batch_imputation.disk"] = args.disk
 	json_dict["batch_imputation.window_size"] = args.window
 	json_dict["batch_imputation.sample_batches"] = sample_batch 
