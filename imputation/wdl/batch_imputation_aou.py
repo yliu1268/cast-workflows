@@ -3,11 +3,9 @@
 Script to launch AOU imputation use new ref panel 
 
 example code to impute 10 samples at CBL region 
-
+chrom=11
 ./batch_imputation_aou.py \
---name batch_test 
-#--samples-batch $WORKSPACE_BUCKETacaf_batches/manifest/chr11_acaf_manifest.txt \
---ref-panel $WORKSPACE_BUCKET/tr_imputation/tr_imputation/ref/chr11_final_SNP_merged_additional_TRs.bref3 \
+--name chr11_batch_test \
 --mem 40 \
 --batch-num 2
 --map $WORKSPACE_BUCKET/tr_imputation/tr_imputation/genetic_map/beagle_chr11_b38.map \
@@ -130,12 +128,12 @@ def main():
 	parser.add_argument("--dryrun", help="Don't actually run the workflow. Just set up", action="store_true")
 	parser.add_argument("--batch-num", help="Number of batches. Default: -1 (all)",type=int, required=False, default=None)
 	parser.add_argument("--overlap", help="Specify overlap size for imputation ", type=int, required=False, default=2)
-	parser.add_argument("--map", help="Specify genetic map for imputation ", type=str, required=True)
+	
 				
 
 	args = parser.parse_args()
 
-	batch_vcf_files = GetBatchVCFFiles(args.vcfdir, args.max_batches)
+	batch_vcf_files = GetBatchVCFFiles(args.vcfdir, args.batch_num)
 	output_bucket = bucket + "/" + args.name
 
 	#Set up sample file list
@@ -163,7 +161,7 @@ def main():
 	json_dict["batch_imputation.region"] = args.region 
 	json_dict["batch_imputation.beagle_region"] = args.beagle_region
 	json_dict["batch_imputation.overlap"] = args.overlap
-	json_dict["batch_imputation.map"] = args.map
+	json_dict["batch_imputation.map"] = bucket + "tr_imputation/tr_imputation/genetic_map/beagle_chr%s_b38.map"%args.chrom
 
 
 
