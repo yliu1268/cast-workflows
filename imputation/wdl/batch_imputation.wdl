@@ -9,8 +9,8 @@ import "merge_TR_batch.wdl" as merge_TR_batch_t
 
 workflow batch_imputation {
         input {
-                #String vcf 
-                #String vcf_index 
+                File ref_vcf 
+                File ref_index 
                 File ref_panel
                 String out_prefix
                 String GOOGLE_PROJECT = ""
@@ -87,7 +87,7 @@ workflow batch_imputation {
         call annotaTR {
             input:
                 vcf=merge_TR_batch.outfile,
-                vcf_index=merge_TR_batch.outfile.index,
+                vcf_index=merge_TR_batch.outfile_index,
                 ref_vcf=ref_vcf,
                 ref_index=ref_index,
                 out_prefix=out_prefix
