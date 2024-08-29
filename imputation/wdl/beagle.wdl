@@ -72,8 +72,7 @@ task beagle {
             ap=true \
             overlap=~{overlap} \
             out=~{out_prefix}_output \
-            map=~{map} \
-            gp=true
+            map=~{map} 
         else
             java -Xmx~{mem}g -jar /beagle.jar \
             gt=~{vcf} \
@@ -83,8 +82,7 @@ task beagle {
             ap=true \
             overlap=~{overlap} \
             out=~{out_prefix}_output \
-            map=~{map} \
-            gp=true
+            map=~{map} 
         fi
 
         tabix -p vcf ~{out_prefix}_output.vcf.gz

@@ -129,7 +129,7 @@ def main():
 	parser.add_argument("--name", help="Name of the TR job", required=True, type=str)
 	#parser.add_argument("--vcf", help="Name of the genotype vcf file", required=True, type=str)
 	parser.add_argument("--ref-panel", help="File id of ref genome", type=str)
-	#parser.add_argument("--ref", help="File of ref genome", type=str,required=True)
+	parser.add_argument("--ref", help="File of ref genome", type=str,required=True)
 	#parser.add_argument("--ref-index", help="File of ref index genome", type=str,required=False)
 	parser.add_argument("--mem", help="Specify run memory for beagle ", type=int, required=False, default=50)
 	parser.add_argument("--merge-mem", help="Specify run memory for bcftools merge ", type=int, required=False, default=50)
@@ -146,7 +146,8 @@ def main():
 	parser.add_argument("--dryrun", help="Don't actually run the workflow. Just set up", action="store_true")
 	parser.add_argument("--batch-num", help="Number of batches. Default: -1 (all)",type=int, required=False, default=None)
 	parser.add_argument("--overlap", help="Specify overlap size for imputation ", type=int, required=False, default=2)
-	parser.add_argument("--map", help="Specify genetic map for imputation ", type=str, required=True)					
+	parser.add_argument("--map", help="Specify genetic map for imputation ", type=str, required=True)
+	parser.add_argument("--outtype", help="Specify out type for annotaTR ", type=str, required=True, default="vcf pgen")					
 
 	args = parser.parse_args()
 
@@ -199,12 +200,13 @@ def main():
 	json_dict["batch_imputation.sample_batches"] = sample_batch 
 	json_dict["batch_imputation.region"] = args.region
 	#json_dict["batch_imputation.subset_region"] = args.subset_region 
-	json_dict["batch_imputation.beagle_region"] =args.beagle_region
+	json_dict["batch_imputation.beagle_region"] = args.beagle_region
 	#json_dict["batch_imputation.header_file"] =args.header_file
-	#json_dict["batch_imputation.ref"] =args.ref
-	#json_dict["batch_imputation.ref_index"] =args.ref + ".tbi"
-	json_dict["batch_imputation.overlap"] =args.overlap
-	json_dict["batch_imputation.map"] =args.map
+	json_dict["batch_imputation.ref_vcf"] =args.ref
+	json_dict["batch_imputation.ref_index"] =args.ref + ".tbi"
+	json_dict["batch_imputation.overlap"] = args.overlap
+	json_dict["batch_imputation.map"] = args.map
+	json_dict["batch_imputation.outtype"] = args.outtype
 
 
 

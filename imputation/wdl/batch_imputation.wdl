@@ -84,55 +84,65 @@ workflow batch_imputation {
 
         #}
 
+        call annotaTR {
+            input:
+                vcf=merge_TR_batch.outfile,
+#               vcf_index=merge_TR_batch.outfile.index,
+##              ref_vcf=ref_vcf,
+#               ref_index=ref_index,
+#               out_prefix=out_prefix,
+#               outtype=outtype
+
+        }
 
         output {
-            File trvcf = merge_TR_batch.outfile
-            File trvcf_index = merge_TR_batch.outfile_index
-            #Array[File] outvcf = run_imputation.outfile
-            #Array[File] outvcf_index = run_imputation.outfile_index
+            #File trvcf = merge_TR_batch.outfile
             #File trvcf_index = merge_TR_batch.outfile_index
-            #File snpvcf = merge_SNP_batch.outfile
-            #File snpvcf_index = merge_SNP_batch.outfile_index
+            File outfile_vcf = annotaTR.outvcf
+            File outfile_pgen = annotaTR.pgen
+            File outfile_psam = annotaTR.psam
+            File outfile_pvar = annotaTR.pvar
+            
         }
 
         meta {
-            description: "This workflow run imputation on batches of sample, extract TRs and merge across a single chromosome with default parameters "
+            description: "This workflow run imputation on batches of sample, extract TRs, merge  across a single chromosome and run annotaTR with default parameters "
     }
                    
 }
 
 
-#task annotaTR
-#    input {
-#        File vcf 
-#        File vcf_index
-##        File ref_panel
-#        File ref_index
-#        String out
-#        String outtype
-#    }
-#    
-#    command <<<
-#        annotaTR --vcf chr11_2batch_merged_noheader.vcf.gz \
-#                --ref-panel ensembletr_refpanel_v3_chr11.vcf.gz \
-#                --out chr11_2batch_merged_annotated \
-#                --vcftype hipstr \
-#                --outtype vcf pgen \
-#                --dosages beagleap_norm \
-#                --ignore-duplicates \
-#                --match-refpanel-on locid
-#
-#    >>>
-#
-#    runtime {
-#        docker:"gcr.io/ucsd-medicine-cast/trtools-6.0.2:latest"
-#    }
-#
-#    output {
-#        File outvcf
-#        File outvcf_index = 
-#        File pgen = 
-#        File psam = 
-#        File pvar = 
-#    }
-#    """
+task annotaTR {
+    input {
+        File vcf 
+        File vcf_index
+        File ref_vcf
+        File ref_index
+        String out_prefix
+        String outtype
+    }
+    
+    command <<<
+        annotaTR --vcf ~{vcf} \
+                --ref-panel ~{ref_vcf} \
+                --out ~{out_prefix}_annotated \
+                --vcftype hipstr \
+                --outtype ~{outtype} \
+                --dosages beagleap_norm \
+                --ignore-duplicates \
+                --match-refpanel-on locid && \
+        bgzip ~{out_prefix}_annotated.vcf 
+
+    >>>
+
+    runtime {
+        docker:"gcr.io/ucsd-medicine-cast/trtools-6.0.2:latest"
+    }
+
+    output {
+        File outvcf = "${out_prefix}_annotated.vcf.gz"
+        File pgen = "${out_prefix}_annotated.pgen"
+        File psam = "${out_prefix}_annotated.psam"
+        File pvar = "${out_prefix}_annotated.pvar"
+    }
+}
