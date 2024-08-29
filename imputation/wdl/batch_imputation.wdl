@@ -87,17 +87,15 @@ workflow batch_imputation {
         call annotaTR {
             input:
                 vcf=merge_TR_batch.outfile,
-#               vcf_index=merge_TR_batch.outfile.index,
-##              ref_vcf=ref_vcf,
-#               ref_index=ref_index,
-#               out_prefix=out_prefix,
-#               outtype=outtype
+                vcf_index=merge_TR_batch.outfile.index,
+                ref_vcf=ref_vcf,
+                ref_index=ref_index,
+                out_prefix=out_prefix
+
 
         }
 
         output {
-            #File trvcf = merge_TR_batch.outfile
-            #File trvcf_index = merge_TR_batch.outfile_index
             File outfile_vcf = annotaTR.outvcf
             File outfile_pgen = annotaTR.pgen
             File outfile_psam = annotaTR.psam
@@ -119,7 +117,6 @@ task annotaTR {
         File ref_vcf
         File ref_index
         String out_prefix
-        String outtype
     }
     
     command <<<
@@ -127,7 +124,7 @@ task annotaTR {
                 --ref-panel ~{ref_vcf} \
                 --out ~{out_prefix}_annotated \
                 --vcftype hipstr \
-                --outtype ~{outtype} \
+                --outtype vcf pgen \
                 --dosages beagleap_norm \
                 --ignore-duplicates \
                 --match-refpanel-on locid && \

@@ -25,24 +25,13 @@ import tempfile
 import csv
 from utils import MSG, ERROR
 
-def GetFileBatches(sample_list, batch_num=None):
-    sample_batch = []
-    
-    # Open txt file
-    with open(sample_list, "r") as f:
-        if batch_num is None:
-            # Read all lines if batch_num is None
-            sample_batch = f.readlines()
-        else:
-            # Read the first batch_num lines
-            for _ in range(batch_num):
-                line = f.readline().strip()  # Read and strip newline character
-                if line:  # Check if the line is not empty
-                    sample_batch.append(line)
-                else:
-                    break  # Exit the loop if there are no more lines
-    
-    return sample_batch
+def GetBatchVCFFiles(vcfdir, max_batches):
+	cmd = "gsutil ls %s/*.vcf.gz"%(vcfdir)
+	output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read().decode("utf-8")
+	batch_files = [item.strip() for item in output.split()]
+	if max_batches > -1 and max_batches <= len(batch_files):
+		batch_files = batch_files[0:max_batches]
+	return batch_files
 
 def RunWorkflow(json_file, json_options_file, wdl_dependencies_file, dryrun=False):
 	"""
@@ -83,20 +72,20 @@ def DownloadGS(filename):
 	output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
 	print(output.decode("utf-8"))	
 	
-def UploadGS(local_path, gcp_path):
-	"""
-	Upload a local file to GCP
-
-	Arguments
-	---------
-	local_path : str
-	   Local path
-	gcp_path : str
-	   GCP path to upload to
-	"""
-	cmd = "gsutil cp {src} {dest}".format(src=local_path, dest=gcp_path)
-	output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
-	print(output.decode("utf-8"))	
+##def UploadGS(local_path, gcp_path):
+#	"""
+#	Upload a local file to GCP
+#
+#	Arguments
+#	---------
+#	local_path : str
+#	   Local path
+#	gcp_path : str
+#	   GCP path to upload to
+#	"""
+#	cmd = "gsutil cp {src} {dest}".format(src=local_path, dest=gcp_path)
+#	output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
+#	print(output.decode("utf-8"))	
 
 def ZipWDL(wdl_dependencies_file):
 	"""
@@ -127,30 +116,26 @@ def main():
 
 	parser = argparse.ArgumentParser(__doc__)
 	parser.add_argument("--name", help="Name of the TR job", required=True, type=str)
-	#parser.add_argument("--vcf", help="Name of the genotype vcf file", required=True, type=str)
-	parser.add_argument("--ref-panel", help="File id of ref genome", type=str)
-	parser.add_argument("--ref", help="File of ref genome", type=str,required=True)
-	#parser.add_argument("--ref-index", help="File of ref index genome", type=str,required=False)
+	parser.add_argument("--chrom", help="Which chromosome to process", type=str, required=True)
 	parser.add_argument("--mem", help="Specify run memory for beagle ", type=int, required=False, default=50)
 	parser.add_argument("--merge-mem", help="Specify run memory for bcftools merge ", type=int, required=False, default=50)
 	parser.add_argument("--disk", help="Specify disk memory ", type=int, required=False, default=25)
 	parser.add_argument("--window", help="Specify window size for imputation ", type=int, required=False, default=20)
-	#need to change path
 	#parser.add_argument("--sample-batches", help="List of batches samples to process ", type=str, required=False, \
 	#				 default=f"{bucket}/tr_imputation/tr_imputation/sample/sample_manifest.txt")
 	parser.add_argument("--sample-batches", help="List of batches samples to process ", type=str, required=False, \
 					 default=f"{bucket}/acaf_batches/manifest/chr11_acaf_manifest.txt")
 	parser.add_argument("--region", help="Name of chrom position  chr:xxx-xxx", type=str,required=False)
 	parser.add_argument("--beagle-region", help="Apply chrom for beagle", action="store_true",required=False)
-	#parser.add_argument("--subset-region", help="Subsetting region for vcf file", action="store_true",required=False)
 	parser.add_argument("--dryrun", help="Don't actually run the workflow. Just set up", action="store_true")
 	parser.add_argument("--batch-num", help="Number of batches. Default: -1 (all)",type=int, required=False, default=None)
 	parser.add_argument("--overlap", help="Specify overlap size for imputation ", type=int, required=False, default=2)
 	parser.add_argument("--map", help="Specify genetic map for imputation ", type=str, required=True)
-	parser.add_argument("--outtype", help="Specify out type for annotaTR ", type=str, required=True, default="vcf pgen")					
+				
 
 	args = parser.parse_args()
 
+	batch_vcf_files = GetBatchVCFFiles(args.vcfdir, args.max_batches)
 	output_bucket = bucket + "/" + args.name
 
 	#Set up sample file list
@@ -159,59 +144,28 @@ def main():
 		sample_list = os.path.basename(args.sample_batches)
 	else: sample_list = args.sample_batches
 
-	# Upload vcf file
-	#if args.vcf.startswith("gs://"):
-	#	vcf_gcs = args.vcf
-	#else:
-	#			# Copying the vcf file
-	##	vcf_gcs = output_bucket + "/" + args.name + "/"
-	#	UploadGS(args.vcf, vcf_gcs)
-	#			# Copying the index file
-	#	UploadGS(args.vcf + ".tbi", vcf_gcs)
-
-	# set up batches of file
-	sample_batch = GetFileBatches(sample_list,args.batch_num)
-
-	# Upload subset sample file
-	#if args.samples.startswith("gs://"):
-	#	sample_file = args.samples
-	#else:
-	#			# Copying the exclude sample file
-	#	sample_file = output_bucket + "/" + args.name + "/"
-	#	UploadGS(args.samples, sample_file)
-
-
 	if args.beagle_region and args.region is None:
 		ERROR("Must specify --region for --beagle-region")
 
 
-
 	# Set up workflow JSON
 	json_dict = {}
-	#json_dict["batch_imputation.vcf"] = args.vcf
-	#json_dict["batch_imputation.vcf_index"]=args.vcf+".tbi"
-	json_dict["batch_imputation.ref_panel"] = args.ref_panel
+	json_dict["batch_imputation.ref_panel"] = bucket + "tr_imputation/tr_imputation/ref_panel/ensembletr_refpanel_v3_chr%s.bref3"%args.chrom
+	json_dict["batch_imputation.ref_vcf"] = bucket + "tr_imputation/tr_imputation/ref_panel/ensembletr_refpanel_v3_chr%s.vcf.gz"%args.chrom
+	json_dict["batch_imputation.ref_index"] = bucket + "tr_imputation/tr_imputation/ref_panel/ensembletr_refpanel_v3_chr%s.vcf.gz.tbi"%args.chrom
 	json_dict["batch_imputation.out_prefix"] = args.name
 	json_dict["batch_imputation.GOOGLE_PROJECT"] = project
 	json_dict["batch_imputation.mem"] = args.mem
 	json_dict["batch_imputation.merge_mem"] = args.merge_mem
 	json_dict["batch_imputation.disk"] = args.disk
 	json_dict["batch_imputation.window_size"] = args.window
-	json_dict["batch_imputation.sample_batches"] = sample_batch 
-	json_dict["batch_imputation.region"] = args.region
-	#json_dict["batch_imputation.subset_region"] = args.subset_region 
+	json_dict["batch_imputation.sample_batches"] = batch_vcf_files 
+	json_dict["batch_imputation.region"] = args.region 
 	json_dict["batch_imputation.beagle_region"] = args.beagle_region
-	#json_dict["batch_imputation.header_file"] =args.header_file
-	json_dict["batch_imputation.ref_vcf"] =args.ref
-	json_dict["batch_imputation.ref_index"] =args.ref + ".tbi"
 	json_dict["batch_imputation.overlap"] = args.overlap
 	json_dict["batch_imputation.map"] = args.map
-	json_dict["batch_imputation.outtype"] = args.outtype
 
 
-
-
-	
 
 
 	# Convert to json and save as a file
