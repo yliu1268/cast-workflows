@@ -40,7 +40,3 @@ chrom=chr11
 cromshell -mc -t 200 metadata $jobid > gnomix_${chrom}_metadata.json
 python -c "import json; data = json.load(open('gnomix_chr11_metadata.json', 'r')); [print(data['calls']['local_ancestry.run_gnomix'][i]['subWorkflowMetadata']['calls']['run_gnomix.beagle'][0]['outputs']['outvcf']) for i in range(len(data['calls']['local_ancestry.run_gnomix']))]; [print(data['calls']['local_ancestry.run_gnomix'][i]['subWorkflowMetadata']['calls']['run_gnomix.beagle'][0]['outputs']['outvcf_index']) for i in range(len(data['calls']['local_ancestry.run_gnomix']))];" | xargs -n 1 -P 1 -I% sh -c "gsutil mv % ${WORKSPACE_BUCKET}/beagle_hg19/${chrom}"
 ```
-
-From python:
-```
-```

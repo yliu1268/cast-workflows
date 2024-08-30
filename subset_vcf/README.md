@@ -1,19 +1,51 @@
 # Pre-compute batches of ACAF VCF files for use in future workflows
 
-This set of workflows precomputes small subsets of the ACAF VCF files. The steps below:
+This set of workflows precomputes small subsets of the ACAF VCF files. 
+
+The steps below launch the following Workflows with cromshell:
+
+* `wdl/subset_vcf.wdl`: Launch a WDL that creates 1 smaller VCF per sample batch per region
+* `wdl/concatenate_batch_vcfs.wdl`: Oragnize all the subset VCF files per batch in a single folder in our workspace for future use
+
+## Subset VCF: Launch jobs
+
+Before running you will need to:
+* Run the tasks under "Setup" below (once done these shouldn't need to be rerun)
+* Start an All of Us analysis environment and go to the terminal
+* Start the All of Us cromshell environment
+* From the analysis environment terminal, clone this repository and configure cromshell:
+
+```
+git clone https://github.com/CAST-genomics/cast-workflows/
+cd cast-workflows/subset_vcf
+../utils/configure-cromshell.py
+```
+
+To launch a job for one chromosome (Note: these are big jobs. only run one chrom at a time)
+```
+# Run subset VCF
+chrom=XXX # e.g. chrom=11
+./subset_vcf_launcher.py --chrom ${chrom} --name chr${chrom} # copy the jobid to $jobid
+cromshell alias $jobid subset-vcf-chr${chrom}
+
+# Concatenate the subsets and upload to ${WORKSPACE_BUCKET}/acaf_batches/${chrom}
+./concatenate_batches_v2.py $subset-vcf-chr${chrom} ${chrom} # copy the jobid to $concatjobid
+cromshell alias $concatjobid concat-vcf-chr${chrom}
+cromshell -mc list-outputs -j concat-vcf-chr${chrom} | \
+	python -c "import json, sys; data=json.load(sys.stdin); [sys.stdout.write(item+'\n') for item in data['concatenate_batch_vcfs.vcf_outputs']+data['concatenate_batch_vcfs.vcf_indices']]" | \
+	xargs -n1 -I% -P1 sh -c "gsutil mv % ${WORKSPACE_BUCKET}/acaf_batches/${chrom}/"
+
+```
+
+## Setup
+
+The steps below:
 
 Setup work on the terminal:
 
 * Break up samples into batches of 1000
 * Sets up the "groups" file needed for subsetting with bcftools split (`aou_sample_groups.txt`) 
 * Sets up 10Mb regions to run on one at a time
-
-Workflows launched with cromshell:
-
-* `subset_vcf.wdl`: Launch a WDL that creates 1 smaller VCF per sample batch per region
-* `concatenate_batch_vcfs.wdl`: Oragnize all the subset VCF files per batch in a single folder in our workspace for future use
-
-## Setup
 
 ### Set up group batches
 
@@ -52,29 +84,3 @@ do
 done
 ```
 
-## Subset VCF: Launch jobs
-
-```
-# Full jobs
-# Keep track of the job ID of each chromosome, needed for next steps below
-for chrom in $(seq 1 22)
-do
-	./subset_vcf_launcher.py --chrom ${chrom} --name chr${chrom}
-done
-```
-
-## Concatenation: Organize files for each batch
-
-```
-# Launch concatenation wdl ( example on chr11)
-chrom=chr11
-jobid=<jobid from the subset_vcf job for this chromosome>
-./concatenate_batches_v2.py ${jobid} ${chrom}
-
-# After completion, rename job outputs to be in ${WORKSPACE_BUCKET}/acaf_batches/${chrom}
-# cromshell buries them in ${WORKSPACE_BUCKET}/acaf_batches/${chrom}/concatenate_batch_vcfs/
-concatjobid=<job id from concatenation>
-cromshell -mc list-outputs -j ${concatjobid} | \
-	python -c "import json, sys; data=json.load(sys.stdin); [sys.stdout.write(item+'\n') for item in data['concatenate_batch_vcfs.vcf_outputs']+data['concatenate_batch_vcfs.vcf_indices']]" | \
-	xargs -n1 -I% -P1 sh -c "gsutil mv % ${WORKSPACE_BUCKET}/acaf_batches/${chrom}/"
-```
