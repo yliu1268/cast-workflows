@@ -124,8 +124,8 @@ def main():
 	parser.add_argument("--window", help="Specify window size for imputation ", type=int, required=False, default=20)
 	#parser.add_argument("--sample-batches", help="List of batches samples to process ", type=str, required=False, \
 	#				 default=f"{bucket}/tr_imputation/tr_imputation/sample/sample_manifest.txt")
-	parser.add_argument("--sample-batches", help="List of batches samples to process ", type=str, required=False, \
-					 default=f"{bucket}/acaf_batches/manifest/chr11_acaf_manifest.txt")
+	#parser.add_argument("--sample-batches", help="List of batches samples to process ", type=str, required=False, \
+	#				 default=f"{bucket}/acaf_batches/manifest/chr11_acaf_manifest.txt")
 	parser.add_argument("--region", help="Name of chrom position  chr:xxx-xxx", type=str,required=False)
 	parser.add_argument("--beagle-region", help="Apply chrom for beagle", action="store_true",required=False)
 	parser.add_argument("--dryrun", help="Don't actually run the workflow. Just set up", action="store_true")
@@ -140,10 +140,10 @@ def main():
 	output_bucket = bucket + "/" + args.name
 
 	#Set up sample file list
-	if args.sample_batches.startswith("gs://"):
-		DownloadGS(args.sample_batches)
-		sample_list = os.path.basename(args.sample_batches)
-	else: sample_list = args.sample_batches
+	#if args.sample_batches.startswith("gs://"):
+	#	DownloadGS(args.sample_batches)
+	#	sample_list = os.path.basename(args.sample_batches)
+	#else: sample_list = args.sample_batches
 
 	if args.beagle_region and args.region is None:
 		ERROR("Must specify --region for --beagle-region")

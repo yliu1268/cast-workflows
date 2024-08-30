@@ -28,7 +28,7 @@ workflow batch_imputation {
         }
     ### Call subsetting samples with batches ###
         
-        Int num_batches = (length(sample_batches))/2
+        Int num_batches = length(sample_batches)
         scatter (i in range(num_batches)) {
                 File batch = sample_batches[i]
                 File batch_index = sample_batches[i]+".tbi"
