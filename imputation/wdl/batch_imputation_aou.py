@@ -5,11 +5,13 @@ Script to launch AOU imputation use new ref panel
 example code to impute 10 samples at CBL region 
 chrom=11
 ./batch_imputation_aou.py \
---name chr11_batch_test \
+--name chr${chrom}_batch_test \
+--chrom ${chrom} \
 --mem 40 \
---batch-num 2
---map $WORKSPACE_BUCKET/tr_imputation/tr_imputation/genetic_map/beagle_chr11_b38.map \
+--batch-num 2 \
+--vcfdir ${WORKSPACE_BUCKET}/acaf_batches/chr${chrom} \
 --disk 50 \
+--merge-mem 100
 """
 
 # need to change GetFileBatches
@@ -114,6 +116,7 @@ def main():
 
 	parser = argparse.ArgumentParser(__doc__)
 	parser.add_argument("--name", help="Name of the TR job", required=True, type=str)
+	parser.add_argument("--vcfdir", help="GCP bucket with batch VCF files", type=str, required=True)
 	parser.add_argument("--chrom", help="Which chromosome to process", type=str, required=True)
 	parser.add_argument("--mem", help="Specify run memory for beagle ", type=int, required=False, default=50)
 	parser.add_argument("--merge-mem", help="Specify run memory for bcftools merge ", type=int, required=False, default=50)
