@@ -90,7 +90,9 @@ workflow batch_imputation {
                 vcf_index=merge_TR_batch.outfile_index,
                 ref_vcf=ref_vcf,
                 ref_index=ref_index,
-                out_prefix=out_prefix
+                out_prefix=out_prefix,
+                merge_mem=merge_mem,
+                disk=disk
 
 
         }
@@ -117,6 +119,8 @@ task annotaTR {
         File ref_vcf
         File ref_index
         String out_prefix
+        Int merge_mem
+        Int disk
     }
     
     command <<<
@@ -124,20 +128,21 @@ task annotaTR {
                 --ref-panel ~{ref_vcf} \
                 --out ~{out_prefix}_annotated \
                 --vcftype hipstr \
-                --outtype vcf pgen \
+                --outtype pgen \
                 --dosages beagleap_norm \
                 --ignore-duplicates \
-                --match-refpanel-on locid && \
-        bgzip ~{out_prefix}_annotated.vcf 
+                --match-refpanel-on locid 
+        
 
     >>>
 
     runtime {
         docker:"gcr.io/ucsd-medicine-cast/trtools-6.0.2:latest"
+        disks: "local-disk ~{disk} SSD"
+        memory: merge_mem + "GB"
     }
 
     output {
-        File outvcf = "${out_prefix}_annotated.vcf.gz"
         File pgen = "${out_prefix}_annotated.pgen"
         File psam = "${out_prefix}_annotated.psam"
         File pvar = "${out_prefix}_annotated.pvar"
