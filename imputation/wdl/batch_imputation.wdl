@@ -118,8 +118,8 @@ task annotaTR {
         File ref_vcf
         File ref_index
         String out_prefix
-        Int merge_mem
-        Int disk
+        Int? merge_mem
+        Int? disk
     }
     
     command <<<
