@@ -34,14 +34,12 @@ cd cast-workflows/imputation
 It is recommended to first run a small test on a couple samples to make sure everything is set up correctly. e.g.:
 
 ```
-
+chrom=21
 ./batch_imputation_aou.py \
---name batch2_test \
---vcf gs://fc-aou-datasets-controlled/v7/wgs/short_read/snpindel/acaf_threshold_v7.1/vcf/acaf_threshold.chr21.vcf.bgz \
---ref-panel $WORKSPACE_BUCKET/tr_imputation/tr_imputation/ref/chr21_final_SNP_merged_additional_TRs.bref3 \
+--name chr${chrom}_test \
 --mem 40 \
 --batch-num 2 \
---ref $WORKSPACE_BUCKET/tr_imputation/tr_imputation/ref/chr21_final_SNP_merged_additional_TRs.vcf.gz \
+--chrom ${chrom}
 --region chr21:5101889-5151889 \
 --subset-region
 
@@ -67,12 +65,13 @@ cromshell list-outputs $JOBID
 ## Run a full job on all samples
 
 ```
+chrom=11
 ./batch_imputation_aou.py \
---name batch2_test \
---vcf gs://fc-aou-datasets-controlled/v7/wgs/short_read/snpindel/acaf_threshold_v7.1/vcf/acaf_threshold.chr21.vcf.bgz \
---ref-panel $WORKSPACE_BUCKET/tr_imputation/tr_imputation/ref/chr21_final_SNP_merged_additional_TRs.bref3 \
---mem 100 \
---ref $WORKSPACE_BUCKET/tr_imputation/tr_imputation/ref/chr21_final_SNP_merged_additional_TRs.vcf.gz 
+--name chr${chrom}_imputation \
+--chrom ${chrom} \
+--mem 40 \
+--disk 100 \
+--merge-mem 100
 
 ```
 
