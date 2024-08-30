@@ -98,7 +98,6 @@ workflow batch_imputation {
         }
 
         output {
-            File outfile_vcf = annotaTR.outvcf
             File outfile_pgen = annotaTR.pgen
             File outfile_psam = annotaTR.psam
             File outfile_pvar = annotaTR.pvar
