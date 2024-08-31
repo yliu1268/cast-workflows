@@ -45,12 +45,15 @@ task concat_batch {
 
         # Concatenate and index
         bcftools concat ~{sep=' ' batch_files} -Oz -o ~{outprefix}_~{batch_prefix}.vcf.gz
+
+        echo "Sorting..."
         bcftools sort -Oz -o ~{outprefix}_~{batch_prefix}.sorted.vcf.gz ~{outprefix}_~{batch_prefix}.vcf.gz
         tabix -p vcf ~{outprefix}_~{batch_prefix}.sorted.vcf.gz
     >>>
 
     runtime {
         docker: "gcr.io/ucsd-medicine-cast/bcftools-gcs:latest"
+        disks: "local-disk 25 SSD"
     }
 
     output {
