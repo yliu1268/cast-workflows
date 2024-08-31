@@ -29,7 +29,7 @@ chrom=XXX # e.g. chrom=11
 cromshell alias $jobid subset-vcf-chr${chrom}
 
 # Concatenate the subsets and upload to ${WORKSPACE_BUCKET}/acaf_batches/${chrom}
-./concatenate_batches_v2.py subset-vcf-chr${chrom} ${chrom} # copy the jobid to $concatjobid
+./concatenate_batches_v2.py subset-vcf-chr${chrom} chr${chrom} # copy the jobid to $concatjobid
 cromshell alias $concatjobid concat-vcf-chr${chrom}
 cromshell -mc list-outputs -j concat-vcf-chr${chrom} | \
 	python -c "import json, sys; data=json.load(sys.stdin); [sys.stdout.write(item+'\n') for item in data['concatenate_batch_vcfs.vcf_outputs']+data['concatenate_batch_vcfs.vcf_indices']]" | \
