@@ -15,6 +15,13 @@ import sys
 cromshell_job_id = sys.argv[1]
 chrom = sys.argv[2]
 
+try:
+	from_batch = int(sys.argv[3])
+	to_batch = int(sys.argv[4])
+except:
+	from_batch = None
+	to_batch = None
+
 def SortByCoordinate(vcf_files):
 	""" Sort files by coordinates in filename """
 	# Filename syntax: bucket/batch99-chr11-50000000-60000000.vcf.gz
@@ -39,6 +46,11 @@ for region in jobdata["subset_vcf.vcf_output_array"]:
 			batch_files[batchname] = []
 		batch_files[batchname].append(f)
 batch_names = list(batch_files.keys())
+
+if from_batch is not None:
+	sys.stderr.write("Processing batches %s-%s out of %s\n"%(from_batch, to_batch, len(batch_names)))
+	batch_names = batch_names[from_batch:to_batch]
+sys.exit(1)
 
 # Set up workflow json
 json_dict = {}
