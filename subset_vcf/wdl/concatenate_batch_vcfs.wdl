@@ -34,6 +34,7 @@ task concat_batch {
         String GOOGLE_PROJECT = ""
         String batch_prefix
         String outprefix
+        Int total = length(batch_files)
     }
 
     command <<<
@@ -43,21 +44,33 @@ task concat_batch {
         export GCS_REQUESTER_PAYS_PROJECT=~{GOOGLE_PROJECT}
         export GCS_OAUTH_TOKEN=$(gcloud auth application-default print-access-token)
 
-        # Concatenate and index
-        bcftools concat ~{sep=' ' batch_files} -Oz -o ~{outprefix}_~{batch_prefix}.vcf.gz
+        # Fix regions (comment after we change subset jobs to fix this)
+        newlist=""
+        VCFARRAY=(~{sep=" " vcf_array}) # Process one vcf file at a time.
+        for (( c = 0; c < ~{total}; c++ )) # bash array are 0-indexed ;)
+        do
+            vcf=${VCFARRAY[$c]}
+            echo "Processing $vcf..."
+            export GCS_OAUTH_TOKEN=$(gcloud auth application-default print-access-token)
+            region=$(basename $vcf | cut -d'-' -f 2-4 | sed 's/-/:/' | sed 's/.vcf.gz//')
+            outf=$(echo $vcf | sed 's/.vcf.gz/.fixed.vcf.gz/')
+            bcftools view $vcf -r $region --regions-overlap 2 -Oz -o ${outf}
+            tabix -p vcf ${outf}
+            newlist="$newlist $outf"
+        done        
+        echo $newlist
 
-        echo "Sorting..."
-        bcftools sort -T . -Oz -o ~{outprefix}_~{batch_prefix}.vcf.gz ~{outprefix}_~{batch_prefix}.vcf.gz
-        tabix -p vcf ~{outprefix}_~{batch_prefix}.sorted.vcf.gz
+        # Concatenate and index
+        bcftools concat ${newlist} -Oz -o ~{outprefix}_~{batch_prefix}.vcf.gz
+        tabix -p vcf ~{outprefix}_~{batch_prefix}.vcf.gz
     >>>
 
     runtime {
         docker: "gcr.io/ucsd-medicine-cast/bcftools-gcs:latest"
-        disks: "local-disk 25 SSD"
     }
 
     output {
-        File vcf_output = "~{outprefix}_~{batch_prefix}.sorted.vcf.gz"
-        File vcf_indices = "~{outprefix}_~{batch_prefix}.sorted.vcf.gz.tbi"
+        File vcf_output = "~{outprefix}_~{batch_prefix}.vcf.gz"
+        File vcf_indices = "~{outprefix}_~{batch_prefix}.vcf.gz.tbi"
     }
 }
