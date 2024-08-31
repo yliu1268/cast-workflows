@@ -35,7 +35,8 @@ cromshell -mc list-outputs -j concat-vcf-chr${chrom} | \
 	python -c "import json, sys; data=json.load(sys.stdin); [sys.stdout.write(item+'\n') for item in data['concatenate_batch_vcfs.vcf_outputs']+data['concatenate_batch_vcfs.vcf_indices']]" | \
 	xargs -n1 -I% -P1 sh -c "gsutil mv % ${WORKSPACE_BUCKET}/acaf_batches/chr${chrom}/"
 
-# Large chroms need to be done in batches...
+# Large chroms need to be done in batches
+# This is bc the JSON is too large to run the full chrom...
 ./concatenate_batches_v2.py subset-vcf-chr${chrom} chr${chrom} 0 100
 ./concatenate_batches_v2.py subset-vcf-chr${chrom} chr${chrom} 100 246
 ```
