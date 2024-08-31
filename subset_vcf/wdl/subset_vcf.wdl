@@ -47,7 +47,7 @@ task subset_region_batches {
         cat ~{sample_groups} | awk -v"region=~{region}" '{print $0 "-" region}' | sed 's/:/-/' > renamed_sample_groups.txt
 
         # Get subsets
-        bcftools plugin split ~{multi_sample_vcf} -r ~{region} -G renamed_sample_groups.txt -Oz -o .
+        bcftools plugin split ~{multi_sample_vcf} --regions-overlap 2 -r ~{region} -G renamed_sample_groups.txt -Oz -o .
 
         # Index
         for f in *.vcf.gz

@@ -44,9 +44,9 @@ task concat_batch {
         export GCS_REQUESTER_PAYS_PROJECT=~{GOOGLE_PROJECT}
         export GCS_OAUTH_TOKEN=$(gcloud auth application-default print-access-token)
 
-        # Fix regions (comment after we change subset jobs to fix this)
+        # Fix regions (comment and revert after we change subset jobs to fix this)
         newlist=""
-        VCFARRAY=(~{sep=" " vcf_array}) # Process one vcf file at a time.
+        VCFARRAY=(~{sep=" " batch_files}) # Process one vcf file at a time.
         for (( c = 0; c < ~{total}; c++ )) # bash array are 0-indexed ;)
         do
             vcf=${VCFARRAY[$c]}
