@@ -45,7 +45,8 @@ task concat_batch {
 
         # Concatenate and index
         bcftools concat ~{sep=' ' batch_files} -Oz -o ~{outprefix}_~{batch_prefix}.vcf.gz
-        tabix -p vcf ~{outprefix}_~{batch_prefix}.vcf.gz
+        bcftools sort -Oz -o ~{outprefix}_~{batch_prefix}.sorted.vcf.gz ~{outprefix}_~{batch_prefix}.vcf.gz
+        tabix -p vcf ~{outprefix}_~{batch_prefix}.sorted.vcf.gz
     >>>
 
     runtime {
@@ -53,7 +54,7 @@ task concat_batch {
     }
 
     output {
-        File vcf_output = "~{outprefix}_~{batch_prefix}.vcf.gz"
-        File vcf_indices = "~{outprefix}_~{batch_prefix}.vcf.gz.tbi"
+        File vcf_output = "~{outprefix}_~{batch_prefix}.sorted.vcf.gz"
+        File vcf_indices = "~{outprefix}_~{batch_prefix}.sorted.vcf.gz.tbi"
     }
 }
