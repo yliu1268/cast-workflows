@@ -151,9 +151,9 @@ def main():
 
 	# Set up workflow JSON
 	json_dict = {}
-	json_dict["batch_imputation.ref_panel"] = bucket + "/tr_imputation/tr_imputation/ref_panel/ensembletr_refpanel_v3_chr%s.bref3"%args.chrom
-	json_dict["batch_imputation.ref_vcf"] = bucket + "/tr_imputation/tr_imputation/ref_panel/ensembletr_refpanel_v3_chr%s.vcf.gz"%args.chrom
-	json_dict["batch_imputation.ref_index"] = bucket + "/tr_imputation/tr_imputation/ref_panel/ensembletr_refpanel_v3_chr%s.vcf.gz.tbi"%args.chrom
+	json_dict["batch_imputation.ref_panel"] = "{bucket}/tr_imputation/tr_imputation/ref_panel/ensembletr_refpanel_v3_chr%s.bref3"%args.chrom
+	json_dict["batch_imputation.ref_vcf"] = "{bucket}/tr_imputation/tr_imputation/ref_panel/ensembletr_refpanel_v3_chr%s.vcf.gz"%args.chrom
+	json_dict["batch_imputation.ref_index"] = "{bucket}/tr_imputation/tr_imputation/ref_panel/ensembletr_refpanel_v3_chr%s.vcf.gz.tbi"%args.chrom
 	json_dict["batch_imputation.out_prefix"] = args.name
 	json_dict["batch_imputation.GOOGLE_PROJECT"] = project
 	json_dict["batch_imputation.mem"] = args.mem
