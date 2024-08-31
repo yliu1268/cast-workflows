@@ -50,7 +50,6 @@ batch_names = list(batch_files.keys())
 if from_batch is not None:
 	sys.stderr.write("Processing batches %s-%s out of %s\n"%(from_batch, to_batch, len(batch_names)))
 	batch_names = batch_names[from_batch:to_batch]
-sys.exit(1)
 
 # Set up workflow json
 json_dict = {}
