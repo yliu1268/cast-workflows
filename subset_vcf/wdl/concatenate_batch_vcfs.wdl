@@ -56,10 +56,10 @@ task concat_batch {
             outf=$(echo $vcf | sed 's/.vcf.gz/.fixed.vcf.gz/')
             bcftools view $vcf -Oz -o tmp.vcf.gz
             tabix -p vcf tmp.vcf.gz
-            bcftools view tmp.vcf.gz -r $region --regions-overlap 2 -Oz -o ${outf}
+            bcftools view tmp.vcf.gz -t $region -Oz -o ${outf}
             tabix -p vcf ${outf}
             newlist="$newlist $outf"
-        done        
+        done
         echo $newlist
 
         # Concatenate and index
