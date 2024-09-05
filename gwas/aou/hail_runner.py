@@ -37,9 +37,17 @@ class HailRunner:
         if self.region is not None:
             mt = hl.filter_intervals(mt, [hl.parse_locus_interval(self.region,)])
 
+        # filter samples to ensure maf filtering applied to cohort
+        ids = pd.DataFrame(self.ptcovar['person_id'])
+        sample_tbl = hl.Table.from_pandas(ids, key="person_id")
+        data = mt.filter_cols(hl.is_defined(sample_tbl[mt.s]))
+
+        # filter multiallelics
+        data = data.filter_rows(hl.len(data.alleles) == 2)
+
         # Load phenotype and covariates
         ptcovar = hl.Table.from_pandas(self.ptcovar, key="person_id")
-        data = mt.annotate_cols(ptcovar = ptcovar[mt.s])
+        data = data.annotate_cols(ptcovar = ptcovar[data.s])
 
         # Genotype QC
         data = data.annotate_entries(FT = hl.coalesce(data.FT,'PASS'))
