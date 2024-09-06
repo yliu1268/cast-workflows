@@ -33,15 +33,12 @@ workflow local_ancestry {
     call gnomix_t.merge_gnomix as merge_gnomix {
         input:
             gnomix_outputs_msp=run_gnomix.msp_outfile,
-            gnomix_outputs_fb=run_gnomix.fb_outfile,
             out_prefix=out_prefix,
-            disk=200
     }
 
     ### Output files ####
     output {
         File msp_outfile = merge_gnomix.msp_outfile
-        File fb_outfile = merge_gnomix.fb_outfile
     }
 }
 

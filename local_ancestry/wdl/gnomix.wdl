@@ -47,13 +47,11 @@ workflow run_gnomix {
     call merge_gnomix {
         input:
             gnomix_outputs_msp=gnomix.msp_outfile_array,
-            gnomix_outputs_fb=gnomix.fb_outfile_array,
             out_prefix=out_prefix
     }
 
     output {
         File msp_outfile = merge_gnomix.msp_outfile
-        File fb_outfile = merge_gnomix.fb_outfile
     }
 
     meta {
@@ -197,7 +195,6 @@ task gnomix {
             echo "Processing $vcf..."
             python3 gnomix.py ${vcf} . ~{chrom} False pretrained_gnomix_models/chr~{chrom}/model_chm_~{chrom}.pkl
             cp query_results.msp /cromwell_root/~{out_prefix}_${c}.msp
-            cp query_results.fb /cromwell_root/~{out_prefix}_${c}.fb
         done
     >>>
 
@@ -208,17 +205,14 @@ task gnomix {
 
     output {
        Array[File] msp_outfile_array = glob("*.msp")
-       Array[File] fb_outfile_array = glob("*.fb")
     }
 }
 
 task merge_gnomix {
     input {
         Array[File] gnomix_outputs_msp
-        Array[File] gnomix_outputs_fb
         String out_prefix
         Int total = length(gnomix_outputs_msp)
-        Int? disk = 10
     }
 
     command <<<
@@ -231,25 +225,13 @@ task merge_gnomix {
             cat ${MSPFILEARRAY[$c]} | grep -v "^#Subpopulation" | cut -f 1-6 -d$'\t' --complement > data_${c}.msp
         done
         paste fixedcols.msp data*.msp >> ~{out_prefix}.msp
-
-        # Next merge fb files
-        FBFILEARRAY=(~{sep=' ' gnomix_outputs_fb})
-        head -n 1 ${FBFILEARRAY[0]} > ~{out_prefix}.fb
-        cat ${FBFILEARRAY[0]} | grep -v "^#" | cut -f 1-4 -d$'\t' > fixedcols.fb
-        for (( c = 0; c < ~{total}; c++ ))
-        do
-            cat ${FBFILEARRAY[$c]} | grep -v "^#" | cut -f 1-4 -d$'\t' --complement > data_${c}.fb
-        done
-        paste fixedcols.fb data*.fb >> ~{out_prefix}.fb
     >>>
 
     runtime {
         docker: "gcr.io/ucsd-medicine-cast/bcftools-gcs:latest"
-        disks: "local-disk ~{disk} SSD"
     }
 
     output {
         File msp_outfile = "~{out_prefix}.msp"
-        File fb_outfile = "~{out_prefix}.fb"
     }
 }
