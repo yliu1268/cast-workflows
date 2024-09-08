@@ -74,15 +74,17 @@ task liftover_vcf {
 
         # Liftover to hg19
         echo "Liftover"
-        bcftools +liftover --no-version -Ou ~{vcf} -- \
+        bcftools +liftover --no-version -Oz ~{vcf} -- \
               -f ~{hg19_ref} \
               -s ~{hg38_ref} \
               -c ~{chainfile} \
               --reject ~{out_prefix}.reject.bcf \
               --reject-type b \
-              --write-src --drop-tags FORMAT/AD > ~{out_prefix}_hg19.bcf
+              --write-src --drop-tags FORMAT/AD > ~{out_prefix}_hg19_lift.vcf.gz
+
+        # Sort liftover file
         echo "sort"
-        bcftools sort -o ~{out_prefix}_hg19.vcf.gz -Oz ~{out_prefix}_hg19.bcf
+        bcftools sort -T . -o ~{out_prefix}_hg19.vcf.gz -Oz ~{out_prefix}_hg19_lift.vcf.gz
         tabix -p vcf ~{out_prefix}_hg19.vcf.gz
 
         # Restrict to target chromosome
