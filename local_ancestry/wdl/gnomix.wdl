@@ -84,6 +84,8 @@ task liftover_vcf {
 
         # Sort liftover file
         echo "sort"
+        df -ah
+        ls -ltrh
         bcftools sort -T . -o ~{out_prefix}_hg19.vcf.gz -Oz ~{out_prefix}_hg19_lift.vcf.gz
         tabix -p vcf ~{out_prefix}_hg19.vcf.gz
 
@@ -96,7 +98,7 @@ task liftover_vcf {
     runtime {
         docker: "gcr.io/ucsd-medicine-cast/bcftools-gcs-plugins:latest"
         memory: "25GB"
-        disks: "local-disk 50 SSD"
+        disks: "local-disk 60 SSD"
     }
 
     output {
