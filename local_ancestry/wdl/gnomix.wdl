@@ -192,6 +192,7 @@ task gnomix {
     }
 
     command <<<
+        set -e
         cd /gnomix
         tar -xzvf ~{model}
 
@@ -224,6 +225,7 @@ task merge_gnomix {
     }
 
     command <<<
+        set -e
         # First merge msp files
         MSPFILEARRAY=(~{sep=' ' gnomix_outputs_msp})
         head -n 1 ${MSPFILEARRAY[0]} > ~{out_prefix}.msp
