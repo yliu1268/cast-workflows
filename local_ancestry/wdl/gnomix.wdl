@@ -98,7 +98,8 @@ task liftover_vcf {
     runtime {
         docker: "gcr.io/ucsd-medicine-cast/bcftools-gcs-plugins:latest"
         memory: "25GB"
-        disks: "local-disk 60 SSD"
+        disks: "local-disk 60 HDD"
+        preemptible: 2
     }
 
     output {
@@ -128,6 +129,7 @@ task beagle {
     runtime {
         docker: "gcr.io/ucsd-medicine-cast/beagle:latest"
         memory: "25GB"
+        preemptible: 2
     }
 
     output {
@@ -141,7 +143,7 @@ task filter_and_split_vcf {
         File vcf
         File vcf_index
         String out_prefix
-        Int batch_size = 200 # smaller files to gnomix doesn't explode
+        Int batch_size = 100 # smaller files to gnomix doesn't explode
     }
 
     command <<<
@@ -170,6 +172,7 @@ task filter_and_split_vcf {
 
     runtime {
         docker: "gcr.io/ucsd-medicine-cast/bcftools-gcs-plugins:latest"
+        preemptible: 2
     }
 
     output {
@@ -205,6 +208,7 @@ task gnomix {
     runtime {
         docker: "gcr.io/ucsd-medicine-cast/gnomix:latest"
         memory: "25GB"
+        preemptible: 2
     }
 
     output {
@@ -233,6 +237,7 @@ task merge_gnomix {
 
     runtime {
         docker: "gcr.io/ucsd-medicine-cast/bcftools-gcs:latest"
+        preemptible: 2
     }
 
     output {
