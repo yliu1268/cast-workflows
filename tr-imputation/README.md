@@ -1,14 +1,13 @@
-# Running imputation on the All of Us workbench
+# Running TR imputation on the All of Us workbench
 
-The goal of imputation is to perform phasing and imputation on a cohort of samples. The workflow performs the following steps:
+The goal of imputation is to perform phasing and imputation of TRs on a cohort of samples. The workflow performs the following steps:
 
-1. **Phase and run imputation with beagle.** Beagle performs multi-sample calling in batches. This is because using beagle to phase and imputate a huge number of samples (e.g. 200,000) is too memory intensive. After imputate each batch, it uses mergeSTR and bcftools to combine the output VCF files.
-2. **Merge imputed TR and SNP seperately with MergeSTR and bcftools.** 
+1. **TR imputation with Beagle.** We perform phasing with Beagle in batches. This is because using running Beagle on a large number of samples (e.g. 200,000) is too memory intensive.
+2. **Merge imputed TR and SNPs seperately with bcftools.** 
 3. **Sort, bgzip and tabix index the output VCF file.**
+4. **Run annotaTR to add dosages and convert to PGEN format.**
 
-
-**For most of our use cases, users do not interact with the WDL described here directly, but rather call launcher scripts ** which handle setting up inputs and calling the WDL on particular cloud systems. Sections below give additional WDL details which can be helpful for development/testing or debugging.
-
+For most of our use cases, users do not interact with the WDL described here directly, but rather call launcher scripts which handle setting up inputs and calling the WDL using cromshell. Sections below give additional WDL details which can be helpful for development/testing or debugging.
 
 ## Setup
 In all cases you'll have to run the following steps in the AoU workbench before starting a workflow:
@@ -24,9 +23,8 @@ In all cases you'll have to run the following steps in the AoU workbench before 
 
 ```
 git clone https://github.com/cast-genomics/cast-workflows/
-git checkout batch_imputation2
-cd cast-workflows/imputation
-./configure-cromshell.py
+cd cast-workflows/tr-imputation
+../utils/configure-cromshell.py
 ```
 
 ## Run a small test job
