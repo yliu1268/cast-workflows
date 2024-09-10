@@ -138,9 +138,9 @@ def main():
 		"Format of each line: cram-file-id cram-index-id", type=str, required=False, default="ukb_cram_and_index_files.txt")
 	parser.add_argument("--genome-id", help="File id of ref genome", type=str, default="file-GGJ1z28JbVqbpqB93YbPqbzz")
 	parser.add_argument("--genome-idx-id", help="File id of ref genome index", type=str, default="file-GGJ94JQJv7BGFYq8BGp62xPV")
-	parser.add_argument("--workflow-id", help="DNA Nexus workflow ID", required=False, default="workflow-Gfb049jJv7B4gj3g5vzZgY4x")
+	parser.add_argument("--workflow-id", help="DNA Nexus workflow ID", required=False, default="workflow-Gpk7B3QJv7B6pgq32QJ5PQ3p")
 	# Options for multi-batches
-	parser.add_argument("--merge-workflow-id", help="DNA Nexus workflow ID for merging", required=False, default="workflow-Gfb056QJv7BPp14Y3gPZZ66F")
+	parser.add_argument("--merge-workflow-id", help="DNA Nexus workflow ID for merging", required=False, default="workflow-Gpk7BBQJv7B3Qp9ZP907z42Z")
 	parser.add_argument("--max-batches-per-workflow", help="Maximum number of batches to launch at once. -1 means all", required=False, default=10, type=int)
 	parser.add_argument("--concurrent", help="Launch all batches at once", action="store_true")
 	args = parser.parse_args()

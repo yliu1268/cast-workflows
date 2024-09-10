@@ -32,6 +32,8 @@ java -jar "$DX_COMPILER_JAR" compile ../wdl/merge_index_str.wdl \
   -project $PROJID -folder /TargetTR/ -streamFiles all -archive 
 ```
 
+**Note:** As of 08/06/2024 dxCompiler does not seem to work with the newest versions of Java. Downgrading to openjdk=11 may fix this. [See this bug report](https://github.com/dnanexus/dxCompiler/issues/468).
+
 ## Compile list of files to process
 
 The steps below need to run once to get a list of samples to process. These steps do the following:
