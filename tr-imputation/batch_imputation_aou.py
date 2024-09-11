@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 """
-Script to launch AOU imputation use new ref panel 
-
-example code to impute 10 samples at CBL region 
+Script to launch AOU TR imputation using new ref panel 
+ 
 chrom=11
 ./batch_imputation_aou.py \
 --name chr${chrom}_batch_test \
@@ -13,6 +12,9 @@ chrom=11
 --disk 50 \
 --merge-mem 100
 """
+
+sys.path.append("../utils")
+import aou_utils
 
 # need to change GetFileBatches
 import argparse
