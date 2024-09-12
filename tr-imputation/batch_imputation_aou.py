@@ -6,11 +6,8 @@ chrom=11
 ./batch_imputation_aou.py \
 --name chr${chrom}_batch_test \
 --chrom ${chrom} \
---beagle-mem 40 \
---batch-num 2 \
 --vcfdir ${WORKSPACE_BUCKET}/acaf_batches/chr${chrom} \
---disk 50 \
---merge-mem 100
+--batch-num 2
 """
 
 sys.path.append("../utils")
@@ -28,8 +25,8 @@ def main():
 	parser.add_argument("--name", help="Name of the TR job", required=True, type=str)
 	parser.add_argument("--vcfdir", help="GCP bucket with batch VCF files", type=str, required=True)
 	parser.add_argument("--chrom", help="Which chromosome to process", type=str, required=True)
-	parser.add_argument("--beagle-mem", help="Specify run memory for beagle ", type=int, required=False, default=50)
-	parser.add_argument("--merge-mem", help="Specify run memory for bcftools merge ", type=int, required=False, default=50)
+	parser.add_argument("--beagle-mem", help="Specify run memory for beagle ", type=int, required=False, default=25)
+	parser.add_argument("--merge-mem", help="Specify run memory for bcftools merge ", type=int, required=False, default=25)
 	parser.add_argument("--dryrun", help="Don't actually run the workflow. Just set up", action="store_true")
 	parser.add_argument("--batch-num", help="Number of batches. Default: -1 (all)",type=int, required=False, default=None)
 	args = parser.parse_args()
@@ -39,9 +36,9 @@ def main():
 
 	# Set up workflow JSON
 	json_dict = {}
-	json_dict["batch_imputation.ref_panel"] = os.environ.get("WORKSPACE_BUCKET") + "/tr_imputation/enstr-v3/ensembletr_refpanel_v3_chr%s.bref"%args.chrom
 	json_dict["batch_imputation.ref_vcf"] = os.environ.get("WORKSPACE_BUCKET") + "/tr_imputation/enstr-v3/ensembletr_refpanel_v3_chr%s.vcf.gz"%args.chrom
 	json_dict["batch_imputation.ref_index"] = os.environ.get("WORKSPACE_BUCKET") + "/tr_imputation/enstr-v3/ensembletr_refpanel_v3_chr%s.vcf.gz.tbi"%args.chrom
+	json_dict["batch_imputation.ref_panel"] = os.environ.get("WORKSPACE_BUCKET") + "/tr_imputation/enstr-v3/ensembletr_refpanel_v3_chr%s.bref"%args.chrom
 	json_dict["batch_imputation.map"] = os.environ.get("WORKSPACE_BUCKET") + "tr_imputation/tr_imputation/genetic_map/beagle_chr%s_b38.map"%args.chrom
 	json_dict["batch_imputation.out_prefix"] = args.name
 	json_dict["batch_imputation.beagle_mem"] = args.beagle_mem
@@ -64,7 +61,8 @@ def main():
 	ZipWDL(wdl_dependencies_file)
 
 	# Run workflow on AoU using cromwell
-	aou_utils.RunWorkflow(json_file, json_options_file, wdl_dependencies_file, dryrun=args.dryrun)
+	aou_utils.RunWorkflow("wdl/batch_imputation.wdl", json_file, \
+		json_options_file, dryrun=args.dryrun)
 
 if __name__ == "__main__":
 	main()

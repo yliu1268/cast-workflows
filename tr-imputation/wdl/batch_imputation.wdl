@@ -5,11 +5,11 @@ workflow batch_imputation {
         File ref_vcf 
         File ref_index 
         File ref_panel
+        File map
         String out_prefix
         Int? beagle_mem 
         Int? merge_mem
         Array[File] batch_vcf_files = []
-        File map
     }
 
     ### Call subsetting samples with batches ###
