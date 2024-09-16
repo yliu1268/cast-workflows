@@ -8,6 +8,14 @@ import subprocess
 import sys
 import tempfile
 
+def GetBatchVCFFiles(vcfdir, max_batches):
+	cmd = "gsutil ls %s/*.vcf.gz"%(vcfdir)
+	output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read().decode("utf-8")
+	batch_files = [item.strip() for item in output.split()]
+	if max_batches > -1 and max_batches <= len(batch_files):
+		batch_files = batch_files[0:max_batches]
+	return batch_files
+	
 def ZipWDL(wdl_dependencies_file, file_list):
 	"""
 	Put all WDL dependencies into a zip file

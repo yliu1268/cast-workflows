@@ -23,14 +23,6 @@ import aou_utils
 
 GNOMIXMODEL = "gs://artifacts.ucsd-medicine-cast.appspot.com/resources/pretrained_gnomix_models.tar.gz"
 
-def GetBatchVCFFiles(vcfdir, max_batches):
-	cmd = "gsutil ls %s/*.vcf.gz"%(vcfdir)
-	output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read().decode("utf-8")
-	batch_files = [item.strip() for item in output.split()]
-	if max_batches > -1 and max_batches <= len(batch_files):
-		batch_files = batch_files[0:max_batches]
-	return batch_files
-
 def main():
 	parser = argparse.ArgumentParser(__doc__)
 	parser.add_argument("--vcfdir", help="GCP bucket with batch VCF files", \
@@ -46,7 +38,7 @@ def main():
 		type=int, default=-1)
 	args = parser.parse_args()
 
-	batch_vcf_files = GetBatchVCFFiles(args.vcfdir, args.max_batches)
+	batch_vcf_files = aou_utils.GetBatchVCFFiles(args.vcfdir, args.max_batches)
 
 	# Set up workflow JSON
 	json_dict = {}

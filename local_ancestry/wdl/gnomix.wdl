@@ -99,7 +99,6 @@ task liftover_vcf {
         docker: "gcr.io/ucsd-medicine-cast/bcftools-gcs-plugins:latest"
         memory: "25GB"
         disks: "local-disk 60 HDD"
-        preemptible: 2
     }
 
     output {
@@ -129,7 +128,6 @@ task beagle {
     runtime {
         docker: "gcr.io/ucsd-medicine-cast/beagle:latest"
         memory: "25GB"
-        preemptible: 2
     }
 
     output {
