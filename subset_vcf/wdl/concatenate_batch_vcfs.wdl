@@ -44,26 +44,8 @@ task concat_batch {
         export GCS_REQUESTER_PAYS_PROJECT=~{GOOGLE_PROJECT}
         export GCS_OAUTH_TOKEN=$(gcloud auth application-default print-access-token)
 
-        # Fix regions (comment and revert after we change subset jobs to fix this)
-        newlist=""
-        VCFARRAY=(~{sep=" " batch_files}) # Process one vcf file at a time.
-        for (( c = 0; c < ~{total}; c++ )) # bash array are 0-indexed ;)
-        do
-            vcf=${VCFARRAY[$c]}
-            echo "Processing $vcf..."
-            export GCS_OAUTH_TOKEN=$(gcloud auth application-default print-access-token)
-            region=$(basename $vcf | cut -d'-' -f 2-4 | sed 's/-/:/' | sed 's/.vcf.gz//')
-            outf=$(echo $vcf | sed 's/.vcf.gz/.fixed.vcf.gz/')
-            bcftools view $vcf -Oz -o tmp.vcf.gz
-            tabix -p vcf tmp.vcf.gz
-            bcftools view tmp.vcf.gz -t $region -Oz -o ${outf}
-            tabix -p vcf ${outf}
-            newlist="$newlist $outf"
-        done
-        echo $newlist
-
         # Concatenate and index
-        bcftools concat ${newlist} -Oz -o ~{outprefix}_~{batch_prefix}.vcf.gz
+        bcftools concat ~{sep=' ' batch_files} -Oz -o ~{outprefix}_~{batch_prefix}.vcf.gz
         tabix -p vcf ~{outprefix}_~{batch_prefix}.vcf.gz
     >>>
 
