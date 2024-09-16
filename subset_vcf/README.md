@@ -22,7 +22,7 @@ cd cast-workflows/subset_vcf
 ```
 
 To launch a job for one chromosome (Note: these are big jobs. only run one chrom at a time).
-It is recommended to run with `--test --disk XXX` first to make sure it works and also make sure you will have enough disk space. `--disk 50` worked for chr1, so you should be able to use much smaller numbers for other chromosomes.
+It is recommended to run with `--test --disk XXX` first to make sure it works and also make sure you will have enough disk space.
 
 ```
 # Run subset VCF
