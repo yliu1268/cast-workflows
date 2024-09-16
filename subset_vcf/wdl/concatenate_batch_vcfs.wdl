@@ -51,7 +51,7 @@ task concat_batch {
 
     runtime {
         docker: "gcr.io/ucsd-medicine-cast/bcftools-gcs:latest"
-        preemptible: 2
+        preemptible: 1
     }
 
     output {

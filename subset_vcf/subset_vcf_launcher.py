@@ -22,15 +22,17 @@ def main():
 	parser.add_argument("--chrom", help="Which chromosome to process. Ignored if testing", type=str, required=True)
 	parser.add_argument("--test", help="Whether to run on small test sets", action="store_true")
 	parser.add_argument("--name", help="Name prefix for intermediate files", type=str, default="test")
+	parser.add_argument("--disk", help="Amount of diskspace (in GB) for subset region batches", default=50, type=int)
 	args = parser.parse_args()
 
 	# Set up workflow JSON
 	json_dict = {}
 	json_dict["subset_vcf.multi_sample_vcf"] = os.environ["WGS_ACAF_THRESHOLD_VCF_PATH"] + "/acaf_threshold.chr%s.vcf.bgz"%args.chrom
 	json_dict["subset_vcf.GOOGLE_PROJECT"] = os.environ.get("GOOGLE_PROJECT", "")
+	json_dict["subset_vcf.disk"] = args.disk
 	if args.test:
 		json_dict["subset_vcf.sample_groups"] = os.environ["WORKSPACE_BUCKET"] + "/subset_vcf/metadata/aou_sample_groups.txt"
-		json_dict["subset_vcf.regions"] = ["chr11:40000000-50000000", "chr11:50000000-60000000"]
+		json_dict["subset_vcf.regions"] = ["chr%s:40000000-50000000"%chrom, "chr%s:50000000-60000000"%chrom]
 	else:
 		json_dict["subset_vcf.sample_groups"] = os.environ["WORKSPACE_BUCKET"] + "/subset_vcf/metadata/aou_sample_groups.txt"
 		json_dict["subset_vcf.regions"] = GetRegions(args.chrom)

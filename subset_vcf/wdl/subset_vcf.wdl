@@ -6,6 +6,7 @@ workflow subset_vcf {
         String GOOGLE_PROJECT = ""
         File sample_groups
         Array[String] regions
+        Int disk
     }
 
     ### Do subsetting for each region ###
@@ -17,7 +18,8 @@ workflow subset_vcf {
                 multi_sample_vcf=multi_sample_vcf,
                 GOOGLE_PROJECT=GOOGLE_PROJECT,
                 sample_groups=sample_groups,
-                region=region
+                region=region,
+                disk=disk
         }
     }
 
@@ -34,6 +36,7 @@ task subset_region_batches {
         String GOOGLE_PROJECT = ""
         File sample_groups
         String region
+        Int disk
     }
 
     command <<<
@@ -58,8 +61,8 @@ task subset_region_batches {
 
     runtime {
         docker: "gcr.io/ucsd-medicine-cast/bcftools-gcs:latest"
-        disks: "local-disk 50 SSD"
-        preemptible: 2
+        disks: "local-disk ~{disk} SSD"
+        preemptible: 1
     }
 
     output {

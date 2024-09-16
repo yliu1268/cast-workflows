@@ -21,7 +21,9 @@ cd cast-workflows/subset_vcf
 ../utils/configure-cromshell.py
 ```
 
-To launch a job for one chromosome (Note: these are big jobs. only run one chrom at a time)
+To launch a job for one chromosome (Note: these are big jobs. only run one chrom at a time).
+It is recommended to run with `--test --disk XXX` first to make sure it works and also make sure you will have enough disk space. `--disk 50` worked for chr1, so you should be able to use much smaller numbers for other chromosomes.
+
 ```
 # Run subset VCF
 chrom=XXX # e.g. chrom=11
