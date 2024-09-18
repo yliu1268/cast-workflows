@@ -22,7 +22,6 @@ cd cast-workflows/subset_vcf
 ```
 
 To launch a job for one chromosome (Note: these are big jobs. only run one chrom at a time).
-It is recommended to run with `--test --disk XXX` first to make sure it works and also make sure you will have enough disk space.
 
 ```
 # Run subset VCF
@@ -82,7 +81,7 @@ gsutil cp aou_sample_groups_test.txt ${WORKSPACE_BUCKET}/subset_vcf/metadata/aou
 
 ### Set up region batches
 ```
-bedtools makewindows -g hg38.txt -w 10000000 > genome_windows.bed
+bedtools makewindows -g hg38.txt -w 5000000 > genome_windows.bed
 for chrom in $(seq 1 22)
 do
 	cat genome_windows.bed | grep -w "chr"${chrom} | awk '{print $1 ":" $2 "-"$3}' > regions_chr${chrom}.txt

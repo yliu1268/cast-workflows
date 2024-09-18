@@ -22,7 +22,7 @@ def main():
 	parser.add_argument("--chrom", help="Which chromosome to process. Ignored if testing", type=str, required=True)
 	parser.add_argument("--test", help="Whether to run on small test sets", action="store_true")
 	parser.add_argument("--name", help="Name prefix for intermediate files", type=str, default="test")
-	parser.add_argument("--disk", help="Amount of diskspace (in GB) for subset region batches", default=50, type=int)
+	parser.add_argument("--disk", help="Amount of diskspace (in GB) for subset region batches", default=16, type=int)
 	args = parser.parse_args()
 
 	# Set up workflow JSON
