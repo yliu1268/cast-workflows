@@ -32,7 +32,7 @@ def main():
 	json_dict["subset_vcf.disk"] = args.disk
 	if args.test:
 		json_dict["subset_vcf.sample_groups"] = os.environ["WORKSPACE_BUCKET"] + "/subset_vcf/metadata/aou_sample_groups.txt"
-		json_dict["subset_vcf.regions"] = ["chr%s:0-10000000"%args.chrom, "chr%s:10000000-20000000"%args.chrom]
+		json_dict["subset_vcf.regions"] = ["chr%s:0-5000000"%args.chrom, "chr%s:5000000-10000000"%args.chrom]
 	else:
 		json_dict["subset_vcf.sample_groups"] = os.environ["WORKSPACE_BUCKET"] + "/subset_vcf/metadata/aou_sample_groups.txt"
 		json_dict["subset_vcf.regions"] = GetRegions(args.chrom)
