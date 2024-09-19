@@ -22,7 +22,7 @@ def main():
 	parser.add_argument("--chrom", help="Which chromosome to process. Ignored if testing", type=str, required=True)
 	parser.add_argument("--test", help="Whether to run on small test sets", action="store_true")
 	parser.add_argument("--name", help="Name prefix for intermediate files", type=str, default="test")
-	parser.add_argument("--disk", help="Amount of diskspace (in GB) for subset region batches", default=20, type=int)
+	parser.add_argument("--disk", help="Amount of diskspace (in GB) for subset region batches", default=30, type=int)
 	args = parser.parse_args()
 
 	# Set up workflow JSON
@@ -32,7 +32,7 @@ def main():
 	json_dict["subset_vcf.disk"] = args.disk
 	if args.test:
 		json_dict["subset_vcf.sample_groups"] = os.environ["WORKSPACE_BUCKET"] + "/subset_vcf/metadata/aou_sample_groups.txt"
-		json_dict["subset_vcf.regions"] = ["chr%s:0-5000000"%args.chrom, "chr%s:5000000-10000000"%args.chrom]
+		json_dict["subset_vcf.regions"] = ["chr%s:0-10000000"%args.chrom, "chr%s:10000000-20000000"%args.chrom]
 	else:
 		json_dict["subset_vcf.sample_groups"] = os.environ["WORKSPACE_BUCKET"] + "/subset_vcf/metadata/aou_sample_groups.txt"
 		json_dict["subset_vcf.regions"] = GetRegions(args.chrom)

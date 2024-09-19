@@ -81,7 +81,7 @@ gsutil cp aou_sample_groups_test.txt ${WORKSPACE_BUCKET}/subset_vcf/metadata/aou
 
 ### Set up region batches
 ```
-bedtools makewindows -g hg38.txt -w 5000000 > genome_windows.bed
+bedtools makewindows -g hg38.txt -w 10000000 > genome_windows.bed
 for chrom in $(seq 1 22)
 do
 	cat genome_windows.bed | grep -w "chr"${chrom} | awk '{print $1 ":" $2 "-"$3}' > regions_chr${chrom}.txt
