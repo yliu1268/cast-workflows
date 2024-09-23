@@ -10,15 +10,15 @@ chrom=21
 --batch-num 2
 """
 
-sys.path.append("../utils")
-import aou_utils
-
 # need to change GetFileBatches
 import argparse
 import json
 import os
 import subprocess
 import sys
+
+sys.path.append("../utils")
+import aou_utils
 
 def main():
 	parser = argparse.ArgumentParser(__doc__)

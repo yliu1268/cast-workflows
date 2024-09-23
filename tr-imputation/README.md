@@ -35,11 +35,8 @@ It is recommended to first run a small test on a couple samples to make sure eve
 chrom=21
 ./batch_imputation_aou.py \
 --name chr${chrom}_test \
---mem 40 \
 --batch-num 2 \
 --chrom ${chrom}
---region chr21:5101889-5151889 \
---subset-region
 
 ```
 
