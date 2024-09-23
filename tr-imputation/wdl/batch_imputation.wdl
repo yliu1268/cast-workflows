@@ -7,8 +7,6 @@ workflow batch_imputation {
         File ref_panel
         File map
         String out_prefix
-        Int? beagle_mem 
-        Int? merge_mem
         Array[File] batch_vcf_files = []
     }
 
@@ -23,7 +21,6 @@ workflow batch_imputation {
                 vcf_index= batch_index,
                 ref_panel=ref_panel,
                 out_prefix=out_prefix+".BATCH"+i,
-                beagle_mem=beagle_mem,
                 map=map
         }
         ## extract TR from batches of beagle output
@@ -40,8 +37,7 @@ workflow batch_imputation {
         input:
             vcfs=extract_TR.outvcf,
             vcfs_index=extract_TR.outvcf_index,
-            out_prefix=out_prefix,
-            merge_mem=merge_mem
+            out_prefix=out_prefix
     }
 
     call annotaTR {
@@ -72,14 +68,13 @@ task beagle {
         File vcf_index 
         File ref_panel
         String out_prefix
-        Int? beagle_mem = 25
         File map
     } 
 
     command <<<
         set -e
 
-        java -Xmx~{beagle_mem}g -jar /beagle.jar \
+        java -Xmx25g -jar /beagle.jar \
             gt=~{vcf} \
             ref=~{ref_panel} \
             ap=true \
@@ -88,11 +83,11 @@ task beagle {
         tabix -p vcf ~{out_prefix}_output.vcf.gz        
     >>>
     
-    #file upto 300mb use mem=25
     runtime {
         docker:"gcr.io/ucsd-medicine-cast/beagle:latest"
-        memory: beagle_mem + "GB"
+        memory: "25G"
         disks: "local-disk 50 SSD"
+        preemptible: 1
     }
 
     output {
@@ -115,6 +110,7 @@ task extract_TR {
 
     runtime {
         docker:"gcr.io/ucsd-medicine-cast/bcftools-gcs:latest"
+        preemptible: 1
     }
 
     output {
@@ -129,7 +125,6 @@ task merge_batch {
         Array[File] vcfs
         Array[File] vcfs_index
         String out_prefix
-        Int? merge_mem
     }
 
     command <<<
@@ -139,7 +134,7 @@ task merge_batch {
     
     runtime {
         docker: "gcr.io/ucsd-medicine-cast/bcftools-gcs:latest"
-        memory: merge_mem + "GB"
+        memory: "8G"
     }
     output {
         File outvcf = "${out_prefix}_TR_merged.vcf.gz"
@@ -162,7 +157,8 @@ task annotaTR {
             --ref-panel ~{ref_vcf} \
             --out ~{out_prefix}_annotated \
             --vcftype hipstr \
-            --outtype pgen gzvcf \
+            --outtype pgen vcf \
+            --vcf-outtype z \
             --dosages beagleap_norm \
             --ignore-duplicates \
             --match-refpanel-on locid \

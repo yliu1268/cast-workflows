@@ -20,7 +20,6 @@ RUN mkdir /sources
 RUN pip3 install --upgrade pip
 RUN git clone https://github.com/gymrek-lab/trtools.git 
 WORKDIR trtools
-RUN git checkout annotatr-less-strict-2
 RUN pip install -e .
 
 # Make sure we have tabix
