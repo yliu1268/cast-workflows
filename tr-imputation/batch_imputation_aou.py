@@ -30,7 +30,6 @@ def main():
 	args = parser.parse_args()
 
 	batch_vcf_files = aou_utils.GetBatchVCFFiles(args.vcfdir, args.batch_num)
-	output_bucket = bucket + "/" + args.name
 
 	# Set up workflow JSON
 	json_dict = {}

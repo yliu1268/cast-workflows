@@ -36,6 +36,7 @@ chrom=21
 ./batch_imputation_aou.py \
 --name chr${chrom}_test \
 --batch-num 2 \
+--vcfdir ${WORKSPACE_BUCKET}/acaf_batches/chr${chrom} \
 --chrom ${chrom}
 
 ```
@@ -60,13 +61,11 @@ cromshell list-outputs $JOBID
 ## Run a full job on all samples
 
 ```
-chrom=11
+chrom=21
 ./batch_imputation_aou.py \
---name chr${chrom}_imputation \
---chrom ${chrom} \
---mem 40 \
---disk 100 \
---merge-mem 100
+--name chr${chrom} \
+--vcfdir ${WORKSPACE_BUCKET}/acaf_batches/chr${chrom} \
+--chrom ${chrom}
 
 ```
 
