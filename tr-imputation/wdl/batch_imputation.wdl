@@ -18,7 +18,7 @@ workflow batch_imputation {
         call beagle {
             input:
                 vcf=batch,
-                vcf_index= batch_index,
+                vcf_index=batch_index,
                 ref_panel=ref_panel,
                 out_prefix=out_prefix+".BATCH"+i,
                 map=map
