@@ -35,7 +35,7 @@ def main():
 	json_dict = {}
 	json_dict["batch_imputation.ref_vcf"] = os.environ.get("WORKSPACE_BUCKET") + "/tr_imputation/enstr-v3/ensembletr_refpanel_v3_chr%s.vcf.gz"%args.chrom
 	json_dict["batch_imputation.ref_index"] = os.environ.get("WORKSPACE_BUCKET") + "/tr_imputation/enstr-v3/ensembletr_refpanel_v3_chr%s.vcf.gz.tbi"%args.chrom
-	json_dict["batch_imputation.ref_panel"] = os.environ.get("WORKSPACE_BUCKET") + "/tr_imputation/enstr-v3/ensembletr_refpanel_v3_chr%s.bref"%args.chrom
+	json_dict["batch_imputation.ref_panel"] = os.environ.get("WORKSPACE_BUCKET") + "/tr_imputation/enstr-v3/ensembletr_refpanel_v3_chr%s.bref3"%args.chrom
 	json_dict["batch_imputation.map"] = os.environ.get("WORKSPACE_BUCKET") + "/tr_imputation/tr_imputation/genetic_map/beagle_chr%s_b38.map"%args.chrom
 	json_dict["batch_imputation.out_prefix"] = args.name
 	json_dict["batch_imputation.batch_vcf_files"] = batch_vcf_files 
