@@ -66,7 +66,12 @@ chrom=21
 --name chr${chrom} \
 --vcfdir ${WORKSPACE_BUCKET}/acaf_batches/chr${chrom} \
 --chrom ${chrom}
+```
 
+To extract the Beagle files and upload separately to `${WORKSPACE_BUCKET}/beagle_hg19/chr${chrom}`
+
+```
+cromshell -mc list-outputs -j -d $jobid | python -c "import json, sys; data=json.load(sys.stdin); [sys.stdout.write(item['outvcf']+'\n'+item['outvcf_index']+'\n') for item in data['batch_imputation.beagle']]" | xargs -n1 -I% -P1 sh -c "gsutil mv % ${WORKSPACE_BUCKET}/beagle_hg38/chr${chrom}"
 ```
 
 ## To check on status on your run
