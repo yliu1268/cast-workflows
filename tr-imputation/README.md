@@ -68,7 +68,13 @@ chrom=21
 --chrom ${chrom}
 ```
 
-To extract the Beagle files and upload separately to `${WORKSPACE_BUCKET}/beagle_hg19/chr${chrom}`
+To extract the imputation results and upload to `${WORKSPACE_BUCKET}/tr_imputation/enstr-v3/results-250K`:
+
+```
+cromshell -mc list-outputs -j -d $jobid | python -c "import json, sys; data=json.load(sys.stdin); [sys.stdout.write(item['outvcf']+'\n'+item['outvcfind']+'\n'+item['pgen']+'\n'+item['psam']+'\n'+item['pvar']+'\n') for item in data['batch_imputation.annotaTR']]" | xargs -n1 -I% -P1 sh -c "gsutil mv % ${WORKSPACE_BUCKET}/tr_imputation/enstr-v3/results-250K"
+```
+
+To extract the Beagle files and upload separately to `${WORKSPACE_BUCKET}/beagle_hg19/chr${chrom}`:
 
 ```
 cromshell -mc list-outputs -j -d $jobid | python -c "import json, sys; data=json.load(sys.stdin); [sys.stdout.write(item['outvcf']+'\n'+item['outvcf_index']+'\n') for item in data['batch_imputation.beagle']]" | xargs -n1 -I% -P1 sh -c "gsutil mv % ${WORKSPACE_BUCKET}/beagle_hg38/chr${chrom}"

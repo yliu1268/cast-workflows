@@ -26,7 +26,7 @@ def main():
 	parser.add_argument("--vcfdir", help="GCP bucket with batch VCF files", type=str, required=True)
 	parser.add_argument("--chrom", help="Which chromosome to process", type=str, required=True)
 	parser.add_argument("--dryrun", help="Don't actually run the workflow. Just set up", action="store_true")
-	parser.add_argument("--batch-num", help="Number of batches. Default: -1 (all)",type=int, required=False, default=None)
+	parser.add_argument("--batch-num", help="Number of batches. Default: -1 (all)",type=int, required=False, default=-1)
 	args = parser.parse_args()
 
 	batch_vcf_files = aou_utils.GetBatchVCFFiles(args.vcfdir, args.batch_num)
