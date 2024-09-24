@@ -15,3 +15,4 @@ build:
 push:
 	# Requires ~/.dockercfg
 	docker push ${name}:${tag}
+	docker push ${name}:latest

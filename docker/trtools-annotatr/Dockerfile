@@ -16,12 +16,6 @@ RUN apt-get update && DEBIAN_FRONTEND="noninteractive" apt-get install -qqy \
 # Make sources directory
 RUN mkdir /sources
 
-# Insatll TRTools version with annotatr
-RUN pip3 install --upgrade pip
-RUN git clone https://github.com/gymrek-lab/trtools.git 
-WORKDIR trtools
-RUN pip install -e .
-
 # Make sure we have tabix
 # Install htslib 1.20
 WORKDIR /sources
@@ -40,5 +34,12 @@ WORKDIR bcftools-1.20
 RUN ./configure
 RUN make
 RUN make install
+
+# Insatll TRTools version with annotatr
+RUN pip3 install --upgrade pip
+RUN git clone https://github.com/gymrek-lab/trtools.git 
+WORKDIR trtools
+RUN pip install -e .
+
 
 

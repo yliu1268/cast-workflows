@@ -29,15 +29,19 @@ chrom=XXX # e.g. chrom=11
 ./subset_vcf_launcher.py --chrom ${chrom} --name chr${chrom} # copy the jobid to $jobid
 cromshell alias $jobid subset-vcf-chr${chrom}
 
-# Concatenate the subsets and upload to ${WORKSPACE_BUCKET}/acaf_batches/chr${chrom}
+# Concatenate the subsets 
 ./concatenate_batches_v2.py subset-vcf-chr${chrom} chr${chrom} # copy the jobid to $concatjobid
 cromshell alias $concatjobid concat-vcf-chr${chrom}
+
+# Upload to ${WORKSPACE_BUCKET}/acaf_batches/chr${chrom}
 cromshell -mc list-outputs -j concat-vcf-chr${chrom} | \
 	python -c "import json, sys; data=json.load(sys.stdin); [sys.stdout.write(item+'\n') for item in data['concatenate_batch_vcfs.vcf_outputs']+data['concatenate_batch_vcfs.vcf_indices']]" | \
 	xargs -n1 -I% -P1 sh -c "gsutil mv % ${WORKSPACE_BUCKET}/acaf_batches/chr${chrom}/"
+```
 
-# Large chroms need to be done in batches
-# This is bc the JSON is too large to run the full chrom...
+Note: large chroms need to be concatenated in batches. This is bc the JSON is too large to run the full chrom. e.g.:
+
+```
 ./concatenate_batches_v2.py subset-vcf-chr${chrom} chr${chrom} 0 100
 ./concatenate_batches_v2.py subset-vcf-chr${chrom} chr${chrom} 100 246
 ```

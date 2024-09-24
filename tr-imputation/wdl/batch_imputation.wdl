@@ -153,6 +153,7 @@ task annotaTR {
     }
     
     command <<<
+        set -e
         annotaTR --vcf ~{vcf} \
             --ref-panel ~{ref_vcf} \
             --out ~{out_prefix}_annotated \
