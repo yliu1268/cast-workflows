@@ -9,6 +9,20 @@ The goal of imputation is to perform phasing and imputation of TRs on a cohort o
 
 For most of our use cases, users do not interact with the WDL described here directly, but rather call launcher scripts which handle setting up inputs and calling the WDL using cromshell. Sections below give additional WDL details which can be helpful for development/testing or debugging.
 
+The outputs for each chromosome are:
+```
+# Imputed and annotated TRs
+chr${chrom}_annotated.vcf.gz
+chr${chrom}_annotated.vcf.gz.tbi
+chr${chrom}_annotated.pgen
+chr${chrom}_annotated.psam
+chr${chrom}_annotated.pvar
+
+# Phased SNP+TR calls
+chr${chrom}.BATCHXX_output.vcf.gz
+chr${chrom}.BATCHXX_output.vcf.gz.tbi
+```
+
 ## Setup
 In all cases you'll have to run the following steps in the AoU workbench before starting a workflow:
 
@@ -34,7 +48,7 @@ It is recommended to first run a small test on a couple samples to make sure eve
 ```
 chrom=21
 ./batch_imputation_aou.py \
---name chr${chrom}_test \
+--name chr${chrom} \
 --batch-num 2 \
 --vcfdir ${WORKSPACE_BUCKET}/acaf_batches/chr${chrom} \
 --chrom ${chrom}
@@ -51,6 +65,8 @@ If you see "Failed", you can look at the logs to see what happened:
 
 ```
 cromshell logs -s ALL $JOBID
+cromshell logs -s ALL -des $JOBID (use -des for descriptive log info)
+cromshell logs -s Failed -des $JOBID
 ```
 
 You can check the output:
@@ -71,17 +87,12 @@ chrom=21
 To extract the imputation results and upload to `${WORKSPACE_BUCKET}/tr_imputation/enstr-v3/results-250K`:
 
 ```
-cromshell -mc list-outputs -j -d $jobid | python -c "import json, sys; data=json.load(sys.stdin); [sys.stdout.write(item['outvcf']+'\n'+item['outvcfind']+'\n'+item['pgen']+'\n'+item['psam']+'\n'+item['pvar']+'\n') for item in data['batch_imputation.annotaTR']]" | xargs -n1 -I% -P1 sh -c "gsutil mv % ${WORKSPACE_BUCKET}/tr_imputation/enstr-v3/results-250K"
+cromshell -t 2000 -mc list-outputs -j -d $jobid | python -c "import json, sys; data=json.load(sys.stdin); [sys.stdout.write(item['outvcf']+'\n'+item['outvcfind']+'\n'+item['pgen']+'\n'+item['psam']+'\n'+item['pvar']+'\n') for item in data['batch_imputation.annotaTR']]" | xargs -n1 -I% -P1 sh -c "gsutil mv % ${WORKSPACE_BUCKET}/tr_imputation/enstr-v3/results-250K/"
 ```
 
-To extract the Beagle files and upload separately to `${WORKSPACE_BUCKET}/beagle_hg19/chr${chrom}`:
+To extract the Beagle files and upload separately to `${WORKSPACE_BUCKET}/beagle_hg38/chr${chrom}`:
 
 ```
-cromshell -mc list-outputs -j -d $jobid | python -c "import json, sys; data=json.load(sys.stdin); [sys.stdout.write(item['outvcf']+'\n'+item['outvcf_index']+'\n') for item in data['batch_imputation.beagle']]" | xargs -n1 -I% -P1 sh -c "gsutil mv % ${WORKSPACE_BUCKET}/beagle_hg38/chr${chrom}"
+cromshell -t 2000 -mc list-outputs -j -d $jobid | python -c "import json, sys; data=json.load(sys.stdin); [sys.stdout.write(item['outvcf']+'\n'+item['outvcf_index']+'\n') for item in data['batch_imputation.beagle']]" | xargs -n1 -I% -P1 sh -c "gsutil mv % ${WORKSPACE_BUCKET}/beagle_hg38/chr${chrom}/"
 ```
 
-## To check on status on your run
-```
-cromshell logs -s ALL -des $JOBID (use -des for descriptive log info)
-cromshell logs -s Failed -des $JOBID
-```
