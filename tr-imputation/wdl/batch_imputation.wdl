@@ -171,6 +171,7 @@ task annotaTR {
     runtime {
         docker:"gcr.io/ucsd-medicine-cast/trtools-annotatr:latest"
         disks: "local-disk 25 SSD"
+        memory: "25G"
     }
 
     output {
