@@ -96,3 +96,17 @@ To extract the Beagle files and upload separately to `${WORKSPACE_BUCKET}/beagle
 cromshell -t 2000 -mc list-outputs -j -d $jobid | python -c "import json, sys; data=json.load(sys.stdin); [sys.stdout.write(item['outvcf']+'\n'+item['outvcf_index']+'\n') for item in data['batch_imputation.beagle']]" | xargs -n1 -I% -P1 sh -c "gsutil mv % ${WORKSPACE_BUCKET}/beagle_hg38/chr${chrom}/"
 ```
 
+## Uploading the reference to our cloud bucket
+
+This only needs to be done once:
+
+```
+BASEURL=https://ensemble-tr.s3.us-east-2.amazonaws.com/ensembletr-refpanel-v3
+for chrom in $(seq 1 22)
+do
+    for fname in ensembletr_refpanel_v3_chr${chrom}.vcf.gz ensembletr_refpanel_v3_chr${chrom}.vcf.gz.tbi ensembletr_refpanel_v3_chr${chrom}.bref3
+    do
+        curl ${BASEURL}/${fname} | gsutil cp - ${WORKSPACE_BUCKET}/tr_imputation/enstr-v3/${fname}
+    done
+done
+```
