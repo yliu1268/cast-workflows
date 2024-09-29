@@ -36,7 +36,16 @@ chrom=11; ./gnomix_launcher.py \
 cromshell list-outputs $jobid
 
 # Also keep track of useful phased Beagle files!
+cromshell -t 2000 -mc list-outputs -j -d $jobid > out.json 
+cat out.json | python -c "import json, sys; data=json.load(sys.stdin); [sys.stdout.write(item['run_gnomix.beagle'][0]['outvcf']+'\n'+item['run_gnomix.beagle'][0]['outvcf_index']+'\n') for item in data['local_ancestry.run_gnomix']]" | xargs -n1 -I% -P1 sh -c "gsutil mv % ${WORKSPACE_BUCKET}/beagle_hg19/chr${chrom}/"
+```
+
+Old:
+
+```
+# Note: now metadata is printing the colors even when using -mc?
+# use list-outputs instesad see above
 chrom=chr11
 cromshell -mc -t 2000 metadata $jobid > gnomix_${chrom}_metadata.json
-python -c "import json; data = json.load(open('gnomix_chr1_metadata.json', 'r')); [print(data['calls']['local_ancestry.run_gnomix'][i]['subWorkflowMetadata']['calls']['run_gnomix.beagle'][0]['outputs']['outvcf']) for i in range(len(data['calls']['local_ancestry.run_gnomix']))]; [print(data['calls']['local_ancestry.run_gnomix'][i]['subWorkflowMetadata']['calls']['run_gnomix.beagle'][0]['outputs']['outvcf_index']) for i in range(len(data['calls']['local_ancestry.run_gnomix']))];" | xargs -n 1 -P 1 -I% sh -c "echo gsutil mv % ${WORKSPACE_BUCKET}/beagle_hg19/${chrom}"
+python -c "import json; data = json.load(open('gnomix_chr${chrom}_metadata.json', 'r')); [print(data['calls']['local_ancestry.run_gnomix'][i]['subWorkflowMetadata']['calls']['run_gnomix.beagle'][0]['outputs']['outvcf']) for i in range(len(data['calls']['local_ancestry.run_gnomix']))]; [print(data['calls']['local_ancestry.run_gnomix'][i]['subWorkflowMetadata']['calls']['run_gnomix.beagle'][0]['outputs']['outvcf_index']) for i in range(len(data['calls']['local_ancestry.run_gnomix']))];" | xargs -n 1 -P 1 -I% sh -c "echo gsutil mv % ${WORKSPACE_BUCKET}/beagle_hg19/${chrom}"
 ```
