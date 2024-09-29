@@ -47,8 +47,13 @@ def main():
 	json_dict["local_ancestry.chrom"] = args.chrom
 	json_dict["local_ancestry.gnomix_model"] = args.gnomix_model
 	json_dict["local_ancestry.chainfile"] = os.environ.get("WORKSPACE_BUCKET") + "/gnomix/resources/hg38ToHg19.over.chain.gz"
-	json_dict["local_ancestry.refpanel"] = os.environ.get("WORKSPACE_BUCKET") + "/gnomix/resources/ALL.chr%s.phase3_shapeit2_mvncall_integrated_v5b.20130502.genotypes.vcf.gz"%args.chrom
-	json_dict["local_ancestry.refpanel_index"] = os.environ.get("WORKSPACE_BUCKET") + "/gnomix/resources/ALL.chr%s.phase3_shapeit2_mvncall_integrated_v5b.20130502.genotypes.vcf.gz.tbi"%args.chrom
+	if args.chrom in ["8"]:
+		# Some chroms had duplicate entries in the 1000G phased VCF :(
+		json_dict["local_ancestry.refpanel"] = os.environ.get("WORKSPACE_BUCKET") + "/gnomix/resources/ALL.chr%s.phase3_shapeit2_mvncall_integrated_v5b.20130502.genotypes-dedup.vcf.gz"%args.chrom
+		json_dict["local_ancestry.refpanel_index"] = os.environ.get("WORKSPACE_BUCKET") + "/gnomix/resources/ALL.chr%s.phase3_shapeit2_mvncall_integrated_v5b.20130502.genotypes-dedup.vcf.gz.tbi"%args.chrom
+	else:
+		json_dict["local_ancestry.refpanel"] = os.environ.get("WORKSPACE_BUCKET") + "/gnomix/resources/ALL.chr%s.phase3_shapeit2_mvncall_integrated_v5b.20130502.genotypes.vcf.gz"%args.chrom
+		json_dict["local_ancestry.refpanel_index"] = os.environ.get("WORKSPACE_BUCKET") + "/gnomix/resources/ALL.chr%s.phase3_shapeit2_mvncall_integrated_v5b.20130502.genotypes.vcf.gz.tbi"%args.chrom
 
 	# Convert to JSON and save to a file
 	json_file = args.name + ".aou.json"
