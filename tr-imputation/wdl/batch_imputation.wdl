@@ -134,7 +134,8 @@ task merge_batch {
     
     runtime {
         docker: "gcr.io/ucsd-medicine-cast/bcftools-gcs:latest"
-        memory: "8G"
+        memory: "25G"
+        disks: "local-disk 60 SSD"
     }
     output {
         File outvcf = "${out_prefix}_TR_merged.vcf.gz"
@@ -170,8 +171,8 @@ task annotaTR {
 
     runtime {
         docker:"gcr.io/ucsd-medicine-cast/trtools-annotatr:latest"
-        disks: "local-disk 25 SSD"
-        memory: "25G"
+        disks: "local-disk 120 SSD"
+        memory: "30G"
     }
 
     output {
