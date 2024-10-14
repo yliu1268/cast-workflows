@@ -23,6 +23,7 @@ def main():
 	parser.add_argument("--test", help="Whether to run on small test sets", action="store_true")
 	parser.add_argument("--name", help="Name prefix for intermediate files", type=str, default="test")
 	parser.add_argument("--disk", help="Amount of diskspace (in GB) for subset region batches. CURRENTLY IGNORED", default=30, type=int)
+	parser.add_argument("--dryrun", action="store_true")
 	args = parser.parse_args()
 
 	# Set up workflow JSON
@@ -44,8 +45,11 @@ def main():
 
 	# Run workflow
 	cmd = "cromshell submit {wdl} {json}".format(wdl="wdl/subset_vcf.wdl", json=json_file)
-	output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
-	print(output.decode("utf-8"))	
+	if args.dryrun:
+		print(cmd)
+	else:
+		output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
+		print(output.decode("utf-8"))	
 
 if __name__ == "__main__":
 	main()
