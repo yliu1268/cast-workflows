@@ -29,7 +29,7 @@ chrom=XXX # e.g. chrom=11
 ./subset_vcf_launcher.py --chrom ${chrom} --name chr${chrom} # copy the jobid to $jobid
 cromshell alias $jobid subset-vcf-chr${chrom}
 
-# Concatenate the subsets 
+# Concatenate the subsets
 ./concatenate_batches_v2.py subset-vcf-chr${chrom} chr${chrom} # copy the jobid to $concatjobid
 cromshell alias $concatjobid concat-vcf-chr${chrom}
 

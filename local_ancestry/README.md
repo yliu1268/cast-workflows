@@ -13,7 +13,7 @@ cd local_ancestry
 
 ```
 chrom=11; ./gnomix_launcher.py \
-  --name test-chr${chrom} \
+  --name gnomix-chr${chrom} \
   --vcfdir ${WORKSPACE_BUCKET}/acaf_batches/chr${chrom} \
   --chrom ${chrom} \
   --max-batches 2 
@@ -35,7 +35,7 @@ chrom=11; ./gnomix_launcher.py \
 cromshell list-outputs $jobid
 
 # Also keep track of useful phased Beagle files!
-cromshell -t 2000 -mc list-outputs -j -d $jobid > out.json 
+cromshell -t 200000 -mc list-outputs -j -d $jobid > out.json 
 cat out.json | python -c "import json, sys; data=json.load(sys.stdin); [sys.stdout.write(item['run_gnomix.beagle'][0]['outvcf']+'\n'+item['run_gnomix.beagle'][0]['outvcf_index']+'\n') for item in data['local_ancestry.run_gnomix']]" | xargs -n1 -I% -P1 sh -c "gsutil mv % ${WORKSPACE_BUCKET}/beagle_hg19/chr${chrom}/"
 ```
 
