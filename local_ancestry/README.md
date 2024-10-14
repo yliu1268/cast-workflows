@@ -35,13 +35,18 @@ chrom=11; ./gnomix_launcher.py \
 cromshell list-outputs $jobid
 
 # Also keep track of useful phased Beagle files!
-cromshell -t 200000 -mc list-outputs -j -d $jobid > out.json 
-cat out.json | python -c "import json, sys; data=json.load(sys.stdin); [sys.stdout.write(item['run_gnomix.beagle'][0]['outvcf']+'\n'+item['run_gnomix.beagle'][0]['outvcf_index']+'\n') for item in data['local_ancestry.run_gnomix']]" | xargs -n1 -I% -P1 sh -c "gsutil mv % ${WORKSPACE_BUCKET}/beagle_hg19/chr${chrom}/"
+
+gsutil ls -r ${WORKSPACE_BUCKET}/cromwell-execution/local_ancestry/$jobid/* | grep vcf | grep phased | xargs -n1 -I% -P1 sh -c "gsutil mv % ${WORKSPACE_BUCKET}/beagle_hg19/chr${chrom}/"
+
 ```
 
 Old:
 
 ```
+# This used to work but keeps timing out now...
+cromshell -t 200000 -mc list-outputs -j -d $jobid > out.json 
+cat out.json | python -c "import json, sys; data=json.load(sys.stdin); [sys.stdout.write(item['run_gnomix.beagle'][0]['outvcf']+'\n'+item['run_gnomix.beagle'][0]['outvcf_index']+'\n') for item in data['local_ancestry.run_gnomix']]" | xargs -n1 -I% -P1 sh -c "gsutil mv % ${WORKSPACE_BUCKET}/beagle_hg19/chr${chrom}/"
+
 # Note: now metadata is printing the colors even when using -mc?
 # use list-outputs instesad see above
 chrom=chr11
