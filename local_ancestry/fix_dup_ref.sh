@@ -3,7 +3,7 @@
 # Fix 1kg ref panel for chroms that had
 # duplicate markers
 
-chrom=14
+chrom=12
 
 gsutil cp ${WORKSPACE_BUCKET}/gnomix/resources/ALL.chr${chrom}.phase3_shapeit2_mvncall_integrated_v5b.20130502.genotypes.vcf.gz .
 
