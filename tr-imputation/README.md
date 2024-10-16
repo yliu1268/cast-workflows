@@ -110,3 +110,9 @@ do
     done
 done
 ```
+
+## Imputation merged TR results are stored in:
+
+```
+${WORKSPACE_BUCKET}/imputation_merged_TR/
+```
