@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import json
+import os
 
 json_dict = json.loads(open("chr9concat.aou.json", "r").read())
 
