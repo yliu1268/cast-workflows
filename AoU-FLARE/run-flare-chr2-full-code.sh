@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Download the phased vcf files from AoU workspace bucket (as input file for FLARE)
-# gsutil -u $GOOGLE_PROJECT cp gs://fc-secure-5efb5f8d-7703-495b-8dc7-3d90605152e5/phased-vcf/acaf_threshold_unrelated.chr2.biallelic.phased.vcf.gz .
-# gsutil -u $GOOGLE_PROJECT cp gs://fc-secure-5efb5f8d-7703-495b-8dc7-3d90605152e5/phased-vcf/acaf_threshold_unrelated.chr2.biallelic.phased.vcf.gz.tbi .
+# gsutil -u $GOOGLE_PROJECT cp gs://.../phased-vcf/acaf_threshold_unrelated.chr2.biallelic.phased.vcf.gz .
+# gsutil -u $GOOGLE_PROJECT cp gs://.../phased-vcf/acaf_threshold_unrelated.chr2.biallelic.phased.vcf.gz.tbi .
 
 ##########################################################################
 # Download GNU Parallel to parallel the splitting job of bcftools
@@ -76,8 +76,8 @@ echo "Splitting chunks complete."
 
 ##########################################################################
 # Download reference: we phased 2504 unrelated-1kgp samples with BEAGLE
-# gsutil -u $GOOGLE_PROJECT cp gs://fc-secure-5efb5f8d-7703-495b-8dc7-3d90605152e5/unrelated-1kgp/recalibrated_variants.1kgp.chr2.biallelic.phased.vcf.gz.tbi .
-# gsutil -u $GOOGLE_PROJECT cp gs://fc-secure-5efb5f8d-7703-495b-8dc7-3d90605152e5/unrelated-1kgp/recalibrated_variants.1kgp.chr2.biallelic.phased.vcf.gz .
+# gsutil -u $GOOGLE_PROJECT cp gs://.../unrelated-1kgp/recalibrated_variants.1kgp.chr2.biallelic.phased.vcf.gz.tbi .
+# gsutil -u $GOOGLE_PROJECT cp gs://.../unrelated-1kgp/recalibrated_variants.1kgp.chr2.biallelic.phased.vcf.gz .
 
 
 # Set variables
